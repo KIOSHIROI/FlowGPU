@@ -128,6 +128,7 @@ Start here:
 - [Language overview](docs/user-guide/language.md)
 - [CLI guide](docs/user-guide/cli.md)
 - [Python API](docs/user-guide/api.md)
+- [Python integration](docs/user-guide/integration.md)
 - [Backends and platform support](docs/user-guide/backends.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)

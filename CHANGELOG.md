@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add a runnable Python-integration example and guide.
+
 ## 0.18.2
 
 - Package the 0.18 migration guide, release guide and TestPyPI workflow.

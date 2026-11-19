@@ -39,6 +39,7 @@ nav:
   - Language: language.md
   - CLI: cli.md
   - Python API: api.md
+  - Python integration: integration.md
   - Backends: backends.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
