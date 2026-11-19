@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.21.3
+
+- Attach the runtime CycloneDX SBOM to GitHub Release assets and checksums.
+
 ## 0.21.2
 
 - Neutralize the last stakeholder wording in the public migration bundle output;
