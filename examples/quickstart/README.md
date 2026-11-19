@@ -43,3 +43,11 @@ After `pip install`, the same CLI is available as `flowgpu`:
 ```sh
 flowgpu examples/quickstart/add.fgpu --run-gpu
 ```
+
+## One-command demo and notebook
+
+```sh
+.venv/bin/python examples/quickstart/demo.py
+```
+
+Open `examples/quickstart/tutorial.ipynb` in JupyterLab or VS Code for a five-minute walkthrough.

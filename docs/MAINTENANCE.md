@@ -43,3 +43,7 @@ This repository is a curated standalone public tree. Private competition
 material, organizer task packages, evidence runs, research data and personal
 infrastructure are intentionally absent. Never copy them into this repository;
 `tools/publish_guard.py` checks the known private paths mechanically.
+
+## Docs site
+
+`mkdocs build --strict` runs in CI. After enabling GitHub Pages (Settings -> Pages -> GitHub Actions), run the manual `docs-pages` workflow to deploy. The site is built from `docs/user-guide/`.

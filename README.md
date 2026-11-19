@@ -52,6 +52,12 @@ Requires **Python 3.11, 3.12 or 3.13**.
 .venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run
 ```
 
+The one-command demo compiles the same program and prints its generated kernels:
+
+```sh
+.venv/bin/python examples/quickstart/demo.py
+```
+
 `--emit summary` prints the typed pipeline, `--emit triton` prints the generated
 Triton module, and `--run` executes the reference backend and prints outputs.
 After installation the same commands are available as `flowgpu ...`.

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.16.2
 
 - Add maintainer, maintenance and release-process documentation.
 - Add Dependabot and issue templates for ongoing maintenance.
@@ -10,6 +10,9 @@
 - Improve package metadata for discoverability and add `docs` extras.
 - Add contributor/roadmap/architecture pages, issue contact links and a guarded
   manual PyPI publishing workflow.
+- Add a one-command quickstart demo, a five-minute notebook and manual GitHub
+  Pages deployment workflow.
+- Finish the user-facing README and package metadata cleanup.
 
 ## 0.16.1
 
