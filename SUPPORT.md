@@ -9,5 +9,5 @@ FlowGPU is a volunteer-maintained prototype. There is no support SLA.
 - **Security:** do not open a public issue; follow [SECURITY.md](SECURITY.md).
 - **Contributions:** see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Before filing, check [Getting started](docs/getting-started.md),
-[FAQ](docs/faq.md) and [Troubleshooting](docs/troubleshooting.md).
+Before filing, check [Getting started](docs/user-guide/getting-started.md),
+[FAQ](docs/user-guide/faq.md) and [Troubleshooting](docs/user-guide/troubleshooting.md).

@@ -1,6 +1,6 @@
 PY ?= python
 
-.PHONY: install dev test lint docs build check clean
+.PHONY: install dev test lint docs links build check clean
 
 install:
 	$(PY) -m pip install -e .
@@ -16,6 +16,9 @@ lint:
 
 docs:
 	$(PY) -m mkdocs build --strict
+
+links:
+	$(PY) tools/check_docs_links.py
 
 build:
 	$(PY) -m build

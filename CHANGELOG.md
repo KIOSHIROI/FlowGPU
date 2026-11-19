@@ -4,6 +4,7 @@
 
 - Add a security policy with supported versions and disclosure expectations.
 - Add a stability/versioning guide and CodeQL + dependency-review workflows.
+- Add an automated relative-link check for README and the user guide.
 
 ## 0.16.2
 
