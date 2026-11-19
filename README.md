@@ -44,8 +44,8 @@ python -m venv .venv
 python -m pip install "git+https://github.com/KIOSHIROI/FlowGPU.git"
 ```
 
-Published wheel/sdist files, their `SHA256SUMS`, and release notes are on the
-[Releases page](https://github.com/KIOSHIROI/FlowGPU/releases).
+Published wheel/sdist files, their `SHA256SUMS`, build-provenance attestations,
+and release notes are on the [Releases page](https://github.com/KIOSHIROI/FlowGPU/releases).
 
 Requires **Python 3.11, 3.12 or 3.13**.
 

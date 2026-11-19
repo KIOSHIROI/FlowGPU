@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -46,6 +48,10 @@ jobs:
           name: dist-${{ github.ref_name }}
           path: dist/*
           retention-days: 90
+      - name: attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "dist/*"
       - name: create GitHub release
         uses: softprops/action-gh-release@v2
         with:

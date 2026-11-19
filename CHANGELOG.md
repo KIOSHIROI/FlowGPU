@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16.6
+
+- Generate GitHub build-provenance attestations for release wheel/sdist files.
+- Document optional attestation verification.
+
 ## 0.16.5
 
 - Keep every public example compilable (remove a staged `store_at` sample and

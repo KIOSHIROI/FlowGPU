@@ -32,7 +32,12 @@ python -m pip install flowgpu-<version>-py3-none-any.whl
 ```
 
 The release page also contains the sdist for environments that prefer building
-from source.
+from source. Release artifacts are covered by GitHub build-provenance
+attestations; if `gh` is available you can verify a downloaded file with:
+
+```sh
+gh attestation verify flowgpu-<version>-py3-none-any.whl --repo KIOSHIROI/FlowGPU
+```
 
 ## Install from Git
 
