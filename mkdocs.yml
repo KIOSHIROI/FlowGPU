@@ -44,3 +44,4 @@ nav:
   - Architecture: architecture.md
   - Contributing: contributing.md
   - Roadmap: roadmap.md
+  - Stability and versioning: stability.md

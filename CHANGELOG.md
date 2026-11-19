@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add a security policy with supported versions and disclosure expectations.
+- Add a stability/versioning guide and CodeQL + dependency-review workflows.
+
 ## 0.16.2
 
 - Add maintainer, maintenance and release-process documentation.

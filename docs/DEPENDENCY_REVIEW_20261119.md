@@ -20,3 +20,11 @@ Review notes:
 No security advisories were reported for the runtime dependency (`lark`) at the
 time of review. The `pyproject.toml` dev extras remain pinned to compatible
 minimal versions.
+
+## Grouped follow-up
+
+Dependabot regrouped the three action bumps into PR #5
+(`github-actions` group: `actions/checkout`, `actions/setup-python`,
+`actions/upload-artifact`). Its CI run is green. It remains open because the
+maintainer session has SSH push access but no GitHub API token for merging or
+closing pull requests.
