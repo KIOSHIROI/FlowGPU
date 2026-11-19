@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.16.3
+
+No runtime code changes. This release packages the documentation, security
+policy, maintenance tooling and CI quality gates added after 0.16.2.
 
 - Add a security policy with supported versions and disclosure expectations.
 - Add a stability/versioning guide and CodeQL scanning.
