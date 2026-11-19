@@ -36,7 +36,7 @@ jobs:
       - name: public CPU suite with coverage gate
         run: |
           python -m pytest -q --junitxml=pytest.xml \
-            --cov=compiler --cov-report=xml:coverage.xml
+            --cov=flowgpu.compiler --cov-report=xml:coverage.xml
       - name: upload test report
         if: always()
         uses: actions/upload-artifact@v4

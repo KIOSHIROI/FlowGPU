@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.1
+
+- Fix the CI coverage source path after the 0.18.0 namespace migration.
+- Keep the public suite and the release workflow green on the new layout.
+
 ## 0.18.0
 
 - **Breaking:** move the implementation into `flowgpu.compiler` and
