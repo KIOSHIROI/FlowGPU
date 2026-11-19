@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add an explicit limitations page covering platform, API and evidence scope.
+
+## Unreleased
+
 - Extend the relative-link check to all public documentation.
 
 ## Unreleased
