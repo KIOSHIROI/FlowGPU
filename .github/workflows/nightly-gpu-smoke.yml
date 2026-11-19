@@ -6,6 +6,9 @@ name: nightly-gpu-smoke
 # falls back to ubuntu-latest, detects that no GPU is present and exits green
 # with a message (a red nightly workflow for missing hardware would be noise).
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: "17 3 * * *"
@@ -14,6 +17,7 @@ on:
 jobs:
   gpu-smoke:
     runs-on: ${{ vars.GPU_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

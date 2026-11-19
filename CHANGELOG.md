@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Harden workflow permissions and add job timeouts to prevent stuck CI.
+
 ## 0.19.0
 
 - Add tested Python 3.14 support to the CI matrix and classifiers.

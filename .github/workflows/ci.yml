@@ -9,6 +9,9 @@ on:
     # Weekly maintenance run: the suite must stay green even without pushes.
     - cron: "23 4 * * 1"
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -17,6 +20,7 @@ jobs:
   test:
     name: cpu-tests-${{ matrix.python }}
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -49,6 +53,7 @@ jobs:
   docs:
     name: build-docs
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -71,6 +76,7 @@ jobs:
   wheel:
     name: build-wheel
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: test
     steps:
       - uses: actions/checkout@v4
