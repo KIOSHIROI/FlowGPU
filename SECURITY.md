@@ -51,3 +51,7 @@ disclosure.
 - CodeQL runs on pushes, pull requests and weekly.
 - `security-audit` runs `pip-audit` over a clean install of the released wheel weekly and on dependency changes, and uploads a CycloneDX SBOM artifact.
 - Dependabot keeps Actions and Python dependencies current.
+
+## Open-source security posture
+
+OpenSSF Scorecard runs on `main`, on branch-protection changes and weekly. Results are uploaded as SARIF and published to the OpenSSF Scorecard service. Findings are triaged alongside CodeQL and Dependabot updates.

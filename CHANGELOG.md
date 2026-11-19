@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add an OpenSSF Scorecard workflow and document the security posture.
+
+## Unreleased
+
 - Add macOS CPU CI coverage and a governance document.
 
 ## 0.19.1
