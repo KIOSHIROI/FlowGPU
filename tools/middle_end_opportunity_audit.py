@@ -14,7 +14,7 @@ layout/materialisation, reduction decomposition or buffer planning.  This is a
 CPU audit (no device execution); it measures *structural* opportunity, which is
 the right first filter before spending GPU time.
 
-    python tools/middle_end_opportunity_audit.py --out results/middle_end/audit.json
+    python tools/middle_end_opportunity_audit.py --out reports/middle_end/audit.json
 """
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def _metrics(result) -> dict:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default="results/middle_end/audit.json")
+    parser.add_argument("--out", default="reports/middle_end/audit.json")
     parser.add_argument("--only", nargs="*", help="subset of program names")
     args = parser.parse_args(argv)
     rows = []

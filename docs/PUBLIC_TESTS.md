@@ -8,7 +8,7 @@ python -m pytest -q
 python -m ruff check .
 ```
 
-Tests that require private competition/evidence fixtures are intentionally not
+Tests that require private competition or evidence fixtures are intentionally not
 part of this repository. The included suite contains 1,600+ passing CPU tests and exercises the parser, type system,
 IR, fusion, buffer planning, layout operators, frontends, reference semantics,
 Triton source emission, scalar placement and public API.

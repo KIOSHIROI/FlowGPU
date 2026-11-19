@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Prohibit private evidence-path tokens across the public tree and neutralize the
+  public audit helper default output path.
+
+## Unreleased
+
 - Replace private evidence-path references in public technical notes with
   neutral placeholders.
 
@@ -21,7 +26,7 @@
 
 ## 0.21.5
 
-- Remove internal research/competition path references from public code comments.
+- Remove internal evidence-path references from public code comments.
 - Ship an explicit empty public extern ledger instead of reading a private path.
 
 ## 0.21.4
