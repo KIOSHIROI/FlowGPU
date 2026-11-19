@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Require release and index-publication tags to be ancestors of `main`.
+
+## Unreleased
+
 - Validate sdist contents alongside the wheel in the release metadata check.
 
 ## 0.20.0

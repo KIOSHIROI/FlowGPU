@@ -35,8 +35,10 @@ git push origin main
 git push origin vX.Y.Z
 ```
 
-The `release` workflow verifies the tag, builds sdist+wheel, generates
-`SHA256SUMS`, attests build provenance and creates a GitHub Release.
+The `release` workflow verifies the tag is an ancestor of `main`, checks the
+version, builds sdist+wheel, generates `SHA256SUMS`, attests build provenance and
+creates a GitHub Release. The index-publication workflows apply the same
+ancestry guard.
 
 ## PyPI and TestPyPI
 

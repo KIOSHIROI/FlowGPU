@@ -17,6 +17,12 @@ jobs:
       attestations: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ensure the tag is on main
+        run: |
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor HEAD FETCH_HEAD
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
