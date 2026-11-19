@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.21.2
+
+- Neutralize the last stakeholder wording in the public migration bundle output;
+  extend the boundary check to catch it.
+
 ## Unreleased
 
 - Add an explicit limitations page covering platform, API and evidence scope.

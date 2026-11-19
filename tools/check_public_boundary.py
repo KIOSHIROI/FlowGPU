@@ -18,7 +18,7 @@ PATTERNS = {
     "ssh material": re.compile(r"BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|~/.ssh/"),
     "competition credential": re.compile(r"flagos_token|cannbench_token|team_id\s*[:=]|submission_id\s*[:=]"),
     "internal commercial pricing": re.compile(r"person-days|gross_margin|cost floor|price ladder|price_menu|CNY"),
-    "internal product positioning": re.compile(r"customer workspace|live engagement|internal roadmap"),
+    "internal product positioning": re.compile(r"customer workspace|live engagement|internal roadmap|product surface|\bprocurement\b|\bCTO\b"),
 }
 FORBIDDEN_FILES = {"golden.py", "proto.yaml", "cases.yaml"}
 FORBIDDEN_DIRS = ("competition", "results", "research", "data/cannbench", "presentation")

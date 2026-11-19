@@ -153,7 +153,7 @@ def attribution_summary(bundle: dict) -> dict:
 def render_one_page(bundle: dict) -> str:
     """A decision page: verdict, thresholds, owners, top gaps, next action.
 
-    This is the page a CTO/procurement reviewer reads; the full evidence,
+    This is the page a technical reviewer reads; the full evidence,
     coverage and reproduction commands stay in the long report.
     """
     evidence = bundle.get("evidence", [])
@@ -184,7 +184,7 @@ def render_one_page(bundle: dict) -> str:
         "",
         "- **ACCEPTED** means every scoped (operator, platform) pair has passing "
         "evidence and there are no gaps; it may go to the next stage (integration, "
-        "procurement, or production gate).",
+        "or production gate).",
         "- **REJECTED** means at least one scoped pair is a recorded failure or an "
         "explicit gap; it must not be reported as accepted, and the gaps below are "
         "the work list.",
