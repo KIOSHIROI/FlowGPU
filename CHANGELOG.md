@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a user-facing security and release-verification page.
+
+## Unreleased
+
 - Add macOS CPU CI coverage and a governance document.
 
 ## 0.19.1
