@@ -79,7 +79,7 @@ the device cannot be used; it never silently falls back to torch.
 ## Python API
 
 ```python
-from compiler import CompileError, compile_source
+from flowgpu import CompileError, compile_source
 
 source = """
 pipeline add {
@@ -98,7 +98,8 @@ print(pipeline.reference.host)   # CPU reference implementation
 ```
 
 The public surface is `compile_source`, `compile_pipelines`, `CompileError` and
-`CompileResult`. See the [Python API guide](docs/user-guide/api.md) for the objects and
+`CompileResult`, available from the `flowgpu` package. The legacy `compiler`
+import path remains supported during the pre-1.0 transition. See the [Python API guide](docs/user-guide/api.md) for the objects and
 common options.
 
 ## What works today

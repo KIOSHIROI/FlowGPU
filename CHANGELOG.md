@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.0
+
+- Add the `flowgpu` public import namespace (`from flowgpu import compile_source`)
+  and `python -m flowgpu`, while keeping the legacy `compiler` imports. This is
+  the first step of the pre-1.0 namespace transition.
+
 ## 0.16.6
 
 - Generate GitHub build-provenance attestations for release wheel/sdist files.

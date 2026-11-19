@@ -1,9 +1,9 @@
 # Python API
 
-The public API is intentionally small:
+The public API is intentionally small. Import it from the `flowgpu` package; the legacy `compiler` package remains available while the pre-1.0 namespace transition is in progress.
 
 ```python
-from compiler import CompileError, compile_source, compile_pipelines
+from flowgpu import CompileError, compile_source, compile_pipelines
 ```
 
 The API is **pre-1.0**: names and result objects may change in minor releases
@@ -12,7 +12,7 @@ until the public surface is frozen. Pin a commit or version if you depend on it.
 ## Compile source
 
 ```python
-from compiler import compile_source
+from flowgpu import compile_source
 
 source = """
 pipeline add {
@@ -79,7 +79,7 @@ list.
 Invalid programs raise `CompileError`:
 
 ```python
-from compiler import CompileError, compile_source
+from flowgpu import CompileError, compile_source
 
 try:
     compile_source("pipeline p { input x: fp16[4] out = add(x, x) output nope }")

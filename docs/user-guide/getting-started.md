@@ -85,6 +85,14 @@ prints the output values. It does not require `torch`.
 If PyTorch, Triton or CUDA is unavailable, this command exits with code 2 and a
 message pointing back to `--run`. It never silently falls back to a torch kernel.
 
+## Import from Python
+
+```python
+from flowgpu import compile_source
+```
+
+The old `from compiler import ...` path remains supported during pre-1.0.
+
 ## Next
 
 - [Tutorial](tutorial.md)
