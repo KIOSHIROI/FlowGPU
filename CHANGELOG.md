@@ -5,6 +5,7 @@
 - Add a security policy with supported versions and disclosure expectations.
 - Add a stability/versioning guide and CodeQL scanning.
 - Add an automated relative-link check for README and the user guide.
+- Enforce the configured coverage gate in CI and report coverage artifacts.
 
 ## 0.16.2
 

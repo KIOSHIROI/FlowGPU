@@ -33,14 +33,18 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: lint
         run: python -m ruff check .
-      - name: public CPU suite
-        run: python -m pytest -q --junitxml=pytest.xml
+      - name: public CPU suite with coverage gate
+        run: |
+          python -m pytest -q --junitxml=pytest.xml \
+            --cov=compiler --cov-report=xml:coverage.xml
       - name: upload test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pytest-${{ matrix.python }}
-          path: pytest.xml
+          path: |
+            pytest.xml
+            coverage.xml
 
   docs:
     name: build-docs
