@@ -1,0 +1,34 @@
+# Natural-log variant. The base-2 variant uses exp2/log2 instead.
+# Explicit casts retain FP32 intermediates even for low-precision recv values.
+pipeline lse {
+    input recv : fp16[R,B,H,D]
+    input lse_in : fp32[R,B,H]
+    a = move_first_last(lse_in)
+    valid = isfinite(a)
+    missing = neg_inf_like(a)
+    clean = where(valid, a, missing)
+    m0 = max_last(clean)
+    mvalid = isfinite(m0)
+    zero = zeros_like(m0)
+    m = where(mvalid, m0, zero)
+    broad_m = broadcast_like(m, clean)
+    shifted = sub(clean, broad_m)
+    weights = exp(shifted)
+    denom = sum_last(weights)
+    recv32 = to_fp32(recv)
+    values = move_first_last(recv32)
+    wview = reshape(weights, [B,H,1,R])
+    wide_w = broadcast_like(wview, values)
+    weighted = mul(values, wide_w)
+    numerator = sum_last(weighted)
+    denom_view = reshape(denom, [B,H,1,1])
+    wide_denom = broadcast_like(denom_view, numerator)
+    norm = div(numerator, wide_denom)
+    norm_view = reshape(norm, [B,H,D])
+    out = cast_like(norm_view, recv)
+    logdenom = log(denom)
+    combined = add(logdenom, m)
+    out_lse = reshape(combined, [B,H])
+    output out
+    output out_lse
+}

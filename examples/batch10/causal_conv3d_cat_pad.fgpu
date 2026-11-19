@@ -1,0 +1,18 @@
+# diffusion/causal_conv3d_cat_pad
+#
+#   out = F.pad(cat([cache, x], dim=2), (w_l, w_r, h_t, h_b, t_front - Tc, t_back))
+#
+# The cached frames occupy the front of the temporal padding, so the effective
+# front pad is `t_front - Tc`.  Extents are literal because the language has no
+# dimension arithmetic: the output extent `T + t_front + t_back` cannot be
+# written from a symbolic extent (the same refusal `concat` makes for a symbolic
+# last axis).
+#
+# The Cosmos3 case the operator comes from: B=1, C=1024, T=1, Tc=1, H=30, W=52
+# with padding (1, 1, 1, 1, 1, 0), i.e. one element of width/height pad and the
+# cache frame replacing the whole front temporal pad.
+pipeline causal_conv3d_cat_pad {
+ input x:bf16[1,1024,1,30,52] input cache:bf16[1,1024,1,30,52]
+ out = pad_cat(x, cache, 1, 1, 1, 1, 1, 0)
+ output out
+}

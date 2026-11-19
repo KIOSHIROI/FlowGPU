@@ -1,0 +1,10 @@
+# The metadata adapter supplies gate/up views for split or interleaved storage.
+# Weight is applied last, and low precision is rounded only at the final cast.
+pipeline routed_silu {
+ input gate:fp16[M,N] input up:fp16[M,N]
+ input weight:fp32[M,1] input like:fp16[1]
+ g=to_fp32(gate) u=to_fp32(up) w=to_fp32(weight)
+ a=silu(g) p=mul(a,u) wide_w=broadcast_like(w,p)
+ scaled=mul(p,wide_w) out=cast_like(scaled,like)
+ output out
+}

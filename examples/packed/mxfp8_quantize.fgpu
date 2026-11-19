@@ -1,0 +1,42 @@
+# MXFP8 quantisation, expressed in the FlowGPU language (packed layout v1).
+#
+# Every 32-element block along the last axis gets one E8M0 scale byte
+# (ceil(log2(block_amax / 448)) + 127, clamped to [0, 254]); the values are
+# divided by that power-of-two scale and stored as E4M3.
+#
+# The integer constants are program inputs, not literals: the value layer
+# (`shl`/`shr`/`bitand`) only mixes scalars with tensors through ordinary
+# arithmetic, so the masks and shift counts must enter as scalar inputs.
+#
+# Reference oracle: compiler/packed_layout.py::quantize_mxfp8.
+# This program replaces the hand-written `to_mxfp8` extern kernel: the language
+# can state it, and test/test_packed_layout.py pins the two to the same bytes.
+pipeline mxfp8_quantize {
+  input x : fp32[4,2,32]
+  input min_amax : fp32          # 1e-30: zero blocks must still get a scale
+  input fp8_max : fp32           # 448.0
+  input neg_fp8_max : fp32       # -448.0
+  input zero_i : int32
+  input one_i : int32
+  input c23 : int32              # exponent field shift
+  input c255 : int32             # exponent field mask
+  input m23 : int32              # mantissa field mask
+  input max_scale : int32        # 254
+  amax = max_last(x)                         # [4,2,1]
+  amax_clamped = maximum(amax, min_amax)
+  ratio = div(amax_clamped, fp8_max)
+  bits = float_bits(ratio)
+  exponent = bitand(shr(bits, c23), c255)    # floor(log2) + 127
+  mantissa = bitand(bits, m23)
+  increment = minimum(mantissa, one_i)       # +1 unless ratio is a power of two
+  biased = add(exponent, increment)          # ceil(log2) + 127
+  scale_byte = minimum(maximum(biased, zero_i), max_scale)
+  descale = bits_float(shl(scale_byte, c23)) # 2 ** (scale_byte - 127)
+  spread = broadcast_like(descale, x)
+  scaled = div(x, spread)
+  clamped = minimum(maximum(scaled, neg_fp8_max), fp8_max)
+  q = cast_to(clamped, fp8e4m3)
+  s = cast_to(scale_byte, uint8)
+  output q
+  output s
+}

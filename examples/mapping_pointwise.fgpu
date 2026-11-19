@@ -1,0 +1,7 @@
+pipeline mapping_pointwise {
+    input x : int32[N]
+    input y : int32[N]
+    sum = add(x,y)
+    z = mul(sum,y)
+    output z
+}

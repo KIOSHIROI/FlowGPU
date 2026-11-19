@@ -1,0 +1,21 @@
+# Task69 `fused_moe_dispatch_index`, written as the two things it actually is:
+# a destination table (computation) and a moved row set (addressing).
+#
+#   offset      = atomic_add(masked_m[expert], 1)
+#   src2dst[i]  = expert * m_max + offset
+#
+# `segment_rank` builds the table -- counts per expert and a *stable* rank within
+# each expert, which is exactly what the atomic produces -- and `scatter_by_index`
+# moves the token rows to those destinations. Keeping them apart is the point:
+# the table is testable on its own, and it is the half whose access shape is a
+# plain block, so a target that refuses gathers and scatters can still compute it.
+pipeline moe_dispatch_index {
+ input base:fp32[8,4]
+ input values:fp32[8,4]
+ input ids:int32[8]
+ counts_out, positions = segment_rank(ids, 2, 4)
+ moved = scatter_by_index(base, positions, values)
+ output counts_out
+ output positions
+ output moved
+}

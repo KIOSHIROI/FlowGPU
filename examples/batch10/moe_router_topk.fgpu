@@ -1,0 +1,26 @@
+# MoE router, both halves of the gap the content census put first
+# (tasks 25/26/27/31/38/44/61/70/85/108):
+#
+#   logits  = x @ router_weight^T
+#   capped  = tanh(logits / cap) * cap        # moe_softcapping
+#   probs   = softmax(capped)                 # over all experts
+#   ids     = topk_last(capped, k)            # descending, ties to the lower column
+#   weights = gather_last(probs, ids)         # from the GLOBAL softmax
+#
+# The last line is the one a top-k softmax cannot replace: those tasks state
+# explicitly that the routing weights come from the softmax over every expert,
+# not from a renormalised top-k. `k` is a literal because the output extent
+# [B, k] has to be writable, the same reason `pad_cat`'s pads are.
+pipeline moe_router_topk {
+ input x:fp32[4,16] input router_weight:fp32[8,16] input cap:fp32[1,1]
+ weight_t = transpose(router_weight)
+ logits = matmul(x, weight_t)
+ cap_tile = broadcast_like(cap, logits)
+ scaled = div(logits, cap_tile)
+ capped = mul(tanh(scaled), cap_tile)
+ probs = softmax(capped)
+ values, ids = topk_last(capped, 2)
+ weights = gather_last(probs, ids)
+ output weights
+ output ids
+}

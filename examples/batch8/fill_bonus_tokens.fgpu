@@ -1,0 +1,10 @@
+pipeline bonus {
+    input tokens : int64[T,D]
+    input lengths : int32[N]
+    input bonus_template : int64[N]
+    one = ones_like(lengths)
+    column = sub(lengths, one)
+    picked = gather_row_offset(tokens, column)
+    out = cast_like(picked, bonus_template)
+    output out
+}

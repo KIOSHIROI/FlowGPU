@@ -1,0 +1,7 @@
+# The source states the axis; normalization retains intent before scheduling.
+pipeline semantic_axis {
+    input x : fp32[B,D,K]
+    t = move_first_last(x)
+    y = sum_axis(t,1)
+    output y
+}

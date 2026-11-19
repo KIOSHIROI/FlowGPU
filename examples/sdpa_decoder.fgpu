@@ -1,0 +1,39 @@
+# Scaled single-head attention with FP32 intermediates via explicit attention.
+# Use --gpu-backend hybrid (FP32 library math by default). No causal mask, GQA or KV cache.
+pipeline sdpa_decoder {
+    input x        : bf16[B,D]
+    input norm1_w  : bf16[D]
+    input w_q      : bf16[D,D]
+    input w_k      : bf16[D,D]
+    input w_v      : bf16[D,D]
+    input w_o      : bf16[D,D]
+    input norm2_w  : bf16[D]
+    input w_gate   : bf16[D,H]
+    input w_up     : bf16[D,H]
+    input w_down   : bf16[H,D]
+
+    # Attention sub-block
+
+    input rope_cos : bf16[B,D]
+    input rope_sin : bf16[B,D]
+    x_norm1 = rms_norm(x, norm1_w)
+    q = matmul(x_norm1, w_q)
+    k = matmul(x_norm1, w_k)
+    v = matmul(x_norm1, w_v)
+    q_rope = rope(q, rope_cos, rope_sin)
+    k_rope = rope(k, rope_cos, rope_sin)
+    attn_out = attention(q_rope, k_rope, v)
+    attn_proj = matmul(attn_out, w_o)
+    x_mid = add(x, attn_proj)
+
+    # MLP sub-block (SwiGLU)
+    x_norm2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(x_norm2, w_gate)
+    up = matmul(x_norm2, w_up)
+    gate_act = silu(gate)
+    hidden = mul(gate_act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+}

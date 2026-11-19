@@ -1,0 +1,10 @@
+# Packed input is split into B,D,K metadata views by the contest adapter.
+# Three-reduction/two-sweep lowering is explicit; the default may materialize.
+pipeline pool_fp32 {
+ input kv : fp32[B,D,K] input scores : fp32[B,D,K]
+ v=to_fp32(kv) s=to_fp32(scores)
+ m=max_last(s) mb=broadcast_like(m,s)
+ e=exp(sub(s,mb)) z=sum_last(e)
+ n=sum_last(mul(v,e)) o=div(n,z)
+ out=cast_like(o,kv) output out
+}

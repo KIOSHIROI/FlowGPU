@@ -1,0 +1,27 @@
+# Task153 `kda_prologue`: the in-chunk gate cumsum of the KDA prologue.
+#
+#     for each chunk c and head h:
+#         g_cu = cumsum(g, dim=chunk_rows)      # resets at the chunk boundary
+#
+# The arithmetic of Task153 is `g_cu`, `g_last = sum(g)`, and the four
+# pre-scaled tensors `k*exp(...)`, `q*scale*exp(...)`. Only the prefix sum is a
+# language gap: it is a scan *within a segment*, and the segments are the
+# chunks. `segmented_cumsum(x, seg_start)` states that directly: `seg_start`
+# carries, per position, the index of the first element of the segment that
+# position belongs to.
+#
+# This program is the scan half only. The exponentials and the scale are
+# ordinary elementwise composition and stay in the program that needs them,
+# exactly as `kda_gate_chunk_cumsum.fgpu` keeps its surrounding maths out of
+# the operator. Literal extents are a stated v0.6 boundary: the operator is a
+# composition into `cumsum` + `gather_last`, whose static tiles/grids cannot be
+# written for a symbolic extent yet.
+pipeline segmented_cumsum {
+    input gate:fp32[2,16]
+    # seg_start has the same shape as the tensor and, per position t, holds
+    # the first index of t's segment: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 is one
+    # segment, 0,0,0,0,4,4,4,4,... is a length-4 first segment, etc.
+    input seg_start:int32[2,16]
+    g_cu = segmented_cumsum(gate, seg_start)
+    output g_cu
+}

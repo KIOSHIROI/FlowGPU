@@ -1,0 +1,11 @@
+# Intentionally broken: the symbolic dimensions do not match.
+# N and M are distinct dimension names, so the shapes are incompatible.
+
+pipeline shape_mismatch {
+    input x        : bf16[N,D]
+    input residual : bf16[M,D]
+
+    y = add(x, residual)
+
+    output y
+}

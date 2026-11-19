@@ -1,0 +1,13 @@
+# CANN-Bench Season2 L1 `SwiGlu`.
+#
+# schema: swi_glu(Tensor input, int dim=-1) -> Tensor output
+# formula: output = silu(x0) * x1 = (x0 * sigmoid(x0)) * x1, where the input is
+# split in half along `dim` and the two halves are passed in already split by the
+# host adapter (layout is metadata, not computation -- the Task160 pattern).
+pipeline swi_glu {
+ input x0:fp32[M,N]
+ input x1:fp32[M,N]
+ gate = mul(x0, sigmoid(x0))
+ out = mul(gate, x1)
+ output out
+}

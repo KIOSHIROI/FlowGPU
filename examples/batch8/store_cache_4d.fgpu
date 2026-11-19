@@ -1,0 +1,10 @@
+pipeline store_cache_4d {
+    input k_view : fp32[P,PS,H,D]
+    input v_view : fp32[P,PS,H,D]
+    input cache_k : fp32[N,H,D]
+    input cache_v : fp32[N,H,D]
+    input loc : int64[N]
+    k_out, v_out = store_cache_4d(k_view, v_view, cache_k, cache_v, loc, 16)
+    output k_out
+    output v_out
+}

@@ -1,0 +1,7 @@
+# GPU MODE prefixsum_v2 fallback: one row for element counts that are not a
+# multiple of 256 (the correctness cases include 1023 and 1025).
+pipeline prefixsum_row {
+    input x : fp32[1,D]
+    y = cumsum(x)
+    output y
+}

@@ -1,0 +1,15 @@
+# GPU MODE prefixsum_v2: inclusive prefix sum of a 1-D fp32 tensor.
+# The input is reshaped to [256, D] by the submission's glue, so the scan runs as
+# 256 independent row scans plus a row-carry pass: within-row prefix (cumsum on
+# the trailing axis), row sums, an inclusive scan over the row sums, then the
+# exclusive offsets are broadcast back onto every row and added.
+pipeline prefixsum {
+    input x : fp32[256,D]
+    local = cumsum(x)
+    sums = sum_last(x)
+    prefix = cumsum_axis(sums, 0)
+    offs = sub(prefix, sums)
+    off = broadcast_like(offs, local)
+    y = add(local, off)
+    output y
+}

@@ -1,0 +1,30 @@
+# Task18 `fused_recurrent_gdn`: the only temporal operator in the language.
+#
+#   for t in 0..T-1:
+#     state      = state * exp(g_t)                 # decay
+#     pred       = sum_k(state[v,k] * k_t[k])       # read through k
+#     state      = state + (v_t - pred) * beta_t * k_t   # delta-rule update
+#     output_t   = sum_k(state[v,k] * q_t[k])       # read through q
+#
+# The head counts differ on purpose: q/k carry H=2 heads, v/gate/beta/state carry
+# HV=4, and head hv of the state reads source head hv // ratio -- exactly the
+# `repeat_interleave(ratio)` the task's reference applies to k and q. That mapping
+# is a declared index relation, so it lives inside the operator; the task does not
+# need a separate repeat primitive for it.
+#
+# `gated_delta_recurrence` is that loop as one declared operator: the state tile
+# [V,K] stays in registers across the whole time axis, one program per (batch,
+# head). What the task states *around* the recurrence -- `scale`, the optional L2
+# norm of q/k, a GQA ratio -- stays in the DSL, because those are composition:
+# scale is one `mul`, and the ratio would need `repeat_interleave`.
+pipeline fused_recurrent_gdn {
+ input q:fp32[1,4,2,8]
+ input k:fp32[1,4,2,8]
+ input v:fp32[1,4,4,8]
+ input g:fp32[1,4,4]
+ input beta:fp32[1,4,4]
+ input state0:fp32[1,4,8,8]
+ output_seq, state_final = gated_delta_recurrence(q, k, v, g, beta, state0)
+ output output_seq
+ output state_final
+}

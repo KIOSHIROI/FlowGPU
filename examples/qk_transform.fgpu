@@ -1,0 +1,23 @@
+# Design.md 12.3 -- QK transformation: RMSNorm then RoPE on 4D q/k.
+#
+# This is the QKV path from Design.md 1.1. RMSNorm normalizes over the last
+# dimension only, so the 4D [B,H,S,D] layout needs no reshaping, and every
+# intermediate type is inferred. Full-shape RoPE tables are explicit inputs.
+
+pipeline qk_transform {
+    input q  : bf16[B,H,S,D]
+    input k  : bf16[B,H,S,D]
+    input qw : bf16[D]
+    input kw : bf16[D]
+
+    input rope_cos : bf16[B,H,S,D]
+    input rope_sin : bf16[B,H,S,D]
+
+    qn = rms_norm(q, qw)
+    kn = rms_norm(k, kw)
+    qr = rope(qn, rope_cos, rope_sin)
+    kr = rope(kn, rope_cos, rope_sin)
+
+    output qr
+    output kr
+}

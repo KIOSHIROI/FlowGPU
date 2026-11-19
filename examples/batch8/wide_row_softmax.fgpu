@@ -1,0 +1,14 @@
+# Task126: the adapter supplies temperatures as a [B,1] metadata view.
+# Destination tail preservation is outside this value-producing language.
+pipeline wide_plain {
+ input x : fp32[B,V]
+ q=softmax(x)
+ output q
+}
+pipeline wide_temp {
+ input x : fp32[B,V] input t : fp32[B,1]
+ tb=broadcast_like(t,x)
+ scaled=div(x,tb)
+ q=softmax(scaled)
+ output q
+}

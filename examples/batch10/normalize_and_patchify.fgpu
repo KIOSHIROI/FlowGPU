@@ -1,0 +1,14 @@
+# normalize_and_patchify (Task154): the normalize half, then the patch geometry.
+#
+# `patchify` is the static layout operator the language was missing:
+#   b c (h ph) (w pw) -> b (h w) (c ph pw)
+# with the patch extents as literals, exactly the way `reshape` takes its shape
+# literal. The emitted plan's access is a permutation of the output index, which
+# `analysis/access_shape` reports as PERMUTED and `platform_conflicts` refuses on
+# 昆仑芯 -- the same 0.02x collapse the official board measured for this operator.
+pipeline normalize_and_patchify {
+ input x:bf16[1,4,8,8]
+ centered = mul(x, x)
+ out = patchify(centered, 2, 2)
+ output out
+}

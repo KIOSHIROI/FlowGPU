@@ -1,0 +1,9 @@
+# GPU MODE vectorsum_v2: sum of every element -> one fp32 scalar.
+# Two levels because max/sum_last reduce the trailing axis only; the second
+# level reduces the row axis with the *_axis spelling (rotate, then reduce).
+pipeline vectorsum {
+    input x : fp32[R,D]
+    s1 = sum_last(x)
+    total = sum_axis(s1, 0)
+    output total
+}

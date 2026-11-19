@@ -1,0 +1,11 @@
+# GPU MODE `vectoradd_v2`: elementwise add of two float16 (N, N) tensors.
+#
+# Symbolic extents on purpose: the compiler emits a launch-time constexpr for
+# every symbolic dimension, so ONE generated kernel covers the whole benchmark
+# range (1024 .. 16384 square) instead of one kernel per literal shape.
+pipeline vectoradd {
+ input a:fp16[M,N]
+ input b:fp16[M,N]
+ out = add(a, b)
+ output out
+}

@@ -1,0 +1,111 @@
+# NVFP4 quantisation in the FlowGPU language: FlagOS task 172's
+# quantize_fp4_indexer, promoted out of the extern escape hatch.
+#
+# Input:  x = n tokens of 128 fp32 values, declared as [n, 4, 32] so the four
+#         32-element groups are an explicit axis (the submission wrapper views
+#         the harness's [..., 128] tensor into this shape: metadata only).
+# Output: q = [n, 4, 16] uint8, two E2M1 codes per byte (even code low nibble);
+#         sf = [n, 4, 1] int32, one exponent per group, packed further by the
+#         wrapper into the task's [n] int32 word (e0 | e1<<8 | e2<<16 | e3<<24).
+#
+# Semantics (byte-for-byte checked against compiler/packed_layout.py::NVFP4 in
+# test/test_packed_dsl.py):
+#   amax = max(|x|) per group; sf = max(amax/6, 1e-4);
+#   exp = clamp(ceil_ue8m0(sf), 1, 254); scale = 2 ** (exp - 127);
+#   v = x / scale; code = |{v exceeds (0.25, 0.75, 1.25, 1.75, 2.5, 3.5, 5.0)}|,
+#   plus bit 3 when v is negative and the magnitude code is non-zero.
+#
+# The integer constants are program inputs: the value layer mixes scalars with
+# tensors only through ordinary arithmetic, and the DSL has no numeric literal
+# in expression position.
+pipeline quantize_fp4_indexer {
+  input x : fp32[4,4,32]
+  input fp4_max : fp32          # 6.0
+  input six_min : fp32          # 6e-4 == 6 * 1e-4 (the sf floor, in amax space)
+  input neg1 : fp32             # -1.0
+  input t0 : fp32               # 0.25
+  input t1 : fp32               # 0.75
+  input t2 : fp32               # 1.25
+  input t3 : fp32               # 1.75
+  input t4 : fp32               # 2.5
+  input t5 : fp32               # 3.5
+  input t6 : fp32               # 5.0
+  input zero_i : int32
+  input one_i : int32
+  input neg1_i : int32
+  input c4 : int32
+  input c8 : int32
+  input c16 : int32
+  input c23 : int32
+  input c24 : int32
+  input c31 : int32
+  input c254 : int32
+  input c255 : int32
+  input m23 : int32             # 0x7FFFFF
+
+  neg_x = mul(x, neg1)
+  abs_x = maximum(x, neg_x)
+  amax = max_last(abs_x)                         # [4,4,1]
+  amax_floor = maximum(amax, six_min)
+  sf_raw = div(amax_floor, fp4_max)
+  sf = cast_to(sf_raw, fp32)                     # fp32 as in the task, not fp64
+  bits = float_bits(sf)
+  exponent0 = bitand(shr(bits, c23), c255)
+  mantissa = bitand(bits, m23)
+  increment = minimum(mantissa, one_i)           # +1 unless sf is a power of two
+  biased = add(exponent0, increment)
+  exp = minimum(maximum(biased, one_i), c254)
+  scale = bits_float(shl(exp, c23))              # pure power of two
+  spread = broadcast_like(scale, x)
+  v_raw = div(x, spread)
+  v = cast_to(v_raw, fp32)
+  neg_v = mul(v, neg1)
+  abs_v = maximum(v, neg_v)
+
+  # E2M1 magnitude code = number of thresholds |v| exceeds.  A threshold is
+  # exceeded exactly when (t - |v|) is negative; its sign bit gives 1/0.
+  d0 = sub(t0, abs_v)
+  k0 = mul(shr(float_bits(d0), c31), neg1_i)
+  d1 = sub(t1, abs_v)
+  k1 = mul(shr(float_bits(d1), c31), neg1_i)
+  d2 = sub(t2, abs_v)
+  k2 = mul(shr(float_bits(d2), c31), neg1_i)
+  d3 = sub(t3, abs_v)
+  k3 = mul(shr(float_bits(d3), c31), neg1_i)
+  d4 = sub(t4, abs_v)
+  k4 = mul(shr(float_bits(d4), c31), neg1_i)
+  d5 = sub(t5, abs_v)
+  k5 = mul(shr(float_bits(d5), c31), neg1_i)
+  d6 = sub(t6, abs_v)
+  k6 = mul(shr(float_bits(d6), c31), neg1_i)
+  c01 = add(k0, k1)
+  c23s = add(k2, k3)
+  c45 = add(k4, k5)
+  c012 = add(c01, c23s)
+  c0123 = add(c012, c45)
+  code = add(c0123, k6)
+
+  # bit 3: the value is negative AND the magnitude code is non-zero
+  vsign = shr(float_bits(v), c31)
+  vneg_flag = mul(vsign, neg1_i)
+  diff_code = sub(code, one_i)
+  code_sign = shr(diff_code, c31)
+  ge_code = add(code_sign, one_i)
+  sign_add = mul(vneg_flag, ge_code)
+  code_final = add(code, mul(sign_add, c8))
+
+  # two codes per byte: low nibble = even index, high nibble = odd index
+  pairs = reshape(code_final, [4,4,16,2])
+  low, high = split(pairs)
+  low2 = reshape(low, [4,4,16])
+  high2 = reshape(high, [4,4,16])
+  q_int = bitor(low2, shl(high2, c4))
+  q = cast_to(q_int, uint8)
+
+  # group exponents, one per group; the wrapper packs four into the task word
+  groups = reshape(exp, [4,4])
+  g0, g1, g2, g3 = split(groups)
+  sf_word = bitor(bitor(g0, shl(g1, c8)), bitor(shl(g2, c16), shl(g3, c24)))
+  output q
+  output sf_word
+}

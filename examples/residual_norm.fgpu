@@ -1,0 +1,16 @@
+# Design.md 12.1 -- Residual + RMSNorm.
+#
+# The only declarations are the inputs; y and z are inferred:
+#   y : bf16[N,D]      <- add(x, residual)
+#   z : bf16[N,D]      <- rms_norm(y, weight)
+
+pipeline residual_norm {
+    input x        : bf16[N,D]
+    input residual : bf16[N,D]
+    input weight   : bf16[D]
+
+    y = add(x, residual)
+    z = rms_norm(y, weight)
+
+    output z
+}

@@ -1,0 +1,11 @@
+# Intentionally broken: bf16 and fp16 cannot be added.
+# Caught at compile time, before any kernel is generated.
+
+pipeline dtype_mismatch {
+    input x        : bf16[N,D]
+    input residual : fp16[N,D]
+
+    y = add(x, residual)
+
+    output y
+}

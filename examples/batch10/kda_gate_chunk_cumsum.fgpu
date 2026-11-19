@@ -1,0 +1,11 @@
+# kda_gate_chunk_cumsum (Task152), expressed in the language after adding `cumsum`.
+#
+# The operator is a cumulative sum of the gate along the chunk axis, which is
+# neither pointwise (each lane depends on every earlier lane) nor a reduction
+# (the axis is kept), so it needed a first-class scan operation rather than
+# borrowing an existing kind.
+pipeline kda_gate_chunk_cumsum {
+ input gates:fp32[64,128]
+ out = cumsum_axis(gates, 1)
+ output out
+}

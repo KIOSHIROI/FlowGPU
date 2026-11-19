@@ -1,0 +1,15 @@
+pipeline extras {
+    input indices : int64[N]
+    input topk_p : fp32[Tp,Kp]
+    input topk_index : int64[Ti,Ki]
+    input tokens : int64[Tt]
+    input hidden : fp16[Th,D]
+    out_p = gather_rows(topk_p, indices)
+    out_index = gather_rows(topk_index, indices)
+    out_tokens = gather_rows(tokens, indices)
+    out_hidden = gather_rows(hidden, indices)
+    output out_p
+    output out_index
+    output out_tokens
+    output out_hidden
+}

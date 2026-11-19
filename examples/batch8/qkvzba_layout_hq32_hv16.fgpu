@@ -1,0 +1,23 @@
+# Compositional QKVZ/BA layout for nqk=2, nv=4, hq=32, hv=16.
+# Shapes are literal because split/concat currently require literal last axes.
+# This is an executable language probe, not a generic competition submission.
+pipeline projection {
+    input mixed_qkvz : fp16[B,256]
+    input mixed_ba : fp16[B,8]
+    heads = reshape(mixed_qkvz, [B,2,128])
+    q, k, v, z = split(heads)
+    q_flat = reshape(q, [B,64])
+    k_flat = reshape(k, [B,64])
+    v_flat = reshape(v, [B,64])
+    qk = concat(q_flat, k_flat)
+    mixed_qkv = concat(qk, v_flat)
+    out_z = reshape(z, [B,4,16])
+    ba_heads = reshape(mixed_ba, [B,2,4])
+    b_part, a_part = split(ba_heads)
+    out_b = reshape(b_part, [B,4])
+    out_a = reshape(a_part, [B,4])
+    output mixed_qkv
+    output out_z
+    output out_b
+    output out_a
+}

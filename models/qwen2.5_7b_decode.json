@@ -1,0 +1,112 @@
+{
+  "schema": "flowgpu.migration.model/1",
+  "model": "qwen2.5-7b (single forward, use_cache=False)",
+  "provenance": "torch.export of a local Hugging Face checkpoint; torch 2.14.1+cu130; transformers 5.21.0; graph sha256 3348f5f348a0294f",
+  "operators": [
+    {
+      "name": "add",
+      "frontend": "add",
+      "where": "traced 200 occurrence(s)"
+    },
+    {
+      "name": "concat",
+      "frontend": "concat",
+      "where": "traced 56 occurrence(s)"
+    },
+    {
+      "name": "cumsum",
+      "frontend": "cumsum",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "eq",
+      "frontend": "eq",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "gather_rows",
+      "frontend": "gather_rows",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "le",
+      "frontend": "le",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "matmul",
+      "frontend": "matmul",
+      "where": "traced 253 occurrence(s)"
+    },
+    {
+      "name": "mul",
+      "frontend": "mul",
+      "where": "traced 282 occurrence(s)"
+    },
+    {
+      "name": "ne",
+      "frontend": "ne",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "ones_like",
+      "frontend": "ones_like",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "rsqrt",
+      "frontend": "rsqrt",
+      "where": "traced 57 occurrence(s)"
+    },
+    {
+      "name": "silu",
+      "frontend": "silu",
+      "where": "traced 28 occurrence(s)"
+    },
+    {
+      "name": "softmax",
+      "frontend": "softmax",
+      "where": "traced 28 occurrence(s)"
+    },
+    {
+      "name": "sub",
+      "frontend": "sub",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "where",
+      "frontend": "where",
+      "where": "traced 1 occurrence(s)"
+    },
+    {
+      "name": "__and__",
+      "external": "__and__",
+      "where": "not mapped to a FlowGPU operator yet"
+    },
+    {
+      "name": "diff",
+      "external": "diff",
+      "where": "not mapped to a FlowGPU operator yet"
+    },
+    {
+      "name": "index",
+      "external": "index",
+      "where": "not mapped to a FlowGPU operator yet"
+    },
+    {
+      "name": "mean",
+      "external": "mean",
+      "where": "not mapped to a FlowGPU operator yet"
+    },
+    {
+      "name": "neg",
+      "external": "neg",
+      "where": "not mapped to a FlowGPU operator yet"
+    },
+    {
+      "name": "pow",
+      "external": "pow",
+      "where": "not mapped to a FlowGPU operator yet"
+    }
+  ]
+}

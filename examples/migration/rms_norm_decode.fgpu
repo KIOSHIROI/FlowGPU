@@ -1,0 +1,9 @@
+# A Qwen2-style decode-path RMSNorm at the real model shape (1 token, hidden 4096).
+# Used by tools/minimal_live_bundle.py --program to produce the first live,
+# real-model-shaped acceptance evidence on the H100 host.
+pipeline rms_norm_decode {
+  input x : fp16[1,4096]
+  input w : fp16[4096]
+  out = rms_norm(x, w)
+  output out
+}

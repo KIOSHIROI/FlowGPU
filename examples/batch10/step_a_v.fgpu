@@ -1,0 +1,38 @@
+# Task157 `step_a_v` (batch10, 29 teams, leader 7.50x): the LoRA A-side read.
+#
+#   for each segment b:  rows = permutation[start:end] or arange(start, end)
+#   for each head h:     out[rows, h, :] = (attn_output[rows, h, :] @ A_buf[w_b].T).to(dtype)
+#
+# Two facts make this `segmented_lora_matmul` and nothing else:
+#
+# 1. The weight is chosen *per segment* (`weight_indices[b]`), which is exactly
+#    the sgmv/LoRA shape: a grouped GEMM whose adapter index is data.
+# 2. Heads flatten into the token axis: the flat row of `(token s, head h)` is
+#    `s * H + h`, so the segment boundaries in that axis are `seg_indptr * H`.
+#    That scaling is index metadata, so the head count reaches the kernel as a
+#    scalar argument and the adapter performs no host kernel for it.
+#
+# What is *not* written here, on purpose:
+#
+# * `permutation`. The reference reads and writes `permutation[start:end]` rows,
+#   so the row set of a segment is permuted. The row-wise function is
+#   order-independent, so the adapter gathers the token axis into segment order
+#   before this kernel and scatters the result back afterwards -- layout, not
+#   computation. The GEMM stays entirely inside the emitted Triton kernel.
+# * The transposed weight (`A_buf[w_b].T`) and the rank-0 skip. The kernel
+#   selects `A_buf[weight_indices[b]]` itself and zeros the rows of adapters
+#   whose `lora_ranks` is 0, so the adapter does not build a per-call stacked
+#   weight or mask anything on the host.
+# * Literal `KV`/`RNK`. They are symbolic: one module must serve whatever
+#   `kv_lora_rank`/`rank` the harness chooses, and a kernel that baked in 16/8
+#   can only ever be right for 16/8.
+pipeline step_a_v {
+ input x_flat:bf16[T,KV]
+ input weight:bf16[NL,RNK,KV]
+ input indptr_exp:int32[NSEG]
+ input weight_indices:int32[SEG]
+ input lora_ranks:int32[NL]
+ input heads:int32
+ y = segmented_lora_matmul(x_flat, weight, indptr_exp, weight_indices, lora_ranks, heads)
+ output y
+}

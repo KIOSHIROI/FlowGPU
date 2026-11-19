@@ -1,0 +1,15 @@
+# GPU MODE prefixsum_v2: inclusive prefix sum of a 1-D fp32 tensor.
+#
+# Two-level scan, with the row totals produced by the scan kernel itself:
+# `cumsum_totals` returns the running prefix and the carry the lowering already
+# keeps, so the row sums cost one scalar store per row instead of a second pass
+# over the input (the earlier version paid a full 1 GB re-read for them).
+pipeline prefixsum {
+    input x : fp32[16384,D]
+    local, totals = cumsum_totals(x)
+    prefix = cumsum_axis(totals, 0)
+    offs = sub(prefix, totals)
+    off = broadcast_like(offs, local)
+    y = add(local, off)
+    output y
+}

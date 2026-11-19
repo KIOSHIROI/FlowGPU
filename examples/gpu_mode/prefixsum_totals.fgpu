@@ -1,0 +1,18 @@
+# GPU MODE prefixsum_v2: inclusive prefix sum of a 1-D fp32 tensor.
+#
+# Three memory round trips instead of four (2026-10-25):
+#   1. `sum_last` reads x once and writes one total per row;
+#   2. the row totals are scanned (tiny);
+#   3. the scan of x is *recomputed* and the row offsets are folded into its
+#      epilogue by `add_broadcast`, so the kernel reads x and writes y directly
+#      and the row-local buffer never exists.
+# The recomputation is the point: a 2**28-element input costs 1 GB to read, and
+# the earlier form wrote + re-read another 1 GB buffer to keep the local scan.
+pipeline prefixsum {
+    input x : fp32[16384,D]
+    totals = sum_last(x)
+    prefix = cumsum_axis(totals, 0)
+    offs = sub(prefix, totals)
+    y = add_broadcast(cumsum(x), offs)
+    output y
+}

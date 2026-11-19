@@ -1,0 +1,176 @@
+FlowGPU v0.1 grammar
+
+This file describes what the parser accepts today. Anything the design
+intends but v0.1 does not accept is listed at the end under RESERVED, so
+that the grammar makes no promise the implementation does not keep.
+
+
+GRAMMAR
+
+program: pipeline+
+
+pipeline: "pipeline" NAME "{"
+           statement*
+         "}"
+
+statement: input_decl
+         | assignment
+         | output_decl
+
+input_decl: "input" NAME ":" type
+
+output_decl: "output" NAME
+
+// v0.2: one statement may bind several names when the operator produces
+// several values. The target count is the number of names on the left; the
+// multi-result operators are split, topk_last, cumsum_totals, segment_rank,
+// store_cache_4d, linear_decode_forward, gated_delta_recurrence,
+// argmax_last and argmin_last.
+assignment: NAME ("," NAME)* "=" expression
+
+?expression: addition
+
+?addition: multiplication
+         | addition add_op multiplication
+
+add_op: "+" | "-"
+
+?multiplication: atom
+               | multiplication "*" atom
+
+?atom: NAME
+     | call
+     | shape_literal
+     | integer_literal
+     | dtype_literal
+
+// A shape literal names reshape's target shape; a dtype literal names
+// cast_to's target dtype. Both are distinct expression kinds, not tensors:
+// anywhere except that one operator position the type checker rejects them
+// by name.
+shape_literal: "[" shape "]"
+integer_literal: ["-"] NUMBER
+dtype_literal: dtype
+
+call: NAME "(" [argument_list] ")"
+
+argument_list: expression ("," expression)*
+
+// A declaration with a bracketed shape is a tensor; one with only a dtype is
+// a rank-0 scalar (one host number, never a pointer with strides).
+type: tensor_type
+    | scalar_type
+
+tensor_type: dtype "[" shape "]"
+
+scalar_type: dtype
+
+shape: dimension ("," dimension)*
+
+?dimension: NAME | NUMBER
+
+?dtype: "fp16"
+      | "bf16"
+      | "fp32"
+      | "fp8e4m3"
+      | "fp8e5m2"
+      | "int8"
+      | "uint8"
+      | "int32"
+      | "int64"
+      | "bool"
+
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /[0-9]+/
+COMMENT: /#[^\n]*/
+
+%ignore WS
+%ignore COMMENT
+
+
+NOTES
+
+* Statement order is significant. An `input` must precede the statements
+  that read it, and a value must be defined before it is used
+  (def-before-use): a forward reference is an error, not a forward
+  declaration. See design 5.2.
+
+* `output` may appear more than once. The grammar does not require it to be
+  last, and design 12.3 emits two outputs.
+
+* A name is bound exactly once. Re-binding (`h = silu(h)`) is a duplicate
+  definition, because a single name must correspond to a single producer.
+  Write `h2 = silu(h)`. See design 5.2.
+
+* `pipeline`, `input`, `output` and the ten dtype names are reserved in the
+  token stream. The parser lexes contextually, which still lets a reserved
+  word through where the grammar expects a NAME; enforcing the reserved set
+  is a name-resolution check rather than a lexical one, and is not
+  implemented yet.
+
+* Infix arithmetic is sugar for an operator call: `x - y` means
+  `sub(x, y)`, and `x + y` / `x * y` mean `add(x, y)` / `mul(x, y)`. Both
+  spellings reach the AST as the same node, so one computation has one
+  representation in the language core (design 7.1) and its type rule lives
+  in exactly one place -- the operator registry (design 10).
+
+  Precedence and associativity come from the shape of that ladder and from
+  nothing else: each level's base case is the next level up, so `*` binds
+  tighter than `+` and `-`, and left recursion makes both levels
+  left-associative. There is no `div`, because v0.1 has no `div` type rule:
+  the operator comes first, the token follows.
+
+* Literal dimensions must be positive (a semantic check); symbolic dimensions
+  are validated before execution. RoPE requires an even last dimension.
+
+* `rope(x, cos, sin)` has three full-shape, same-dtype floating inputs;
+  it rotates paired half-axis elements. Unary `rope(x)` is not supported.
+
+* Dimensions are matched syntactically. `bf16[2,4]` is compatible with
+  `bf16[2,4]` and incompatible with `bf16[4,2]`. There is no dimension
+  arithmetic, so `bf16[1+1,4]` is outside the language.
+
+* The lexer and the parser are built from the same grammar file
+  (compiler/grammar.lark), so the token stage cannot drift from the parser's
+  terminals.
+
+
+v0.2 (2026-10-02): multi_assignment moved into the grammar above --
+`assignment: NAME ("," NAME)* "=" expression` -- because v0.1.2 implements
+split, the operator it was written for. The part count is the number of
+names; no v0.1 operator produces more than one result, and that is why this
+was reserved then. A shape literal atom (`[N,32,64]`) also joined the
+grammar for reshape's second argument.
+
+RESERVED -- designed, not accepted
+
+The following appeared in earlier revisions of this file as if they were
+part of the language. They are not, and saying so here is the point: a
+grammar that promises what the compiler rejects is worse than a smaller
+grammar.
+
+buffer_type: "Buffer" "<" dtype ">"
+    Dropped on purpose rather than implemented: design 7.3 and 11 define
+    Buffer as an IR-level concept that the user never writes. Having it in
+    the DSL type syntax contradicted the design document itself.
+
+`return`
+    Was declared as a keyword token in both the lexer and the parser with no
+    production in either and no appearance in this file. Removed.
+
+* `attention(q,k,v)` is a three-tensor call, in two ranks. 2D keeps the
+  v0.1 contract: q:[L,D], k:[S,D], v:[S,V] -> [L,V]. 4D is the
+  batched-heads form: q:[B,H,L,D], k:[B,G,S,D], v:[B,G,S,V] -> [B,H,L,V],
+  where G < H is GQA (H//G query heads share one key/value head; literal
+  head counts are checked to divide at compile time, symbolic ones at run
+  time, because H//G is arithmetic this grammar has no expression for).
+  It explicitly means non-causal, dropout-free softmax(QK^T/sqrt(D))V with
+  FP32 GPU intermediates and one final output dtype boundary. GPU execution
+  currently requires the hybrid backend (FP32 library math by default); the CPU target implements
+  its mathematical definition. It does not add scalar literals or implicit casts.
+* `causal_attention(q,k,v)` takes the same two ranks with a causal mask:
+  query i attends to keys 0..i+(S-L), the kv-cache offset convention
+  (S >= L, checked at run time). Causal is an operator NAME, not a call
+  argument, because the grammar has no boolean literal to write in an
+  argument position -- rms_norm/rmsnorm_hf is the precedent for two
+  conventions carried by two names.

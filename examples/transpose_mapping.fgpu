@@ -1,0 +1,9 @@
+pipeline transpose_mapping {
+    input x : fp16[M,N]
+    input residual : fp16[M,N]
+    input bias : fp16[N,M]
+    z = add(x,residual)
+    t = transpose(z)
+    y = sub(t,bias)
+    output y
+}

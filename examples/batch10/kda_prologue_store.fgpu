@@ -1,0 +1,22 @@
+# Task153 `kda_prologue`, write-side projection.
+#
+# The hand-written kernel of 153 reads four program-uniform scalars per program
+# (`chunk_indices[c,0]`, `cu_seqlens[seq]`, ...) and then writes contiguous runs at
+# `base + arange(lane)`. This program expresses exactly that write shape with the
+# staged `store_at` primitive: one block write per program, its base read once from
+# a 1-D int32 device table.
+#
+# `store_at` is NOT registered in compiler/frontend/operator.py yet: that registry
+# is being merged by the segmented_cumsum work, and these two operators are added in
+# one coordinated commit. The lowering is exercised by test/test_store_at.py.
+#
+# Layout note (the observed 153 shapes): `hb == hv` because `hv * kdim <= 2048`, so
+# each chunk writes BT full token rows = BT*HV*K contiguous elements, and the chunks
+# tile T. That is one contiguous run per chunk, i.e. exactly this operator's shape.
+pipeline kda_prologue_store {
+    input dst    : bf16[T]
+    input starts : int32[C]
+    input values : bf16[C,BT,K]
+    out = store_at(dst, starts, values)
+    output out
+}

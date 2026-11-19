@@ -1,0 +1,24 @@
+# The destination adapter pads the last tile with -inf; all reduction math
+# remains ordinary compositional FlowGPU, including both partial merge axes.
+pipeline wide_parallel {
+ input x : fp32[B,C,T]
+ m=max_last(x) mb=broadcast_like(m,x)
+ e=exp(sub(x,mb)) z=sum_last(e)
+ gm=max_axis(m,1) gmb=broadcast_like(gm,m)
+ w=exp(sub(m,gmb)) weighted=mul(z,w) gz=sum_axis(weighted,1)
+ mx=broadcast_like(gm,x) den=broadcast_like(gz,x)
+ q=div(exp(sub(x,mx)),den)
+ output q
+}
+pipeline wide_parallel_temp {
+ input raw : fp32[B,C,T] input t : fp32[B,1,1] input valid : bool[B,C,T]
+ tb=broadcast_like(t,raw) divided=div(raw,tb)
+ padding=neg_inf_like(raw) x=where(valid,divided,padding)
+ m=max_last(x) mb=broadcast_like(m,x)
+ e=exp(sub(x,mb)) z=sum_last(e)
+ gm=max_axis(m,1) gmb=broadcast_like(gm,m)
+ w=exp(sub(m,gmb)) weighted=mul(z,w) gz=sum_axis(weighted,1)
+ mx=broadcast_like(gm,x) den=broadcast_like(gz,x)
+ q=div(exp(sub(x,mx)),den)
+ output q
+}

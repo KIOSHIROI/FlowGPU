@@ -1,0 +1,121 @@
+PIPELINE: "pipeline"
+INPUT: "input"
+OUTPUT: "output"
+
+// Type names are reserved. Two things are needed for the standalone lexer
+// (lexer="basic", no parser context to disambiguate with) to agree with the
+// LALR parser: priority, so "bf16" is not taken as a NAME, and a trailing
+// word boundary, so "bf16x" is still a NAME rather than DTYPE + NAME.
+DTYPE.2: /(?:bf16|fp16|fp32|fp8e4m3|fp8e5m2|int8|uint8|int32|int64|bool)(?![a-zA-Z0-9_])/
+
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+INT: /[0-9]+/
+
+COMMENT: /#[^\n]*/
+
+LBRACE: "{"
+RBRACE: "}"
+LBRACK: "["
+RBRACK: "]"
+LPAR: "("
+RPAR: ")"
+COLON: ":"
+COMMA: ","
+EQUAL: "="
+
+// Infix operators. Each one is surface sugar for a registered operator, and
+// no operator means no token: division has no `div` type rule in v0.1, so
+// there is no DIV terminal either. Adding one means registering the operator
+// first (operator.py), then adding the token here and one entry in
+// ast_builder.INFIX_OPERATORS -- in that order, because the operator registry
+// is where this language's semantics are defined.
+PLUS: "+"
+MINUS: "-"
+STAR: "*"
+
+%import common.WS
+%ignore WS
+%ignore COMMENT
+
+// program: pipeline+ -- a file is one or more pipelines.
+start: pipeline_decl+
+
+pipeline_decl: PIPELINE NAME LBRACE statement* RBRACE
+
+?statement: input_decl
+          | assignment
+          | output_decl
+
+// A declared input is a tensor when it writes a shape, and a scalar when it
+// writes only a dtype: `input alpha:fp32` has no dimensions to index, so it
+// is rank 0 and reaches a kernel as one number rather than as a pointer with
+// meaningless strides. A bracketed shape is still required to have at least
+// one dimension (`fp16[1]` is a one-element tensor, not a scalar), which is
+// what keeps every existing declaration's meaning unchanged.
+input_decl: INPUT NAME COLON declared_type
+
+?declared_type: tensor_type
+              | scalar_type
+
+output_decl: OUTPUT NAME
+
+// v0.2: one statement can bind several names when the operator produces
+// several values. The only multi-value operator today is split; the target
+// count is the number of names on the left, which is why the grammar needs
+// no arity in the call itself.
+assignment: NAME (COMMA NAME)* EQUAL expr
+
+tensor_type: DTYPE LBRACK shape RBRACK
+
+// A scalar type is a dtype with no brackets. Rank 0: it names one number the
+// caller passes to the host entry, never to a kernel as a tile.
+scalar_type: DTYPE
+
+// shape dimensions are symbolic names or integer literals
+shape: dimension (COMMA dimension)*
+
+?dimension: NAME | INT
+
+?expr: addition
+
+// Infix arithmetic is sugar for an operator call: `a + b` means `add(a, b)`,
+// `a - b` means `sub(a, b)`, `a * b` means `mul(a, b)`. Both spellings reach
+// the AST as the same node -- one computation, one representation, which is
+// also the shape the IR uses (Design.md 7.1). The mapping lives in
+// ast_builder.INFIX_OPERATORS.
+//
+// The ladder gives precedence and associativity by shape alone, so no
+// precedence declaration is needed anywhere: each level's base case is the
+// next level up (so * binds tighter than + and -), and left recursion makes
+// both levels left-associative.
+?addition: multiplication
+         | addition _addop multiplication
+
+_addop: PLUS | MINUS
+
+?multiplication: atom
+               | multiplication STAR atom
+
+atom: call
+     | NAME
+     | shape_atom
+     | integer_atom
+     | dtype_atom
+
+integer_atom: MINUS? INT
+
+// v0.2: a shape literal names reshape's target shape. It is a distinct
+// expression kind, not a tensor: anywhere except reshape's second argument
+// the type checker rejects it by name.
+shape_atom: LBRACK shape RBRACK
+
+// v0.5: a dtype literal names a cast target. Like the shape literal it is a
+// distinct expression kind, not a tensor: anywhere except cast_to's second
+// argument the type checker rejects it by name. `cast_like(x, template)` keeps
+// taking a tensor template; this atom is what lets a program state the target
+// dtype itself, without a tensor that exists only to carry a dtype.
+dtype_atom: DTYPE
+
+call: NAME LPAR arguments? RPAR
+
+arguments: expr (COMMA expr)*

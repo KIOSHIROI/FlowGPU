@@ -1,0 +1,13 @@
+# CANN-Bench Season2 L1 `Exp` (default attrs: base=-1 natural, scale=1, shift=0).
+#
+# schema: exp(Tensor x, float base=-1.0, float scale=1.0, float shift=0.0) -> Tensor y
+# formula: y = e^((x*scale + shift) * ln(base)); base=-1 means natural base.
+#
+# The non-default attribute paths are produced by the same program with different
+# literal constants (the backend specialises on them), so the compiler is the
+# single source of truth for every variant.
+pipeline exp {
+ input x:fp32[M,N]
+ out = exp(x)
+ output out
+}

@@ -1,0 +1,11 @@
+pipeline linear_decode_forward {
+    input q : fp16[B,H,1,D]
+    input k : fp16[B,H,1,D]
+    input v : fp16[B,H,1,D]
+    input kv_caches : fp16[S,H,D,D]
+    input slope_rate : fp32[H]
+    input slot_idx : int32[B]
+    out, cache = linear_decode_forward(q, k, v, kv_caches, slope_rate, slot_idx, 32)
+    output out
+    output cache
+}

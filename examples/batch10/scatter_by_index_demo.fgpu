@@ -1,0 +1,9 @@
+# A declared indexed write: the `indexed_write` capability the catalogue survey
+# put first (23 tasks). Out-of-bounds entries are discarded, duplicate targets are
+# last-write-wins and unordered, and the lowering is two launches: copy the base,
+# then write the addressed rows.
+pipeline scatter_demo {
+ input base:fp32[8,4] input index:int32[3] input values:fp32[3,4]
+ out = scatter_by_index(base, index, values)
+ output out
+}

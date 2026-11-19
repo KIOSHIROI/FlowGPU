@@ -1,0 +1,13 @@
+# The `segment` capability the catalogue survey found blocking thirteen tasks:
+# a matmul whose weight matrix is selected per segment (sgmv / LoRA / grouped GEMM).
+#
+#   out[t, :] = x[t, :] @ w[segment(t), :, :]
+#
+# The token axis stays symbolic because no arithmetic is performed on it; the
+# segment boundaries arrive as an explicit int32 tensor, which is what keeps this
+# declarative rather than general indexing.
+pipeline grouped_gemm_demo {
+ input x:bf16[64,32] input w:bf16[4,32,16] input indptr:int32[5]
+ out = segmented_matmul(x, w, indptr)
+ output out
+}

@@ -1,0 +1,17 @@
+# The MLP pipeline from Design.md 12.2.
+#
+# Note the renamed intermediate: FlowGPU binds a name once (def-before-use,
+# one name = one value), so Design.md's `h = silu(h)` is rejected as a
+# duplicate definition. The dataflow is identical, only the names differ.
+
+pipeline mlp {
+    input x  : bf16[B,D]
+    input w1 : bf16[D,H]
+    input w2 : bf16[H,D]
+
+    h  = matmul(x, w1)
+    h2 = silu(h)
+    y  = matmul(h2, w2)
+
+    output y
+}

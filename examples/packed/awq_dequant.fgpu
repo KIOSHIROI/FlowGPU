@@ -1,0 +1,75 @@
+# AWQ int4 dequantisation in the FlowGPU language: FlagOS task 161's
+# awq_dequantize, promoted out of the extern escape hatch.
+#
+# Shapes are literal because the last axis drives the layout operators:
+#   qweight int32[K, M/8]       eight shuffled nibbles per word
+#   zeros   int32[K/G, M/8]     same packing for the zero points
+#   scales  fp16[K/G, M]        per-group scale
+#   group_index int32[K]        row -> scale-group index (row // G); the
+#                               submission wrapper builds it as a constant
+# Output: fp16[K, M] = (unpack(qweight) - unpack(zeros)) * scales, with the
+# nibbles reordered by AWQ's [0,4,1,5,2,6,3,7] inside every word.
+#
+# The reorder needs a permutation *inside* a word, which reshape/split/concat
+# cannot express: those keep last-axis blocks contiguous.  The new `interleave`
+# layout operator builds the per-word axis by alternating two same-shaped
+# tensors, and the tree below uses it to realize AWQ's bit-reversal-like order.
+pipeline awq_dequantize {
+  input qweight : int32[4,2]
+  input zeros : int32[2,2]
+  input scales : fp16[2,16]
+  input group_index : int32[4]
+  input c0 : int32             # shift for nibble 0
+  input c4 : int32
+  input c8 : int32
+  input c12 : int32
+  input c16 : int32
+  input c20 : int32
+  input c24 : int32
+  input c28 : int32
+  input c15 : int32            # nibble mask
+
+  # expand the per-group tensors to one row each (gather_rows is a row copy)
+  sc = gather_rows(scales, group_index)          # fp16[4,16]
+  zr = gather_rows(zeros, group_index)           # int32[4,2]
+
+  # raw nibbles by in-word position
+  u0 = bitand(shr(qweight, c0), c15)
+  u1 = bitand(shr(qweight, c4), c15)
+  u2 = bitand(shr(qweight, c8), c15)
+  u3 = bitand(shr(qweight, c12), c15)
+  u4 = bitand(shr(qweight, c16), c15)
+  u5 = bitand(shr(qweight, c20), c15)
+  u6 = bitand(shr(qweight, c24), c15)
+  u7 = bitand(shr(qweight, c28), c15)
+  z0 = bitand(shr(zr, c0), c15)
+  z1 = bitand(shr(zr, c4), c15)
+  z2 = bitand(shr(zr, c8), c15)
+  z3 = bitand(shr(zr, c12), c15)
+  z4 = bitand(shr(zr, c16), c15)
+  z5 = bitand(shr(zr, c20), c15)
+  z6 = bitand(shr(zr, c24), c15)
+  z7 = bitand(shr(zr, c28), c15)
+
+  # per-word order [u0,u4,u1,u5,u2,u6,u3,u7]:
+  #   even output positions come from interleave(even, odd) recursively
+  a0 = interleave(u0, u2)
+  a1 = interleave(u1, u3)
+  a = interleave(a0, a1)
+  b0 = interleave(u4, u6)
+  b1 = interleave(u5, u7)
+  b = interleave(b0, b1)
+  vals = interleave(a, b)                        # int32[4,16]
+  za0 = interleave(z0, z2)
+  za1 = interleave(z1, z3)
+  za = interleave(za0, za1)
+  zb0 = interleave(z4, z6)
+  zb1 = interleave(z5, z7)
+  zb = interleave(zb0, zb1)
+  zvals = interleave(za, zb)                     # int32[4,16]
+
+  diff = sub(vals, zvals)                        # fits int8; exact in int32
+  diff16 = cast_to(diff, fp16)
+  out = mul(diff16, sc)                          # fp16[4,16]
+  output out
+}

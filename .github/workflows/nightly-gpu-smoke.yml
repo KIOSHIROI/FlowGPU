@@ -1,0 +1,36 @@
+name: nightly-gpu-smoke
+
+# The CPU suite runs the emitted source through the CPU Triton double, so this
+# workflow is the only place device code actually executes.  Set the repository
+# variable GPU_RUNNER to a self-hosted CUDA runner label; without it the job
+# falls back to ubuntu-latest, detects that no GPU is present and exits green
+# with a message (a red nightly workflow for missing hardware would be noise).
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  gpu-smoke:
+    runs-on: ${{ vars.GPU_RUNNER || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: install (with GPU extras)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install torch triton
+      - name: device smoke
+        run: python tools/gpu_smoke.py --require-device 2>&1 | tee gpu-smoke.log
+      - name: keep the device log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpu-smoke-${{ github.run_id }}
+          path: gpu-smoke.log
+          retention-days: 90

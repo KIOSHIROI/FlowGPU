@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+title: FlowGPU
+type: software
+authors:
+  - name: The FlowGPU Authors
+license: MIT
+version: 0.16.0

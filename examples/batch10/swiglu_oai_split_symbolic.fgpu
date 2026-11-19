@@ -1,0 +1,32 @@
+# Task160 `swiglu_oai_split`, in the *submission* form: symbolic token and width.
+#
+# Why this variant exists next to `swiglu_oai_split.fgpu`: the compiler emits a
+# launch-time constexpr for every *symbolic* dimension and a literal for every
+# literal one. So a program written over `[M, N]` produces ONE kernel whose grid
+# and bounds are computed from the tensors at launch -- a shape-generic module,
+# which is what the evaluation harness needs. The literal-extent variant emits
+# `idx < 16` and can only run the one shape it was compiled for.
+#
+# The last-axis `split` can only be halved when the width is a literal, so the
+# split stays on the *host* side as a pair of views (metadata, not compute -- the
+# same adapter pattern the Task155 submission used for split/interleaved), and
+# the kernel itself is the full arithmetic over the two halves:
+#
+#   out = clamp(gate, max=limit) * sigmoid(alpha * gate) * (clamp(up, -limit, limit) + beta)
+pipeline swiglu_oai_split_symbolic {
+ input gate:fp32[M,N]
+ input up:fp32[M,N]
+ input alpha:fp32[1,1]
+ input beta:fp32[1,1]
+ input limit:fp32[1,1]
+ gate_tile = broadcast_like(broadcast_like(limit, gate), gate)
+ upper = minimum(gate, gate_tile)
+ alpha_tile = broadcast_like(broadcast_like(alpha, gate), gate)
+ beta_tile = broadcast_like(broadcast_like(beta, up), up)
+ neg = sub(broadcast_like(zeros_like(limit), gate), gate_tile)
+ lower = maximum(up, broadcast_like(neg, up))
+ bounded = minimum(lower, broadcast_like(gate_tile, up))
+ gated = mul(upper, sigmoid(mul(alpha_tile, upper)))
+ out = mul(gated, add(bounded, beta_tile))
+ output out
+}

@@ -1,0 +1,25 @@
+name: Bug report
+about: Report a compiler or backend issue
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A small .fgpu program and the exact command.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FlowGPU version / commit
+  - type: input
+    id: env
+    attributes:
+      label: Python / OS / GPU (if relevant)

@@ -1,0 +1,11 @@
+# GPU MODE `matmul_v2`: C = A @ B for float16 operands, ranked at 512x512x512.
+#
+# Symbolic extents on purpose: the compiler emits one kernel whose grid and
+# bounds come from the tensors at launch, so the same generated module covers the
+# whole benchmark range (128 .. 512) instead of one kernel per literal shape.
+pipeline matmul {
+ input a:fp16[M,K]
+ input b:fp16[K,N]
+ out = matmul(a, b)
+ output out
+}

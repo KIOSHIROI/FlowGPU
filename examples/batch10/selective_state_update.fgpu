@@ -1,0 +1,35 @@
+# Task36 `selective_state_update`: a SINGLE-step SSM update, not a recurrence.
+#
+#   dt' = softplus(dt)            (dt_softplus=True, no bias)
+#   dA  = exp(dt' * A)            [B,H,dim,dstate]
+#   B'  = broadcast(B)            (ngroups == nheads here)
+#   S'  = dA * S + (dt' * B') * x
+#   y   = sum_dstate(S' * C') + D * x
+#
+# The name says "update" and the reference takes the current state, so there is
+# no loop over t: the census filed this under `recurrence` because the task
+# statement says "state", and that was another name-level overcount. Every
+# operator it needs -- softplus, exp, broadcast_like, reshape, sum_axis, add, mul
+# -- entered the language before or with the value layer.
+pipeline selective_state_update {
+ input state:fp32[2,2,4,8]
+ input x:fp32[2,2,4]
+ input dt:fp32[2,2,4]
+ input A:fp32[2,8]
+ input B:fp32[2,2,8]
+ input C:fp32[2,2,8]
+ input D:fp32[2,2,4]
+ dtc = softplus(dt)
+ dt_tile = broadcast_like(reshape(dtc, [2,2,4,1]), state)
+ a_tile = broadcast_like(reshape(A, [1,2,1,8]), state)
+ decay = exp(mul(dt_tile, a_tile))
+ b_tile = broadcast_like(reshape(B, [2,2,1,8]), state)
+ x_tile = broadcast_like(reshape(x, [2,2,4,1]), state)
+ driven = mul(mul(dt_tile, b_tile), x_tile)
+ updated = add(mul(decay, state), driven)
+ c_tile = broadcast_like(reshape(C, [2,2,1,8]), state)
+ readout = reshape(sum_axis(mul(updated, c_tile), 3), [2,2,4])
+ y = add(readout, mul(D, x))
+ output y
+ output updated
+}
