@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16.1
+
+- Fix the release/CI wheel smoke check.
+- Keep the public CPU test suite green.
+
 ## 0.16.0
 
 First public snapshot of the FlowGPU compiler prototype.
