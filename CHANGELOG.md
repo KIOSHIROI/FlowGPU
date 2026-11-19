@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.2
+
+- Package the 0.18 migration guide, release guide and TestPyPI workflow.
+- Point package metadata at the live documentation site.
+- Add the wheel release-metadata check to CI.
+
 ## Unreleased
 
 - Add upgrade guidance for the 0.18 namespace migration, a release guide,
