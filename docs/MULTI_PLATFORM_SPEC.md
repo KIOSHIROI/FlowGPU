@@ -34,7 +34,7 @@ CUDA GEMM 现在将 `num_warps` 和 `num_stages` 传入实际 launch；`group_m`
 
 ## 正式参赛证据的归属
 
-`competition/season2/add_constant/add_constant.py` 是独立手写的 Triton 适配器。该文件对应正式七芯片通过回执，平均加速比 0.78×。它不是上述 DSL lowering 的产物，不能据此宣称 `ascend-910b` 或 `kunlun-r300` 配置的 GEMM、归约或逐元素流水线已通过官方评测。
+`private evidence` 是独立手写的 Triton 适配器。该文件对应正式七芯片通过回执，平均加速比 0.78×。它不是上述 DSL lowering 的产物，不能据此宣称 `ascend-910b` 或 `kunlun-r300` 配置的 GEMM、归约或逐元素流水线已通过官方评测。
 
 正式回执 (private evidence, not included)、逐元素 312 组 A800 检查 (private evidence, not included)、[逐元素映射说明](pointer-mapping notes) 分别保留自己的适用范围。取得具体型号、逐尺寸日志及设备编译执行结果后，才能回填硬件参数或扩大默认放行范围。
 

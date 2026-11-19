@@ -39,8 +39,8 @@ compile_source(source, layout_views=True)
 所有 `layout_views` 输出与 default 输出通过 `torch.testing.assert_close`
 （rtol/atol 1e-4），数值正确性已由 H100 脚本检查。
 
-结果：`results/middle_end/h100_layout_views.{json,md}`；审计更新：
-`results/middle_end/audit.json`。
+结果：`private evidence`；审计更新：
+`private evidence`。
 
 ## 测试
 

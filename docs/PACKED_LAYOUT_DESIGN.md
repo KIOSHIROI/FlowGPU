@@ -88,8 +88,8 @@ small permutation table that the frontend resolves.
 
 - Every phase ships with (a) bit-exact reference comparison on the CPU double
   harness, (b) a Triton interpreter smoke test, (c) one migrated extern kernel;
-- the extern kernels in `competition/cann_bench/extern_20261026/` and
-  `competition/season2/batch11/work/` are the acceptance corpus; a phase is
+- the extern kernels in `private evidence` and
+  `private evidence` are the acceptance corpus; a phase is
   "done" only when its target extern kernel is deleted;
 - performance test: the migrated program must be within 10 % of the extern
   kernel on the same platform (the extern version is the baseline).

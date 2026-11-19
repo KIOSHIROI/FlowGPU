@@ -39,7 +39,7 @@ Status: **reference-verified**; the Triton path compiles (`complete`, one kernel
 `fp8e4m3`/`uint8` outputs) and is expected to run on CUDA, but no GPU was
 available in this environment — the nightly `tools/gpu_smoke.py` workflow is
 where that gets pinned.  The extern file itself stays in
-`competition/season2/batch11/work/task174/` as the historical submission; the
+`private evidence` as the historical submission; the
 ledger (`docs/EXTERN_LEDGER.md`) records it as promoted.
 
 ## Boundaries and next steps

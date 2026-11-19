@@ -79,9 +79,9 @@ backend 做同样的两遍循环。非 row-broadcast 的 totals 使用仍然拒�
 
 - 新测试：`test_layout_views.py` 增加 interleave/transpose；
   `test_scan_epilogue.py`（2 条）；`test_layout_view_cost.py`（3 条）；
-- H100 结果：`results/middle_end/h100_p1.json`；
-- corpus 结果：`results/middle_end/real_corpus.json`；
-- 全量 suite 见 `results/pytest.log`。
+- H100 结果：`private evidence`；
+- corpus 结果：`private evidence`；
+- 全量 suite 见 `private evidence`。
 
 ## 边界
 

@@ -62,7 +62,7 @@ H100 分段统计实验 (private evidence, not included)正确性通过，性能
 - **不需要设备、不消耗配额**：判定来自算子身份与访问形状，不来自测量。
 - **screen 证据（本轮，可复现）**：17 个示例程序的 IR 判定与发射文本判定全部一致；
   Task154 的计划（`patchify`）在昆仑报 permuted、Task152 的计划（`cumsum`）报 block——
-  与 `research/kunlun_feasibility/RESULTS.md` 已记录的 IR 预测一致，**没有**用官方 0.03×
+  与 `private evidence` 已记录的 IR 预测一致，**没有**用官方 0.03×
   去反推判定（那会是把检查器拟合到答案上）。
 - **今日不改变任何编译结果**：随附平台表上昆仑只允许 `pointwise`，非逐元素计划早已被
   类型白名单拒绝，闸门在该目标上是冗余的。它的价值是在"白名单放行、实测访问不支持"时

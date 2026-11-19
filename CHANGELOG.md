@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Replace private evidence-path references in public technical notes with
+  neutral placeholders.
+
 ## 0.21.7
 
 - Add `flowgpu --doctor-format json` for machine-readable environment reports.

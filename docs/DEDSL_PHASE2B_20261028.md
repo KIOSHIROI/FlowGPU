@@ -76,7 +76,7 @@ shape/dtype，这是诚实的 importer 边界，而不是隐藏假设。
 | where + comparison | [1048576] | fp32 |
 | multiple stores | 2×[1024] | fp32 |
 
-结果：`results/triton_import/h100_verify.{json,md}`。
+结果：`private evidence`。
 
 ## 5. H100 性能 sanity check
 
@@ -97,7 +97,7 @@ launch-bound case 和多 output case 的导入宿主要付额外的 shape/dtype 
 不是调优后的性能结论**；它说明下一步该优化生成宿主路径（或直接 ABI 导入），而不是
 importer 的语义映射。
 
-结果：`results/triton_import/h100_benchmark.{json,md}`。
+结果：`private evidence`。
 
 ## 5. 剩余工作
 

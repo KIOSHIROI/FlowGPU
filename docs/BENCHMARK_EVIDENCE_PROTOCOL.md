@@ -42,7 +42,7 @@ being tested:
 Each evidence bundle records:
 
 - commit/tag of this repo (`git describe --tags --always`), dirty-tree status;
-- SHA-256 of generated modules/submission files (our `results/` already keeps
+- SHA-256 of generated modules/submission files (our private evidence already keeps
   candidates; pin the exact file);
 - for GPU MODE: problem, leaderboard, GPU, mode, repetitions, and the exact
   CLI command; for CANN/FlagOS: submission id, endpoint, quota state, case
@@ -69,9 +69,9 @@ result — overstating it is not.
 
 | Protocol item | Existing artifact | Gap |
 |---|---|---|
-| CPU correctness + byte identity | `results/pytest.xml`, `results/pytest.log`, golden/byte tests | fine |
-| Generated vs hand provenance | `competition/attribution_20261027.json`, `docs/SCORE_ATTRIBUTION_20261027.md` | fine |
-| GPU MODE matched pairs | `competition/gpu_mode/**` submission records | **needs** driver/GPU/repetition/power pins per entry |
+| CPU correctness + byte identity | `private evidence`, `private evidence`, golden/byte tests | fine |
+| Generated vs hand provenance | `private evidence`, `docs/SCORE_ATTRIBUTION_20261027.md` | fine |
+| GPU MODE matched pairs | `private evidence` submission records | **needs** driver/GPU/repetition/power pins per entry |
 | CANN/FlagOS official evidence | submission ids, artifacts, quotas in work logs | add explicit limitations per claim |
 | Device execution of generated code | nightly `tools/gpu_smoke.py` | needs a registered runner before it is evidence |
 | External-methodology audit | this page + study note | apply on the next GPU MODE submission |

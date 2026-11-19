@@ -1,6 +1,6 @@
 # SPS S1：IR-native scalar placement（2026-10-28）
 
-S1 把标量放置从 `research/sps` 的独立模型变成编译器里的 **IR-native pass**，并
+S1 把标量放置从 `private evidence` 的独立模型变成编译器里的 **IR-native pass**，并
 真正落地了 HOST 与 CONSTEXPR 两种 placement。输入是 frontend-neutral 的 core
 AST + dataflow graph，所以 DSL、Python eDSL、Triton import 三条前端路径都会走
 同一份分析。
@@ -54,13 +54,13 @@ compile_pipelines(pipeline,
 - 数值：两种路径都与原始 kernel `max_abs_diff=0.0`；
 - constexpr 比 host formal 快约 **12%**（launch-bound kernel，5 批 interleaved
   测量中位数；这是 sanity check，不是调优结论）；
-- 结果：`results/triton_import/h100_scalar_specialization.{json,md}`。
+- 结果：`private evidence`。
 
 ## 5. 测试
 
 - `test/test_scalar_placement.py` 7 条：host/constexpr 决策、host ABI 保留/移除、
   literal 内联、默认 off 不变、非法输入拒绝、Triton importer 常量特殊化；
-- 全量 suite 见 `results/pytest.log`。
+- 全量 suite 见 `private evidence`。
 
 ## 6. 边界与下一步
 
