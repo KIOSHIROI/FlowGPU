@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add maintainer, maintenance and release-process documentation.
+- Add Dependabot and issue templates for ongoing maintenance.
+
 ## 0.16.1
 
 - Fix the release/CI wheel smoke check.

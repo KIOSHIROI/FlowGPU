@@ -64,6 +64,7 @@ GPU is required for CI. Device execution is opt-in (`--run-gpu`).
 - [Architecture](docs/ARCHITECTURE.md)
 - [Public test suite](docs/PUBLIC_TESTS.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Maintenance and release process](docs/MAINTENANCE.md)
 - [Compiler acceptance criteria](docs/COMPILER_ACCEPTANCE.md)
 - [Backend contracts](docs/BACKEND_CONTRACTS_20261019.md)
 
