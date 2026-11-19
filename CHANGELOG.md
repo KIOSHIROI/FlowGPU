@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Apply the grouped Dependabot GitHub Actions upgrades to the workflow files.
+- Apply the grouped Dependabot GitHub Actions upgrades to the workflow files;
+  close the stale PR and leave no open pull requests.
 
 ## 0.21.5
 

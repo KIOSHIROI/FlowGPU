@@ -39,3 +39,10 @@ Dependabot closed PR #5 and opened PR #6, a grouped update of seven GitHub
 Actions. Its checks are green. It remains open because the maintainer session has
 SSH push access but no GitHub API token for merging/closing pull requests; the
 normal path is a maintainer review and merge in the GitHub UI.
+
+## Resolution
+
+The final grouped GitHub Actions update (PR #9, ten action bumps) was applied
+directly to the workflow files, verified by the full CI/CodeQL/docs/security
+runs, and its stale Dependabot branch was deleted. The pull request is closed;
+there are no open pull requests.
