@@ -7,7 +7,8 @@ the case matrix without importing torch; CI therefore runs that form.
 Backends:
 * ``flowgpu``  -- FlowGPU-generated Triton host;
 * ``eager``    -- dtype-faithful PyTorch expression;
-* ``inductor`` -- ``torch.compile`` (TorchInductor, Triton backend).
+* ``inductor`` -- ``torch.compile`` (TorchInductor, Triton backend);
+* ``triton``   -- explicitly hand-written Triton kernels in triton_baselines.py.
 
 A separate handwritten-Triton baseline can be added without changing the
 correctness/timing protocol.  Graph and full-call are intentionally separate:
@@ -175,7 +176,7 @@ def main(argv=None) -> int:
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--backends", default="flowgpu,eager,inductor")
+    parser.add_argument("--backends", default="flowgpu,eager,inductor,triton")
     parser.add_argument("--warmup", type=int, default=10)
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--seed", type=int, default=0)

@@ -63,7 +63,8 @@ specialization per metadata tuple, with explicit rebuild on shape change.
 
 M2's runner is implemented as `benchmarks/competitive/device_runner.py`:
 same inputs, float64 oracle and per-case tolerance, Graph and full-call
-separated, FlowGPU vs eager vs `torch.compile` (TorchInductor). It is not claimed
+separated, FlowGPU vs eager vs `torch.compile` (TorchInductor) vs explicit
+hand-written Triton kernels. It is not claimed
 as a result yet because the development host has no CUDA device; CI validates
 only the matrix configuration.
 

@@ -26,7 +26,8 @@ python benchmarks/competitive/device_runner.py --json    # CUDA measurements
 It uses the same generated tensors for every backend and the same float64
 oracle/tolerance. It separates **CUDA Graph replay** (no host guards/allocation/
 dispatch) from **full-call** (guarded host call) and reports both. Backends are
-FlowGPU-generated Triton, PyTorch eager, and `torch.compile` (TorchInductor).
+FlowGPU-generated Triton, PyTorch eager, `torch.compile` (TorchInductor) and an
+explicit hand-written Triton baseline (`triton_baselines.py`).
 
 The device runner is not executed in CI because CI has no GPU. A handwritten
 Triton baseline and TVM/FlagOS columns can be added after their versions and
