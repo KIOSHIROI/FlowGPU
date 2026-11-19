@@ -1,5 +1,15 @@
 # Roadmap
 
+## Current status
+
+- [x] single `flowgpu` namespace and `python -m flowgpu`
+- [x] Python 3.11–3.14 CI (Linux + macOS)
+- [x] GitHub Pages user guide and release verification docs
+- [x] checksums, build provenance, SBOM and release workflow
+- [ ] TestPyPI/PyPI first publish (trusted publisher configured externally)
+- [ ] Windows CI (documented as WSL2 for now)
+
+
 FlowGPU is a compiler prototype. Near-term work is grouped by contract rather
 than by benchmark score.
 

@@ -1,7 +1,7 @@
 # Examples catalog
 
 All examples are runnable with the CLI. Paths are relative to the repository
-root.
+root; the catalog overview is [examples/README.md](https://github.com/KIOSHIROI/FlowGPU/blob/main/examples/README.md).
 
 ## Start here
 

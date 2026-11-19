@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add an examples catalog and record the current roadmap status.
+
+## Unreleased
+
 - Document the tested platform matrix (Linux/macOS; Windows via WSL2).
 
 ## Unreleased
