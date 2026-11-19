@@ -38,7 +38,7 @@ def main() -> int:
                      "docs/user-guide/api.md", "docs/user-guide/faq.md",
                      "tools/check_docs_links.py",
                      ".github/workflows/ci.yml", ".github/workflows/release.yml",
-                     ".github/workflows/codeql.yml",
+                     ".github/workflows/codeql.yml", ".github/workflows/security-audit.yml",
                      ".github/dependabot.yml"):
         if not (ROOT / relative).exists():
             problems.append(f"missing {relative}")

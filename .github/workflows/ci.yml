@@ -93,6 +93,16 @@ jobs:
           assert result.pipelines[0].triton.complete
           print("wheel import ok")
           PY
+      - name: install sdist in a clean venv
+        run: |
+          python -m venv /tmp/sdistcheck
+          /tmp/sdistcheck/bin/python -m pip install dist/*.tar.gz
+          /tmp/sdistcheck/bin/python - <<'PY'
+          from compiler import __version__, compile_source
+          result = compile_source("pipeline p { input x:fp16[4] input y:fp16[4] out = add(x, y) output out }")
+          assert result.pipelines[0].triton.complete
+          print("sdist import ok", __version__)
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: dist

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add a weekly `pip-audit` runtime-dependency audit and an sdist install check
+  in CI.
+
 ## 0.16.3
 
 No runtime code changes. This release packages the documentation, security

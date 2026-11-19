@@ -45,3 +45,9 @@ This is a volunteer-maintained prototype. We aim to acknowledge a report within
 7 days and to agree on a disclosure timeline; fixes are best-effort and there is
 no bug bounty or support SLA. Please give us a reasonable window before public
 disclosure.
+
+## Automated checks
+
+- CodeQL runs on pushes, pull requests and weekly.
+- `security-audit` runs `pip-audit` over a clean install of the released wheel weekly and on dependency changes.
+- Dependabot keeps Actions and Python dependencies current.

@@ -51,3 +51,7 @@ infrastructure are intentionally absent. Never copy them into this repository;
 ## Dependency review
 
 `dependency-review-action` requires the repository dependency graph to be enabled in GitHub Settings -> Code security and analysis. It is not enabled in this repository, so the workflow was removed rather than shipping a permanently failing check. Once enabled, re-add the standard `pull_request` dependency-review workflow.
+
+## Dependency audit
+
+Weekly and on dependency-file changes, `security-audit` builds the wheel, installs it into a clean runtime environment and runs `pip-audit` over the runtime site-packages. It is intentionally separate from CodeQL: CodeQL checks code, pip-audit checks known dependency advisories.
