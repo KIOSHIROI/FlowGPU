@@ -65,6 +65,23 @@ platforms with a validated contract, and liveness slot reuse for disjoint
 buffers. Changing a default still requires parent/candidate evidence under
 [the acceptance protocol](https://github.com/KIOSHIROI/FlowGPU/blob/main/docs/COMPILER_ACCEPTANCE.md).
 
+## Structural ablation
+
+`tools/optimization_ablation.py` compiles a program with graph identity/CSE/DCE,
+rule fusion, index/reduction fusion and layout views individually disabled and
+prints the resulting plan summary. It is CPU-only and **does not measure
+latency**; the device ablation protocol remains the authority for performance.
+
+```sh
+python tools/optimization_ablation.py examples/batch8/dcp_lse_combine.fgpu
+```
+
+## Prepared/frozen evaluation
+
+Measured autotune winners can be frozen into guarded direct launches; see
+[Prepared deployment](deployment.md). This removes the per-call autotuner
+dispatch while keeping the measured configuration evidence.
+
 ## What is not implemented
 
 This pipeline is not a general optimizing compiler. It does not yet provide

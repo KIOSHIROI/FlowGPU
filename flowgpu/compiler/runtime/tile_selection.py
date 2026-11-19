@@ -195,39 +195,19 @@ def space_for(shape, names=SPACE):
     return space_for_extents(shape[0], shape[3], names=names)
 
 
-def space_for_extents(row_extent, column_extent, names=SPACE):
+def space_for_extents(row_extent, column_extent, names=SPACE, platform_config=None):
     """[(label, options, geometry)] for these extents, with duplicate work removed.
 
     ``geometry`` is None for arms whose program structure is not a tile of the
-    recompute kernel; those are measured through their own module.
+    recompute kernel; those are measured through their own module. Candidate
+    generation lives in ``runtime.tuning_space`` so the same family description
+    can drive other measured selectors.
     """
-    table = _recompute_table()
-    found = []
-    for name in names:
-        if name in ('default', MATERIALIZE):
-            found.append((MATERIALIZE, {'cross_domain_strategy': MATERIALIZE}, None))
-        elif name == 'recompute':
-            found.append(('recompute', {'cross_domain_strategy': 'recompute'},
-                          tile_from_caps(None, None, None, None, row_extent, column_extent)))
-        elif name in table:
-            spec = table[name]
-            geometry = tile_from_caps(spec.columns, spec.rows, spec.budget, spec.warps,
-                                      row_extent, column_extent)
-            found.append((name, spec.options(), geometry))
-        else:
-            raise ValueError('unknown candidate: ' + name)
-    # Two names can name the same geometry -- retile-ing 2048 rows of D into a
-    # 512-row cap makes r2048-d16 and r4096-d16 identical. Measuring one of them
-    # twice would present the difference between two timings of the same work as
-    # a difference between two configurations.
-    deduped, seen = [], set()
-    for label, options, geometry in found:
-        identity = geometry if geometry is not None else ('opaque', label)
-        if identity in seen:
-            continue
-        seen.add(identity)
-        deduped.append((label, options, geometry))
-    return deduped
+    from flowgpu.compiler.runtime.tuning_space import generate_cross_domain_space
+    return [(candidate.label, dict(candidate.options), candidate.geometry)
+            for candidate in generate_cross_domain_space(
+                row_extent, column_extent, names=names,
+                platform_config=platform_config)]
 
 
 def options_for_arm(label, shape=None, extents=None):

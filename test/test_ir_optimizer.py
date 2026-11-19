@@ -153,3 +153,23 @@ def test_cli_planning_and_optimizer_controls(tmp_path):
     assert conservative.returncode == 0, conservative.stderr
     dataflow = json.loads(conservative.stdout)["pipelines"][0]["dataflow"]
     assert len(dataflow["nodes"]) == 6
+
+
+def test_structural_ablation_reports_optimizer_effects(tmp_path):
+    import json
+    import subprocess
+    import sys
+
+    source = tmp_path / "program.fgpu"
+    source.write_text(
+        "pipeline p { input x:fp16[64] input y:fp16[64] "
+        "a = add(x, y) b = add(x, y) out = add(a, b) output out }\n")
+    result = subprocess.run(
+        [sys.executable, "tools/optimization_ablation.py", str(source), "--json"],
+        capture_output=True, text=True, timeout=120,
+        cwd=__import__("pathlib").Path(__file__).resolve().parents[1])
+    assert result.returncode == 0, result.stderr
+    report = json.loads(result.stdout)
+    assert report["default"]["plan"]["kernels"] >= 1
+    assert report["no_graph_pipeline"]["optimization"] == []
+    assert report["default"]["optimization"]

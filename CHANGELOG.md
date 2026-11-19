@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.23.0
+
+- Add a declarative, contract-filtered tuning-space generator for measured
+  cross-domain selection.
+- Add `ShapeSpecializedRunner` for bounded per-shape prepared-runner caches.
+- Document frozen autotune, per-shape specialization and prepared deployment.
+
 ## 0.22.0
 
 - Add an explicit effect/alias model and graph verifier; stateful cache
