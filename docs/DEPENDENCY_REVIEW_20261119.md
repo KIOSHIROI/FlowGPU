@@ -32,3 +32,10 @@ closing pull requests.
 ## Dependency graph note
 
 `dependency-review-action` cannot run because the repository dependency graph is not enabled. The workflow was removed; Dependabot and CodeQL remain active. Re-add dependency review after enabling dependency graph in repository security settings.
+
+## Later status
+
+Dependabot closed PR #5 and opened PR #6, a grouped update of seven GitHub
+Actions. Its checks are green. It remains open because the maintainer session has
+SSH push access but no GitHub API token for merging/closing pull requests; the
+normal path is a maintainer review and merge in the GitHub UI.
