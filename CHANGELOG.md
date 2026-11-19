@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.0
+
+- Add tested Python 3.14 support to the CI matrix and classifiers.
+- Include the Python integration guide/example and release tooling since
+  0.18.2.
+
 ## Unreleased
 
 - Add a runnable Python-integration example and guide.

@@ -13,7 +13,7 @@ Releases use `MAJOR.MINOR.PATCH`:
   [CHANGELOG](https://github.com/KIOSHIROI/FlowGPU/blob/main/CHANGELOG.md).
 - **PATCH** — backwards-compatible fixes and documentation corrections.
 
-Python support is **3.11–3.13**. Dropping a Python version is a minor change and
+Python support is **3.11–3.14**. Dropping a Python version is a minor change and
 is documented in the changelog.
 
 ## What is stable

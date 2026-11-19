@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- **Python 3.11, 3.12 or 3.13**.
+- **Python 3.11, 3.12, 3.13 or 3.14**.
 - No GPU is needed to compile programs or to run the reference backend.
 - To execute generated Triton you additionally need a CUDA-capable machine with
   PyTorch and Triton installed.
