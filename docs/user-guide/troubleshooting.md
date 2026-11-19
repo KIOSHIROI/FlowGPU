@@ -65,6 +65,11 @@ Examples use literal shapes for clarity. Use symbolic dimensions in your own
 program when you need one compiled program to serve several shapes; the
 generated host wrapper checks the runtime shapes and dtypes.
 
+## Collect environment details
+
+Run `flowgpu --doctor` and include its output in the issue; it avoids a long
+back-and-forth about Python, lark, torch and Triton versions.
+
 ## Still stuck?
 
 Open a GitHub issue with:

@@ -16,7 +16,9 @@ which of them share it (13.7, 11).
 
 import argparse
 from dataclasses import asdict
+import importlib.metadata
 import json
+import platform
 import sys
 
 from lark.exceptions import LarkError
@@ -813,7 +815,13 @@ def build_argument_parser() -> argparse.ArgumentParser:
         version="FlowGPU " + __version__,
     )
     argument_parser.add_argument(
+        "--doctor",
+        action="store_true",
+        help="print environment diagnostics and exit",
+    )
+    argument_parser.add_argument(
         "path",
+        nargs="?",
         help="path to a .fgpu file, or - to read from stdin",
     )
     argument_parser.add_argument(
@@ -976,9 +984,33 @@ def _report(error: CompileError, as_json: bool) -> None:
         print(f"error: {diagnostic}", file=sys.stderr)
 
 
+def _doctor() -> int:
+    print("FlowGPU " + __version__)
+    print("Python: " + platform.python_version() + " (" + platform.platform() + ")")
+    print("Executable: " + sys.executable)
+    from importlib.util import find_spec
+    for package in ("lark", "torch", "triton"):
+        if find_spec(package) is None:
+            print(package + ": not installed")
+            continue
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            version = "unknown"
+        print(package + ": " + version)
+    print("Reference backend: available")
+    print("Doctor only reports the environment; it does not run a GPU kernel.")
+    return 0
+
+
 def main(argv=None) -> int:
     argument_parser = build_argument_parser()
     args = argument_parser.parse_args(argv)
+    if args.doctor:
+        return _doctor()
+    if args.path is None:
+        argument_parser.error("the following arguments are required: path")
+        return 2
     if args.strategy_policy and args.emit != 'strategies':
         print('error: --strategy-policy requires --emit strategies', file=sys.stderr)
         return 2

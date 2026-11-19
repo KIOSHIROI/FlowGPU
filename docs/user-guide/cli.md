@@ -51,6 +51,17 @@ flowgpu program.fgpu --shape N=1024 --emit summary
 Symbolic dimensions are normally checked at runtime by the generated host code.
 `--shape` specializes them for inspection or a concrete generated module.
 
+## Environment diagnostics
+
+If installation or device execution is unclear, print a compact environment report:
+
+```sh
+flowgpu --doctor
+```
+
+It reports the FlowGPU, Python, lark, torch and Triton versions and whether
+the reference backend is available; it never runs a GPU kernel.
+
 ## Help and errors
 
 ```sh

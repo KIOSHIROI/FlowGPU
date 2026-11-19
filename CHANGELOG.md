@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.0
+
+- Add `flowgpu --doctor` environment diagnostics and document it.
+
 ## 0.19.2
 
 - Add the user-facing security and release-verification page.
