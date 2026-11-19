@@ -107,8 +107,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip build
           python -m build
-      - name: check release metadata
-        run: python tools/check_release_metadata.py --dist dist
+      - name: check release metadata and twine rendering
+        run: |
+          python -m pip install twine
+          python tools/check_release_metadata.py --dist dist
+          python -m twine check dist/*
       - name: install wheel in a clean venv
         run: |
           python -m venv /tmp/wheelcheck

@@ -36,6 +36,7 @@ def main() -> int:
                      "docs/MAINTENANCE.md", "docs/user-guide/index.md",
                      "docs/user-guide/getting-started.md", "docs/user-guide/tutorial.md",
                      "docs/user-guide/api.md", "docs/user-guide/faq.md",
+                     ".devcontainer/devcontainer.json",
                      "tools/check_docs_links.py",
                      ".github/workflows/ci.yml", ".github/workflows/release.yml",
                      ".github/workflows/codeql.yml", ".github/workflows/security-audit.yml",

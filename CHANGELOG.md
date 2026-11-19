@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Validate wheel/sdist metadata with `twine check` in CI, release and
+  index-publication workflows.
+- Add a VS Code/Codespaces dev container.
+
+## Unreleased
+
 - Add a user-facing security and release-verification page.
 
 ## Unreleased

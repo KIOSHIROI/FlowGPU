@@ -6,6 +6,9 @@ change is explicitly about emission.
 
 ## Setup
 
+A ready-to-use VS Code Dev Container / Codespace is available in
+`.devcontainer/devcontainer.json`; it installs the dev and docs dependencies.
+
 ```sh
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[dev,docs]"

@@ -11,6 +11,8 @@ python -m ruff check .
 python tools/check_docs_links.py
 python tools/maintenance_check.py
 python -m mkdocs build --strict
+uv build
+uvx twine check dist/*
 ```
 
 Update `CHANGELOG.md`, bump both `pyproject.toml` and
