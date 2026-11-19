@@ -1,6 +1,6 @@
 PY ?= python
 
-.PHONY: install dev test lint docs links build check clean
+.PHONY: install dev test lint docs links build check release-check clean
 
 install:
 	$(PY) -m pip install -e .
@@ -24,6 +24,9 @@ build:
 	$(PY) -m build
 
 check: lint test
+
+release-check: lint test docs links build
+	python tools/check_release_metadata.py --dist dist
 
 clean:
 	rm -rf build dist .pytest_cache .ruff_cache site

@@ -45,7 +45,7 @@ docs = [
 [project.urls]
 Homepage = "https://github.com/KIOSHIROI/FlowGPU"
 Repository = "https://github.com/KIOSHIROI/FlowGPU"
-Documentation = "https://github.com/KIOSHIROI/FlowGPU/tree/main/docs"
+Documentation = "https://kioshiroi.github.io/FlowGPU/"
 Issues = "https://github.com/KIOSHIROI/FlowGPU/issues"
 Changelog = "https://github.com/KIOSHIROI/FlowGPU/blob/main/CHANGELOG.md"
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add upgrade guidance for the 0.18 namespace migration, a release guide,
+  TestPyPI trusted publishing, and a wheel metadata invariant check.
+
 ## 0.18.1
 
 - Fix the CI coverage source path after the 0.18.0 namespace migration.
