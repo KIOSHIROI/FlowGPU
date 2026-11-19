@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 from flowgpu.compiler.backend.backends import KERNELS  # noqa: E402
 from flowgpu.compiler.backend.platform_configs import PLATFORMS  # noqa: E402

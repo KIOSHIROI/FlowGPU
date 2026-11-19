@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.1
+
+- Fix `flowgpu-migration demo` for the public tree: resolve repository paths
+  correctly and bundle the demo model in the package.
+- Add a public test for the migration demo.
+
 ## Unreleased
 
 - Add a public-boundary check for personal paths, credentials and organizer files.

@@ -32,6 +32,8 @@ def main(argv=None) -> int:
             problems.append("grammar.lark is missing from flowgpu.compiler")
         if "flowgpu/py.typed" not in names:
             problems.append("PEP 561 marker flowgpu/py.typed is missing")
+        if not any(name.endswith("flowgpu/migration/data/qwen2_7b_decode.json") for name in names):
+            problems.append("bundled migration model is missing")
         metadata = [name for name in names if name.endswith(".dist-info/METADATA")]
         if len(metadata) != 1:
             problems.append("missing or duplicate METADATA")

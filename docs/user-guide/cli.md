@@ -73,4 +73,10 @@ Compile errors include a source position. For common failures, see
 [Troubleshooting](troubleshooting.md).
 
 The `flowgpu-migration` console script provides operator-coverage and evidence
-tooling; run `flowgpu-migration --help` for its commands.
+tooling. A GPU-free demo is available with:
+
+```sh
+flowgpu-migration demo
+```
+
+Run `flowgpu-migration --help` for all commands.

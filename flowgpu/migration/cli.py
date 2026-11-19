@@ -17,7 +17,7 @@ import pathlib
 import subprocess
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from flowgpu.migration import coverage as coverage_module  # noqa: E402
@@ -112,15 +112,10 @@ def _init(args) -> int:
 
 
 def _demo(args) -> int:
-    """Print the product flow on the bundled examples (no GPU required)."""
-    model = ROOT / "models/qwen2_7b_decode.json"
+    """Print the product flow on a bundled model (no GPU required)."""
+    model = pathlib.Path(__file__).resolve().parent / "data" / "qwen2_7b_decode.json"
     result = coverage_module.coverage(model, ["cuda", "ascend", "ascend-wide"])
     print(coverage_module.render_coverage(result))
-    print()
-    starter = ROOT / "examples/migration_bundle_qwen2_ascend/manifest.json"
-    if starter.exists():
-        data = bundle_module.load(starter)
-        print(bundle_module.render_one_page(data))
     return 0
 
 
