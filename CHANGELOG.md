@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.24.0
+
+- Add `DynamicShapeRunner`: derive symbolic bindings per call and cache static
+  per-shape specializations with explicit rebuilds.
+- Document the practical dynamic-shape boundary and M3 status.
+
 ## Unreleased
 
 - Add the CPU competitive probe, six-case matrix, independent CPU oracles and

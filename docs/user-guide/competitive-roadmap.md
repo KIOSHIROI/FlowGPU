@@ -57,6 +57,10 @@ softmax, residual RMSNorm). All six pass on the development machine. The
 residual-Norm case uses a small tolerance for bf16 rounding; per-case tolerances
 are declared in `cases.json`.
 
+M3's dispatch primitive is implemented as `runtime.dynamic_shape.DynamicShapeRunner`:
+it derives symbolic bindings from the actual tensors and caches a static
+specialization per metadata tuple, with explicit rebuild on shape change.
+
 M2's runner is implemented as `benchmarks/competitive/device_runner.py`:
 same inputs, float64 oracle and per-case tolerance, Graph and full-call
 separated, FlowGPU vs eager vs `torch.compile` (TorchInductor). It is not claimed

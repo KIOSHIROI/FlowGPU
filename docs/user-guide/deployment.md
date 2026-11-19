@@ -72,6 +72,21 @@ The key includes shape, stride, dtype, device and alignment. The cache is
 bounded and evicts the least recently used tuple. This is **explicit per-shape
 specialization**, not dynamic-shape compilation.
 
+For a symbolic FlowGPU source, `DynamicShapeRunner` derives the bindings from
+each call and wraps the same cache:
+
+```python
+from flowgpu.compiler.runtime.dynamic_shape import DynamicShapeRunner
+
+runner = DynamicShapeRunner(source, "matmul", ".flowgpu-cache")
+runner(a_64x128, b_128x32)   # compiles with M=64, K=128, N=32
+runner(a_64x128, b_128x32)   # cache hit
+runner(a_32x64,  b_64x16)    # compiles with M=32, K=64, N=16
+```
+
+Literal extents are validated; a symbolic name that appears twice must receive
+the same value. A mismatch raises rather than inventing a second meaning.
+
 ## Candidate spaces
 
 `flowgpu.compiler.runtime.tuning_space` describes measured candidate families as

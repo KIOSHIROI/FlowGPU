@@ -23,8 +23,9 @@ hidden gaps.
 ## Dynamic shapes
 
 FlowGPU compiles static shapes. A symbolic dimension can be specialized with
-`shape_bindings`, but there is no runtime dynamic-shape dispatch or guard path;
-compile a new specialization for a new shape.
+`shape_bindings`, and `DynamicShapeRunner` caches one static specialization per
+observed input metadata tuple. There is still no symbolic-shape kernel or
+general runtime dynamic-dispatch path; a new shape is an explicit compile miss.
 
 ## Platforms
 
