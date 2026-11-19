@@ -41,3 +41,6 @@ nav:
   - Backends: backends.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
+  - Architecture: architecture.md
+  - Contributing: contributing.md
+  - Roadmap: roadmap.md

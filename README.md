@@ -117,6 +117,7 @@ Start here:
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [FAQ](docs/user-guide/faq.md) · [Troubleshooting](docs/user-guide/troubleshooting.md)
+- [Contributing](docs/user-guide/contributing.md) · [Roadmap](docs/user-guide/roadmap.md)
 
 The language contract is [Design.md](Design.md); the grammar is [EBNF](EBNF).
 The deeper design/evidence notes live in [`docs/`](docs/).

@@ -34,6 +34,8 @@ def main() -> int:
     for relative in ("LICENSE", "README.md", "CONTRIBUTING.md", "SECURITY.md",
                      "MAINTAINERS.md", "SUPPORT.md", "Makefile", "mkdocs.yml",
                      "docs/MAINTENANCE.md", "docs/user-guide/index.md",
+                     "docs/user-guide/getting-started.md", "docs/user-guide/tutorial.md",
+                     "docs/user-guide/api.md", "docs/user-guide/faq.md",
                      ".github/workflows/ci.yml", ".github/workflows/release.yml",
                      ".github/dependabot.yml"):
         if not (ROOT / relative).exists():

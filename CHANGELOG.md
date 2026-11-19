@@ -8,6 +8,8 @@
 - Add a user guide, FAQ, troubleshooting, Python API and CLI docs, and a
   strict MkDocs documentation site build.
 - Improve package metadata for discoverability and add `docs` extras.
+- Add contributor/roadmap/architecture pages, issue contact links and a guarded
+  manual PyPI publishing workflow.
 
 ## 0.16.1
 
