@@ -1,9 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.16.4
 
-- Add a weekly `pip-audit` runtime-dependency audit and an sdist install check
-  in CI.
+- Add a GitHub Release on tag pushes with generated notes and wheel/sdist assets.
+- Add a weekly `pip-audit` runtime-dependency audit.
+- Add an sdist install check to CI.
+- Update dependency-triage documentation.
 
 ## 0.16.3
 
