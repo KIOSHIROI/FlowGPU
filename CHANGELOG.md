@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Generate a CycloneDX runtime SBOM in the security-audit workflow.
+
 ## 0.17.0
 
 - Add the `flowgpu` public import namespace (`from flowgpu import compile_source`)

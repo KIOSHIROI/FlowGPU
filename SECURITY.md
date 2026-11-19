@@ -49,5 +49,5 @@ disclosure.
 ## Automated checks
 
 - CodeQL runs on pushes, pull requests and weekly.
-- `security-audit` runs `pip-audit` over a clean install of the released wheel weekly and on dependency changes.
+- `security-audit` runs `pip-audit` over a clean install of the released wheel weekly and on dependency changes, and uploads a CycloneDX SBOM artifact.
 - Dependabot keeps Actions and Python dependencies current.
