@@ -9,8 +9,8 @@ operator refuses it by name.
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError
 
 
 def compile_one(source):
@@ -19,7 +19,7 @@ def compile_one(source):
 
 @pytest.mark.parametrize("dtype", ["fp8e4m3", "fp8e5m2"])
 def test_fp8_is_a_one_byte_storage_dtype(dtype):
-    from compiler.analysis.precision import DTYPE_BYTES, DTYPE_CLASSES, STORAGE_DTYPES
+    from flowgpu.compiler.analysis.precision import DTYPE_BYTES, DTYPE_CLASSES, STORAGE_DTYPES
 
     assert DTYPE_BYTES[dtype] == 1
     assert DTYPE_CLASSES[dtype] == "storage"
@@ -53,7 +53,7 @@ def test_reference_rounds_to_e4m3_nearest_even_and_saturates():
 
     root = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location(
-        "ref_under_test", root / "compiler/backend/reference.py")
+        "ref_under_test", root / "flowgpu/compiler/backend/reference.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     # The rounding helpers live in the emitted reference's preamble, which is the
@@ -83,7 +83,7 @@ def test_reference_rounds_to_e5m2_with_two_mantissa_bits():
 
     root = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location(
-        "ref_under_test_e5", root / "compiler/backend/reference.py")
+        "ref_under_test_e5", root / "flowgpu/compiler/backend/reference.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     preamble = {}

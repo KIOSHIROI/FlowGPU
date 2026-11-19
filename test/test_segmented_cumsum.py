@@ -8,7 +8,7 @@ a task-specific shortcut:
 
 * the registry contract: float input, same-shaped integer `seg_start`, fp32
   accumulator, literal extents (the stated v0.6 boundary);
-* the lowering is a **composition**: `compiler/ir/composite_ops.py` expands the
+* the lowering is a **composition**: `flowgpu/compiler/ir/composite_ops.py` expands the
   single operator into the existing `cumsum` / `gather_last` / elementwise
   lowerings before fusion, so no backend gains a second copy of the scan or the
   gather. The emitted kernel count is pinned here, and the next-step one-pass
@@ -25,12 +25,12 @@ the first segment).
 """
 import pytest
 
-from compiler import reference
-from compiler.backend.reference import module as reference_module
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError, DiagnosticKind
-from compiler.frontend.operator import OPERATORS
-from compiler.platform_configs import resolve_platform
+from flowgpu.compiler import reference
+from flowgpu.compiler.backend.reference import module as reference_module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler.frontend.operator import OPERATORS
+from flowgpu.compiler.platform_configs import resolve_platform
 
 ROWS, COLS = 3, 5
 

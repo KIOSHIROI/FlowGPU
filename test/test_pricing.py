@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from migration import cli, pricing
+from flowgpu.migration import cli, pricing
 
 
 def test_every_package_clears_its_cost_floor_with_the_default_assumptions():

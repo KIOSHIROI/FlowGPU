@@ -21,11 +21,11 @@ import struct
 
 import pytest
 
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.ast_node import DTypeLiteral
-from compiler.frontend.diagnostic import CompileError, DiagnosticKind
-from compiler.frontend.parser import parse_ast
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.ast_node import DTypeLiteral
+from flowgpu.compiler.frontend.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler.frontend.parser import parse_ast
 
 
 def compile_one(source, **options):

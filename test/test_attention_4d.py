@@ -18,10 +18,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from compiler import reference as reference_backend
-from compiler import triton_backend
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler import reference as reference_backend
+from flowgpu.compiler import triton_backend
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError, DiagnosticKind
 
 
 GQA4D = """

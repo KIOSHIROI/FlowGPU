@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from compiler import compile_source
+from flowgpu.compiler import compile_source
 
 ROOT = Path(__file__).resolve().parents[1]
 # Most examples use the default Triton backend; the SDPA example explicitly

@@ -9,15 +9,15 @@ EXAMPLE = ROOT / "examples/quickstart/add.fgpu"
 
 
 def _cli_main():
-    spec = importlib.util.spec_from_file_location("flowgpu_cli", ROOT / "compiler/cli.py")
+    spec = importlib.util.spec_from_file_location("flowgpu_cli", ROOT / "flowgpu/compiler/cli.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.main
 
 
 def test_the_quickstart_example_compiles_to_a_complete_module():
-    from compiler import compile_source
-    from compiler.backend.triton_backend import module
+    from flowgpu.compiler import compile_source
+    from flowgpu.compiler.backend.triton_backend import module
 
     program = compile_source(EXAMPLE.read_text()).pipelines[0].triton
     assert program.complete
@@ -60,8 +60,8 @@ def test_the_cli_reports_the_package_version(capsys):
     import pytest
     pyproject = (ROOT / "pyproject.toml").read_text()
     declared = pyproject.split('version = "')[1].split('"')[0]
-    import compiler
-    assert compiler.__version__ == declared
+    import flowgpu.compiler
+    assert flowgpu.compiler.__version__ == declared
 
     with pytest.raises(SystemExit) as exit_info:
         _cli_main()(["--version"])

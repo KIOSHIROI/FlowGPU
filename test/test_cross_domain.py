@@ -3,13 +3,13 @@ import math
 from dataclasses import replace
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.triton_backend import module
-from compiler.platform_configs import resolve_platform
-from compiler.traffic import indexed_read_count,at_unit
-from compiler.cache import cached_module
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.traffic import indexed_read_count,at_unit
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
 
 SOURCE=Path('examples/batch8/dcp_lse_combine.fgpu').read_text()
 

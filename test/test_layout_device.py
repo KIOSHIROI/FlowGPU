@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import pathlib
 
-from compiler import compile_source
-from compiler.backend import reference
-from compiler.backend.platform_configs import PLATFORMS, resolve_platform
-from compiler.backend.triton_backend import module
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.backend.platform_configs import PLATFORMS, resolve_platform
+from flowgpu.compiler.backend.triton_backend import module
 from test.segmented_support import Buffer
 from test.test_platform_contract_fixtures import _execute_emitted
 

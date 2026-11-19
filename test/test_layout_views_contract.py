@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from compiler import compile_source
-from compiler.backend.platform_configs import PLATFORMS, resolve_platform
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.backend.platform_configs import PLATFORMS, resolve_platform
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 SPLIT = "pipeline p { input x:fp32[32,64] a,b=split(x) out=add(a,b) output out }"
 
@@ -50,8 +50,8 @@ def test_experimental_override_is_explicit_and_not_a_platform_default():
 
 
 def test_kunlun_indexed_reduction_uses_a_rank_one_tile():
-    from compiler import compile_source
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler import compile_source
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
     config = resolve_platform(
         "kunlunxin",
         allowed_kernel_kinds=("pointwise", "rowwise", "primitive", "layout",
@@ -68,8 +68,8 @@ def test_kunlun_indexed_reduction_uses_a_rank_one_tile():
 
 
 def test_concat_operand_addresses_are_clamped_for_masked_lanes():
-    from compiler import compile_source
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler import compile_source
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
     config = resolve_platform(
         "kunlunxin",
         allowed_kernel_kinds=("pointwise", "rowwise", "primitive", "layout",
@@ -85,8 +85,8 @@ def test_concat_operand_addresses_are_clamped_for_masked_lanes():
 
 
 def test_concat_of_the_two_split_parts_folds_to_the_source():
-    from compiler import compile_source
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler import compile_source
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
     config = resolve_platform(
         "kunlunxin",
         allowed_kernel_kinds=("pointwise", "rowwise", "primitive", "layout",

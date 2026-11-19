@@ -1,10 +1,10 @@
 """SPS S2: the same plan is derived for DSL, python eDSL and imported Triton."""
 from __future__ import annotations
 
-from compiler import compile_source
-from compiler.compile import compile_pipelines
-from compiler.frontends.python_edsl import program
-from compiler.frontends.triton_importer import import_triton
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.compile import compile_pipelines
+from flowgpu.compiler.frontends.python_edsl import program
+from flowgpu.compiler.frontends.triton_importer import import_triton
 
 DSL = "pipeline p { input x:fp32[1024] input c:fp32 y=mul(x,c) output y }"
 TRITON = '''

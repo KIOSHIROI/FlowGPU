@@ -1,8 +1,8 @@
 import ast
 import pytest
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
-from compiler.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.triton_backend import module
 
 SOURCE = '''pipeline tx {
     input x : fp16[M,N]

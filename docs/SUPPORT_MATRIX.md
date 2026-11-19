@@ -119,7 +119,7 @@ generator uses a wider Ascend profile (`tools/cann_bench/gen_from_dsl.py`
 
 **kunlunxin refuses:** `attention`, `axis_gather`, `cache_store`, `composed`, `index_table`, `layout`, `linear_decode`, `matmul`, `pad_cat`, `patchify`, `primitive`, `recurrence`, `reduce_with_index`, `rope`, `rowwise`, `scan`, `scatter_by_index`, `segmented_matmul`, `store_at`, `topk`, `transpose`
 
-## Extern kernels (hand-written Triton, wrapped by `compiler/extern.py`)
+## Extern kernels (hand-written Triton, wrapped by `flowgpu/compiler/extern.py`)
 
 Extern kernels are not frontend operators.  They are recorded here with
 their CANN-Bench score so generated and hand-written contributions stay
@@ -138,6 +138,6 @@ separable (`docs/SCORE_ATTRIBUTION_20261027.md`).
 | `dilation_2d` | 24.48 | NHWC dilation with SAME/VALID |
 | `depthwise_conv_2d` | 30.62 | NCHW depthwise conv, Kahan accumulation |
 
-The escape hatch is documented in `compiler/extern.py`; the promotion
+The escape hatch is documented in `flowgpu/compiler/extern.py`; the promotion
 rule is: two independent tasks need a construct before it enters the
 language, one task is a kernel.

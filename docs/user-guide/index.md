@@ -17,8 +17,8 @@ PyTorch and Triton.
 ```sh
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit summary
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit summary
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run
 ```
 
 ## Where to go next

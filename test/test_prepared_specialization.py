@@ -4,9 +4,9 @@ import json
 
 import pytest
 
-from compiler.backend.specialization import freeze_autotune
-from compiler.compile import compile_source
-from compiler.triton_backend import module
+from flowgpu.compiler.backend.specialization import freeze_autotune
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.triton_backend import module
 
 
 POOL = '''pipeline pool { input kv : fp32[B,K,D] input scores : fp32[B,K,D]
@@ -19,7 +19,7 @@ def emitted(source=POOL, **options):
 
 
 def first_configs(code):
-    from compiler.backend.specialization import _configs
+    from flowgpu.compiler.backend.specialization import _configs
     tree = ast.parse(code)
     assignments = {n.targets[0].id: n.value for n in tree.body if isinstance(n, ast.Assign)}
     return {n.name: _configs(next(k.value for k in d.keywords if k.arg == 'configs'), assignments)[0]

@@ -19,9 +19,9 @@ guarded on the flag). These tests pin the host side of that contract:
 
 import ast
 
-from compiler.compile import compile_source
-from compiler.reference import run as run_reference
-from compiler.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.reference import run as run_reference
+from flowgpu.compiler.triton_backend import module
 
 
 GATE_3D = """pipeline gate3d {

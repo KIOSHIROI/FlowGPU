@@ -50,10 +50,10 @@ This installs the runtime dependency (`lark`) and the `flowgpu` command.
 ## Verify
 
 ```sh
-.venv/bin/python -m compiler.cli --version
+.venv/bin/python -m flowgpu --version
 # FlowGPU 0.16.1
 
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit summary
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit summary
 ```
 
 The `summary` command should print a typed pipeline (`quickstart_add`) with one
@@ -69,7 +69,7 @@ flowgpu --version
 ## Run the reference backend
 
 ```sh
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run
 ```
 
 This executes the generated Python reference implementation on the CPU and
@@ -79,7 +79,7 @@ prints the output values. It does not require `torch`.
 
 ```sh
 .venv/bin/python -m pip install torch triton
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run-gpu
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run-gpu
 ```
 
 If PyTorch, Triton or CUDA is unavailable, this command exits with code 2 and a
@@ -91,7 +91,7 @@ message pointing back to `--run`. It never silently falls back to a torch kernel
 from flowgpu import compile_source
 ```
 
-The old `from compiler import ...` path remains supported during pre-1.0.
+The old `from flowgpu.compiler import ...` path remains supported during pre-1.0.
 
 ## Next
 

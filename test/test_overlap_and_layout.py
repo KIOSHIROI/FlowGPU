@@ -1,7 +1,7 @@
 import ast
 
-from compiler.compile import compile_source
-from compiler.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.triton_backend import module
 
 
 def test_overlap_keeps_independent_outputs_on_independent_streams():

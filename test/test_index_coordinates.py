@@ -2,7 +2,7 @@ import itertools
 
 import pytest
 
-from compiler.backend.index_coordinates import broadcast, flatten, singleton_reshape
+from flowgpu.compiler.backend.index_coordinates import broadcast, flatten, singleton_reshape
 
 
 @pytest.mark.parametrize('source,target',[

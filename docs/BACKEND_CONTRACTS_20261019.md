@@ -58,7 +58,7 @@ coreDim is invalid. Expected value: less than or equal to 65535.
 
 ### 编译器里已修的部分
 
-`compiler/backend/triton_backend.py` 原来的二维发射路径
+`flowgpu/compiler/backend/triton_backend.py` 原来的二维发射路径
 （`grid_limited_body_2d`）是**逐轴**封顶到 `max_grid_dim` 的：
 
 ```python
@@ -118,9 +118,9 @@ program，现在最多 65025 个。program 更多本身可能是更优的映射�
 
 | 文件 | 用途 |
 |---|---|
-| `compiler/backend/cache_store_backend.py` | KV cache 写入，`kv_axis = tl.program_id(2)` |
-| `compiler/backend/linear_decode_backend.py` | linear decode，`db = tl.program_id(2)` |
-| `compiler/backend/cross_domain_backend.py` | 跨域归约分段，`segment = tl.program_id(2)` |
+| `flowgpu/compiler/backend/cache_store_backend.py` | KV cache 写入，`kv_axis = tl.program_id(2)` |
+| `flowgpu/compiler/backend/linear_decode_backend.py` | linear decode，`db = tl.program_id(2)` |
+| `flowgpu/compiler/backend/cross_domain_backend.py` | 跨域归约分段，`segment = tl.program_id(2)` |
 
 三处都**没有**调用 `grid_ceiling` / `max_grid_dim` / `grid_limited_*`。也就是说它们
 无条件发射三维网格，与平台是否设了上限无关。
@@ -144,7 +144,7 @@ program，现在最多 65025 个。program 更多本身可能是更优的映射�
 
 上面两条契约原先只存在于这份文档里。现在它们是可执行的东西：
 
-### 1. 能力位（`compiler/backend/platform_configs.py`）
+### 1. 能力位（`flowgpu/compiler/backend/platform_configs.py`）
 
 `PlatformConfig` 新增三个字段，随平台表一起声明，并像其它字段一样可被
 `resolve_platform(...)` 覆盖（实验用）：
@@ -158,10 +158,10 @@ program，现在最多 65025 个。program 更多本身可能是更优的映射�
 每个取值旁都在源码里写了对应的单变量证据（第几次尝试、翻正了什么），
 不是"文档说"。`__post_init__` 里加了布尔类型校验。
 
-### 2. 源码审计器（`compiler/backend/contracts.py`）
+### 2. 源码审计器（`flowgpu/compiler/backend/contracts.py`）
 
 ```python
-from compiler.backend.contracts import violations, assert_contracts, audit_pipeline
+from flowgpu.compiler.backend.contracts import violations, assert_contracts, audit_pipeline
 
 problems = violations(kernel.source, platform)   # 空列表 = 生成码在该平台契约内
 assert_contracts(kernel.source, platform)        # 违规即抛 ValueError

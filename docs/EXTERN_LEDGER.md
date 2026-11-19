@@ -34,6 +34,6 @@ An extern kernel is promoted into the language only when the language can state 
 | `categorical_embedding_bag` | CANN-Bench level 3 | table lookup + bag reduction; a second task would be needed before promoting |
 | `histogram_two_stage` | GPU MODE histogram_v2 | tl.histogram has no frontend equivalent; a histogram primitive is not on the critical path |
 
-Promotion rule (from `compiler/extern.py`): one task is a kernel, two
+Promotion rule (from `flowgpu/compiler/extern.py`): one task is a kernel, two
 independent tasks are a feature.  A promoted entry must ship a reference
 oracle plus a byte-exact test before the extern file can be retired.

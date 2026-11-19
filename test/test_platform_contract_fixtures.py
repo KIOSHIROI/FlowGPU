@@ -18,10 +18,10 @@ import math
 
 import pytest
 
-from compiler import compile_source
-from compiler.backend.contracts import violations
-from compiler.backend.platform_configs import PlatformConfig, resolve_platform
-from compiler.backend.triton_backend import module
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.backend.contracts import violations
+from flowgpu.compiler.backend.platform_configs import PlatformConfig, resolve_platform
+from flowgpu.compiler.backend.triton_backend import module
 from test import platform_contract_registry as registry
 from test import segmented_support
 

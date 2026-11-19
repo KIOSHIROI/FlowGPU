@@ -6,15 +6,15 @@ import pathlib
 
 import pytest
 
-import compiler.core
-import compiler.core.frontend as frontend_api
-import compiler.frontend.ast_node as ast_node
-import compiler.frontend.diagnostic as dsl_diagnostic
-import compiler.frontend.position as dsl_position
-from compiler.frontend.dsl import DslFrontend
+import flowgpu.compiler.core
+import flowgpu.compiler.core.frontend as frontend_api
+import flowgpu.compiler.frontend.ast_node as ast_node
+import flowgpu.compiler.frontend.diagnostic as dsl_diagnostic
+import flowgpu.compiler.frontend.position as dsl_position
+from flowgpu.compiler.frontend.dsl import DslFrontend
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-CORE = ROOT / "compiler/core"
+CORE = ROOT / "flowgpu/compiler/core"
 
 
 def _imports(path: pathlib.Path) -> list[str]:
@@ -31,22 +31,23 @@ def _imports(path: pathlib.Path) -> list[str]:
 def test_core_never_imports_a_frontend():
     for path in CORE.glob("*.py"):
         imports = _imports(path)
-        offending = [name for name in imports if name == "compiler.frontend" or name.startswith("compiler.frontend.")]
+        offending = [name for name in imports if name == "flowgpu.compiler.frontend" or name.startswith("flowgpu.compiler.frontend.")]
         assert not offending, f"{path.name} imports a frontend: {offending}"
 
 
 def test_core_imports_without_the_dsl_package():
     # Importing core in a fresh interpreter must not load the DSL frontend or
-    # Lark.  (Source-level import checks alone would miss compiler/__init__.py,
+    # Lark.  (Source-level import checks alone would miss flowgpu/compiler/__init__.py,
     # which used to import compile_source eagerly.)
     import subprocess
     import sys
 
     code = (
-        "import sys, compiler.core; "
-        "assert 'compiler.frontend' not in sys.modules, sorted(sys.modules); "
+        "import sys, flowgpu.compiler.core; "
+        "assert 'flowgpu.compiler.frontend.dsl' not in sys.modules, sorted(sys.modules); "
+        "assert 'flowgpu.compiler.frontend.parser' not in sys.modules; "
         "assert 'lark' not in sys.modules, 'lark was imported'; "
-        "print(compiler.core.TensorType('fp32', []).is_scalar)"
+        "print(flowgpu.compiler.core.TensorType('fp32', []).is_scalar)"
     )
     completed = subprocess.run([sys.executable, "-c", code], cwd=ROOT,
                                capture_output=True, text=True)
@@ -64,8 +65,8 @@ def test_programmatic_frontend_does_not_load_the_dsl_parser():
 
     code = (
         "import sys; "
-        "from compiler.frontends.programmatic import ProgrammaticFrontend; "
-        "assert 'compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
+        "from flowgpu.compiler.frontends.programmatic import ProgrammaticFrontend; "
+        "assert 'flowgpu.compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
         "assert 'lark' not in sys.modules, 'lark was imported'; "
         "print(ProgrammaticFrontend().name)"
     )
@@ -76,11 +77,11 @@ def test_programmatic_frontend_does_not_load_the_dsl_parser():
 
 
 def test_dsl_primitives_are_the_core_objects():
-    assert compiler.core.CompileError is dsl_diagnostic.CompileError
-    assert compiler.core.DiagnosticKind is dsl_diagnostic.DiagnosticKind
-    assert compiler.core.RuleError is dsl_diagnostic.RuleError
-    assert compiler.core.Position is dsl_position.Position
-    assert compiler.core.TensorType is ast_node.TensorType
+    assert flowgpu.compiler.core.CompileError is dsl_diagnostic.CompileError
+    assert flowgpu.compiler.core.DiagnosticKind is dsl_diagnostic.DiagnosticKind
+    assert flowgpu.compiler.core.RuleError is dsl_diagnostic.RuleError
+    assert flowgpu.compiler.core.Position is dsl_position.Position
+    assert flowgpu.compiler.core.TensorType is ast_node.TensorType
 
 
 def test_dsl_frontend_satisfies_the_protocol_and_parses():
@@ -115,16 +116,16 @@ def test_a_non_dsl_frontend_can_register_without_touching_the_dsl():
 def test_ir_does_not_import_the_lexer_or_parser():
     # Phase 0 boundary: ir may still consume DSL AST node classes (Phase 1 moves
     # those), but it must not own syntax: no lexer/parser/ast_builder imports.
-    forbidden = ("compiler.frontend.lexer", "compiler.frontend.parser",
-                 "compiler.frontend.ast_builder")
-    for path in (ROOT / "compiler/ir").glob("*.py"):
+    forbidden = ("flowgpu.compiler.frontend.lexer", "flowgpu.compiler.frontend.parser",
+                 "flowgpu.compiler.frontend.ast_builder")
+    for path in (ROOT / "flowgpu/compiler/ir").glob("*.py"):
         imports = _imports(path)
         offending = [name for name in imports if name.startswith(forbidden)]
         assert not offending, f"{path.name} imports syntax: {offending}"
 
 
 def test_programmatic_frontend_builds_the_core_graph_without_the_dsl_parser():
-    from compiler.frontends.programmatic import ProgrammaticFrontend
+    from flowgpu.compiler.frontends.programmatic import ProgrammaticFrontend
 
     spec = {
         "pipeline": "programmatic_p",
@@ -142,7 +143,7 @@ def test_programmatic_frontend_builds_the_core_graph_without_the_dsl_parser():
     assert [node.op for node in graph.nodes] == ["input", "input", "add", "relu", "output"]
     assert graph.values["w"] == ast_node.TensorType("fp32", ["N"])
     # graph-level passes consume it without any DSL source text
-    from compiler.optimization.fusion import fuse
+    from flowgpu.compiler.optimization.fusion import fuse
     report = fuse(graph)
     assert len(report.groups) == 1 and report.groups[0].fused
 
@@ -150,7 +151,7 @@ def test_programmatic_frontend_builds_the_core_graph_without_the_dsl_parser():
 def test_programmatic_frontend_accepts_json_and_rejects_bad_specs():
     import json as _json
 
-    from compiler.frontends.programmatic import ProgrammaticFrontend
+    from flowgpu.compiler.frontends.programmatic import ProgrammaticFrontend
 
     frontend = ProgrammaticFrontend()
     graph = frontend.parse(_json.dumps({
@@ -159,7 +160,7 @@ def test_programmatic_frontend_accepts_json_and_rejects_bad_specs():
                    "output_type": "fp32[2]"}],
         "outputs": ["y"],
     }))
-    assert isinstance(graph, compiler.core.ir.DataflowGraph)
+    assert isinstance(graph, flowgpu.compiler.core.ir.DataflowGraph)
     with pytest.raises(ValueError):
         frontend.parse({"pipeline": "bad", "inputs": {"x": "fp32[2]"},
                         "nodes": [{"op": "relu", "inputs": ["nope"],
@@ -172,19 +173,19 @@ def test_programmatic_frontend_accepts_json_and_rejects_bad_specs():
 
 
 def test_programmatic_frontend_source_does_not_import_syntax():
-    from compiler.frontends import programmatic
+    from flowgpu.compiler.frontends import programmatic
     source = pathlib.Path(programmatic.__file__).read_text()
-    for forbidden in ("compiler.frontend.lexer", "compiler.frontend.parser",
-                      "compiler.frontend.ast_builder", "lark"):
+    for forbidden in ("flowgpu.compiler.frontend.lexer", "flowgpu.compiler.frontend.parser",
+                      "flowgpu.compiler.frontend.ast_builder", "lark"):
         assert forbidden not in source
 
 
 def test_ir_optimization_and_analysis_are_frontend_free():
-    for relative in ("compiler/ir", "compiler/optimization", "compiler/analysis"):
+    for relative in ("flowgpu/compiler/ir", "flowgpu/compiler/optimization", "flowgpu/compiler/analysis"):
         for path in (ROOT / relative).glob("*.py"):
             imports = _imports(path)
             offending = [name for name in imports
-                         if name == "compiler.frontend" or name.startswith("compiler.frontend.")]
+                         if name == "flowgpu.compiler.frontend" or name.startswith("flowgpu.compiler.frontend.")]
             assert not offending, f"{relative}/{path.name} imports a frontend: {offending}"
 
 
@@ -194,11 +195,12 @@ def test_core_ast_builder_does_not_load_the_dsl_or_lark():
 
     code = (
         "import sys; "
-        "from compiler.core.ast import PipelineDecl, InputDecl, Assignment, Call, Name, OutputDecl, Symbol; "
-        "from compiler.core.symbol_table import SymbolTable; "
-        "from compiler.core.types import TensorType; "
-        "from compiler.ir.dataflow_builder import DataflowBuilder; "
-        "assert 'compiler.frontend' not in sys.modules, sorted(sys.modules); "
+        "from flowgpu.compiler.core.ast import PipelineDecl, InputDecl, Assignment, Call, Name, OutputDecl, Symbol; "
+        "from flowgpu.compiler.core.symbol_table import SymbolTable; "
+        "from flowgpu.compiler.core.types import TensorType; "
+        "from flowgpu.compiler.ir.dataflow_builder import DataflowBuilder; "
+        "assert 'flowgpu.compiler.frontend.dsl' not in sys.modules, sorted(sys.modules); "
+        "assert 'flowgpu.compiler.frontend.parser' not in sys.modules; "
         "assert 'lark' not in sys.modules, 'lark was imported'; "
         "st = SymbolTable(); "
         "st.define(Symbol('x', 'input', TensorType('fp32', ['N']))); "
@@ -217,10 +219,10 @@ def test_core_ast_builder_does_not_load_the_dsl_or_lark():
 
 
 def test_dataflow_builder_consumes_core_ast_directly():
-    from compiler.core.ast import Assignment, Call, InputDecl, Name, OutputDecl, PipelineDecl, Symbol
-    from compiler.core.symbol_table import SymbolTable
-    from compiler.core.types import TensorType
-    from compiler.ir.dataflow_builder import DataflowBuilder
+    from flowgpu.compiler.core.ast import Assignment, Call, InputDecl, Name, OutputDecl, PipelineDecl, Symbol
+    from flowgpu.compiler.core.symbol_table import SymbolTable
+    from flowgpu.compiler.core.types import TensorType
+    from flowgpu.compiler.ir.dataflow_builder import DataflowBuilder
 
     symbols = SymbolTable()
     symbols.define(Symbol("x", "input", TensorType("fp32", ["N"])))
@@ -236,17 +238,17 @@ def test_dataflow_builder_consumes_core_ast_directly():
 
 
 def test_backend_does_not_import_the_frontend():
-    for path in (ROOT / "compiler/backend").glob("*.py"):
+    for path in (ROOT / "flowgpu/compiler/backend").glob("*.py"):
         imports = _imports(path)
         offending = [name for name in imports
-                     if name == "compiler.frontend" or name.startswith("compiler.frontend.")]
+                     if name == "flowgpu.compiler.frontend" or name.startswith("flowgpu.compiler.frontend.")]
         assert not offending, f"backend/{path.name} imports a frontend: {offending}"
 
 
 def test_compile_module_has_no_top_level_frontend_import():
     # parser/ASTBuilder are imported lazily inside the parse branch; an AST or
     # eDSL caller must not need them at module import time.
-    tree = ast.parse((ROOT / "compiler/compile.py").read_text())
+    tree = ast.parse((ROOT / "flowgpu/compiler/compile.py").read_text())
     imports = []
     for node in tree.body:
         if isinstance(node, ast.Import):
@@ -254,11 +256,11 @@ def test_compile_module_has_no_top_level_frontend_import():
         elif isinstance(node, ast.ImportFrom) and node.module:
             imports.append(node.module)
     offending = [name for name in imports
-                 if name == "compiler.frontend" or name.startswith("compiler.frontend.")]
+                 if name == "flowgpu.compiler.frontend" or name.startswith("flowgpu.compiler.frontend.")]
     assert not offending, f"compile.py imports a frontend at module level: {offending}"
     import subprocess
     import sys
-    code = ("import sys, compiler.compile; "
+    code = ("import sys, flowgpu.compiler.compile; "
             "assert 'lark' not in sys.modules, 'lark was imported'; "
             "print('ok')")
     completed = subprocess.run([sys.executable, "-c", code], cwd=ROOT,

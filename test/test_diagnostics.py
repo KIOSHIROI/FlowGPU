@@ -18,8 +18,8 @@ import json
 
 import pytest
 
-from compiler.compile import CompileError, compile_source
-from compiler.diagnostic import DiagnosticKind
+from flowgpu.compiler.compile import CompileError, compile_source
+from flowgpu.compiler.diagnostic import DiagnosticKind
 
 
 def diagnostic(source: str) -> CompileError:

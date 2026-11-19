@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from compiler.backend.kernel_abi import prune_unused_parameters
-from compiler.backend.triton_backend import module
-from compiler.compile import compile_source
-from compiler.runtime.cache import cached_module
+from flowgpu.compiler.backend.kernel_abi import prune_unused_parameters
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.runtime.cache import cached_module
 from main import main
 
 SOURCE=Path('examples/batch8/dcp_lse_combine.fgpu').read_text()

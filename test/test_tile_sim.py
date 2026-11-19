@@ -12,7 +12,7 @@ milliseconds; these tests keep them asserted.
 """
 import pytest
 
-from compiler.analysis import tile_sim as ts
+from flowgpu.compiler.analysis import tile_sim as ts
 
 
 SMALL = ts.Geom.from_shapes((1, 1, 1, 30, 52), 1, (1, 1, 1, 1, 1, 0))

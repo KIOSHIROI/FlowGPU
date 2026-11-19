@@ -12,10 +12,10 @@ import pathlib
 
 import pytest
 
-from compiler.backend import reference
-from compiler.backend.triton_backend import module as triton_module
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.backend.triton_backend import module as triton_module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 from test import segmented_support
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
@@ -182,7 +182,7 @@ def test_emit_json_handles_multi_name_assignments(tmp_path):
     import io
     import json
 
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     source = tmp_path / "multi.fgpu"
     source.write_text(
@@ -324,7 +324,7 @@ def test_gated_delta_recurrence_widens_non_power_of_two_state_extents():
 # P1-11: the two reference hosts that used to raise a traceback now run, and a
 # genuinely broken host would still be reported as a diagnostic, not a traceback.
 def test_the_batch8_cache_examples_run_through_the_reference_host(capsys):
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     for path in ("examples/batch8/linear_decode_forward.fgpu",
                  "examples/batch8/store_cache_4d.fgpu"):

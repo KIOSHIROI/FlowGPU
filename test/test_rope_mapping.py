@@ -3,9 +3,9 @@ import ast
 
 import pytest
 
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import grid_ceiling, module
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import grid_ceiling, module
+from flowgpu.compiler.compile import compile_source
 
 
 SOURCE = '''pipeline rotary {

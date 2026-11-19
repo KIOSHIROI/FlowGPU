@@ -17,12 +17,12 @@ consumes it:
 """
 import pytest
 
-from compiler.backend.platform_configs import (PLATFORMS, PlatformConfig,
+from flowgpu.compiler.backend.platform_configs import (PLATFORMS, PlatformConfig,
                                                block_candidates,
                                                measured_block_peak,
                                                resolve_platform,
                                                resolved_default_block)
-from compiler.compile import compile_source
+from flowgpu.compiler.compile import compile_source
 
 #: The resolved default after consuming the curve: only a platform with a
 #: measured record moves.

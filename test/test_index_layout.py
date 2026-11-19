@@ -20,9 +20,9 @@ import math
 
 import pytest
 
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 
 def compile_program(source):
@@ -113,7 +113,7 @@ def test_the_post_reorder_combine_is_a_gather_not_a_scatter():
     half only *reads* them out of place, then reduces. The distinction is what
     `analysis/access_shape` reports to a target, so it is asserted rather than
     assumed: an indexed read and an indexed write do not cost the same."""
-    from compiler.analysis.access_shape import GATHER, SCATTER, of_op
+    from flowgpu.compiler.analysis.access_shape import GATHER, SCATTER, of_op
 
     assert of_op("gather_rows").kind == GATHER
     assert of_op("scatter_by_index").kind == SCATTER

@@ -3,8 +3,8 @@ import ast
 
 import pytest
 
-from compiler.backend.platform_configs import resolve_platform
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
 
 
 @pytest.mark.parametrize('operator', ['rmsnorm_hf', 'rms_norm', 'softmax'])

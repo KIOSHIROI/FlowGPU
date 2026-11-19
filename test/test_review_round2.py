@@ -11,10 +11,10 @@ from pathlib import Path
 
 import pytest
 
-from compiler.backend import reference
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
-from compiler.cli import main
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.cli import main
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -148,15 +148,15 @@ def test_emit_false_stops_before_both_lowerings():
 
 
 def test_program_scalar_identifiers_reject_python_keywords():
-    from compiler.ir.program_scalar_ir import ProgramIndex, ProgramScalar
+    from flowgpu.compiler.ir.program_scalar_ir import ProgramIndex, ProgramScalar
     with pytest.raises(ValueError, match='program scalar table must be a non-empty, non-keyword identifier') as caught:
         ProgramScalar(table="class", index=ProgramIndex(axis=0))
     assert "keyword" in str(caught.value)
 
 
 def test_the_cache_facade_does_not_rewrite_the_implementation_fingerprint():
-    from compiler import cache
-    from compiler.runtime import cache as implementation
+    from flowgpu.compiler import cache
+    from flowgpu.compiler.runtime import cache as implementation
 
     original = implementation.compiler_fingerprint
     calls = []
@@ -228,8 +228,8 @@ def test_rowwise_reduction_results_are_broadcast_lane_shaped(source, marker):
 
 # --- GEMM tile policy: measured tiles are data, not emitter edits ---------
 def test_the_matmul_tile_policy_rewrites_header_and_launch_resources():
-    from compiler.backend.platform_configs import resolve_platform
-    from compiler.backend.triton_backend import module
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler.backend.triton_backend import module
     source = (HERE / 'examples/gpu_mode/matmul.fgpu').read_text()
     config = resolve_platform('cuda', matmul_block_m=128, matmul_block_n=256,
                               matmul_block_k=32, matmul_num_warps=8,

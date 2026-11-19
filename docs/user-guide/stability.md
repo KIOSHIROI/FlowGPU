@@ -26,7 +26,7 @@ is documented in the changelog.
 
 ## What is not stable yet
 
-- Internal modules below `compiler/` are implementation details; importing them
+- Internal modules below `flowgpu/compiler/` are implementation details; importing them
   directly is not a compatibility promise.
 - Generated Triton source, host-wrapper ABI and JSON emitted by advanced
   `--emit` modes are not a stable serialized interface.

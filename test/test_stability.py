@@ -20,11 +20,11 @@ import json
 
 import pytest
 
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError
-from compiler.operator import OPERATORS, infer_mul, infer_unary_same_type, register_operator
-from compiler.stability import PATTERNS, boundary, check
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError
+from flowgpu.compiler.operator import OPERATORS, infer_mul, infer_unary_same_type, register_operator
+from flowgpu.compiler.stability import PATTERNS, boundary, check
 
 HAND_WRITTEN_SOFTMAX = """
 pipeline hand_softmax {

@@ -1,9 +1,9 @@
 import math
 import pytest
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.cli import main
-from compiler.diagnostic import CompileError
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.diagnostic import CompileError
 
 
 def run(source,args,**opts):
@@ -236,7 +236,7 @@ def test_task_chunked_rowwise_declares_every_chain_dimension():
     bound-shape local run cannot.
     """
     import re
-    from compiler.platform_configs import resolve_platform
+    from flowgpu.compiler.platform_configs import resolve_platform
     config = resolve_platform('cuda')
     p = compile_source(TASK_SOURCE, platform_config=config).pipelines[0]
     text = '\n\n'.join(k.source for k in p.triton.kernels)
@@ -305,7 +305,7 @@ def test_indexed_reduction_store_tail_uses_inverse_map():
     (a per-row result written once, not once per column chunk).
     """
     import re
-    from compiler.platform_configs import resolve_platform
+    from flowgpu.compiler.platform_configs import resolve_platform
     config = resolve_platform('cuda')
     p = compile_source(TASK_SOURCE, platform_config=config).pipelines[0]
     text = '\n\n'.join(k.source for k in p.triton.kernels)

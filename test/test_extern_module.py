@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from compiler.extern import ExternModule, ExternModuleError, assemble
+from flowgpu.compiler.extern import ExternModule, ExternModuleError, assemble
 
 KERNELS = '''@triton.jit
 def add_kernel(x_ptr, y_ptr, n, BLOCK: tl.constexpr):

@@ -1,7 +1,7 @@
-from compiler.backend.backend_policy import BackendPolicy, make_backend_policy
-from compiler.analysis.kernel_schedule import analyze_schedule
-from compiler.compile import compile_source
-from compiler.backend import reference
+from flowgpu.compiler.backend.backend_policy import BackendPolicy, make_backend_policy
+from flowgpu.compiler.analysis.kernel_schedule import analyze_schedule
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend import reference
 
 
 SOURCE = """

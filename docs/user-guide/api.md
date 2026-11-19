@@ -1,6 +1,6 @@
 # Python API
 
-The public API is intentionally small. Import it from the `flowgpu` package; the legacy `compiler` package remains available while the pre-1.0 namespace transition is in progress.
+The public API is intentionally small. Import it from the `flowgpu` package. The former top-level `compiler` import was removed in 0.18.0.
 
 ```python
 from flowgpu import CompileError, compile_source, compile_pipelines
@@ -60,7 +60,7 @@ Only a small subset is needed for normal use. All are keyword-only after
 | Option | Purpose |
 |---|---|
 | `source_path=` | path used in diagnostics |
-| `platform_config=` | target profile (see `compiler.backend.platform_configs`) |
+| `platform_config=` | target profile (see `flowgpu.compiler.backend.platform_configs`) |
 | `shape_bindings=` / `shape_constraints=` | specialize or constrain symbolic dimensions |
 | `index_fusion=` | enable/disable index-region fusion (default on) |
 | `reduction_fusion=` | enable/disable reduction fusion (default on) |
@@ -70,7 +70,7 @@ Only a small subset is needed for normal use. All are keyword-only after
 | `cache_dir=` | content-addressed emission cache |
 
 For the complete signature, see
-[`compiler/compile.py`](https://github.com/KIOSHIROI/FlowGPU/blob/main/compiler/compile.py).
+[`flowgpu/compiler/compile.py`](https://github.com/KIOSHIROI/FlowGPU/blob/main/flowgpu/compiler/compile.py).
 The CLI exposes many advanced strategy options; use `flowgpu --help` for the
 list.
 
@@ -96,4 +96,4 @@ The compiler chooses to refuse a construct rather than silently approximating it
 frontends. Most users should call `compile_source`.
 
 For examples of frontends, see
-[`compiler/frontends`](https://github.com/KIOSHIROI/FlowGPU/tree/main/compiler/frontends).
+[`flowgpu/compiler/frontends`](https://github.com/KIOSHIROI/FlowGPU/tree/main/flowgpu/compiler/frontends).

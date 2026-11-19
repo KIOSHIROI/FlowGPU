@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.18.0
+
+- **Breaking:** move the implementation into `flowgpu.compiler` and
+  `flowgpu.migration`; the former top-level `compiler` / `migration` packages
+  are removed. Import from `flowgpu` and use `python -m flowgpu`.
+- The wheel now contains one top-level package, `flowgpu`.
+
 ## Unreleased
 
 - Publish the user guide on GitHub Pages and link it from the README.

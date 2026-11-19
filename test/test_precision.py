@@ -15,12 +15,12 @@ import json
 
 import pytest
 
-from compiler.backend.value_layer import NAMES as VALUE_LAYER_NAMES
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError
-from compiler.operator import OPERATORS, infer_unary_same_type, register_operator
-from compiler.precision import ACC_FLOOR, declared, declined, dtype_class, width
+from flowgpu.compiler.backend.value_layer import NAMES as VALUE_LAYER_NAMES
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError
+from flowgpu.compiler.operator import OPERATORS, infer_unary_same_type, register_operator
+from flowgpu.compiler.precision import ACC_FLOOR, declared, declined, dtype_class, width
 
 NARROW_ACCUMULATOR = """
 pipeline narrow {

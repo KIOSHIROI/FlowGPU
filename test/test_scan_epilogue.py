@@ -1,7 +1,7 @@
 """P1 scan+row-total rewrite."""
 from __future__ import annotations
 
-from compiler import compile_source
+from flowgpu.compiler import compile_source
 
 SCAN = ("pipeline p { input x:fp32[8,128] t=sum_axis(x,1) c=cumsum_axis(x,1) "
         "out=add(c,broadcast_like(t,x)) output out }")

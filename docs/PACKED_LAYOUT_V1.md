@@ -8,7 +8,7 @@ without growing the frontend grammar.
 
 | Piece | Where | State |
 |---|---|---|
-| Layout descriptor | `compiler/packed_layout.py::PackedLayout` | data-only: `storage=e4m3`, `block=32`, `scale=e8m0`, `scale_dtype=uint8`, `pack_bits=8`; other values are rejected rather than half-supported |
+| Layout descriptor | `flowgpu/compiler/packed_layout.py::PackedLayout` | data-only: `storage=e4m3`, `block=32`, `scale=e8m0`, `scale_dtype=uint8`, `pack_bits=8`; other values are rejected rather than half-supported |
 | E4M3 byte codec (RTNE, saturating) | `packed_layout.e4m3_byte` / `e4m3_value` | independent bit-layout oracle; agrees byte-for-byte with `tools/fp8_encoder.e4m3_bits` and numerically with the backend's `fp8e4m3` preamble |
 | E8M0 scale codec | `packed_layout.e8m0_scale` / `e8m0_value` | `ceil(log2(amax/448))+127`, clamped `[0,254]`, amax clamped to `1e-30` |
 | MXFP8 quantise/dequantise oracle | `quantize_mxfp8` / `dequantize_mxfp8` | no torch, no device; this is the statement's semantics |
@@ -33,7 +33,7 @@ needs a special backend path:
 | kernels | 3 passes (amax, scale, encode) | 1 fused `primitive` kernel |
 | platforms | generic + a KunlunXin variant for a bitcast miscompile | target-neutral source; the backend plan chooses the machine code |
 | verification | per-platform harness runs | reference oracle + byte-exact test in the normal suite |
-| provenance | extern envelope (`compiler/extern.py`) | frontend operator graph |
+| provenance | extern envelope (`flowgpu/compiler/extern.py`) | frontend operator graph |
 
 Status: **reference-verified**; the Triton path compiles (`complete`, one kernel,
 `fp8e4m3`/`uint8` outputs) and is expected to run on CUDA, but no GPU was

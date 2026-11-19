@@ -165,7 +165,7 @@ QK 示例保留两个归一化 kernel 与两个配对旋转 kernel。RoPE 不是
 
 ### 13.1 Lexer
 
-compiler/grammar.lark 定义终结符，独立词法视图和解析器共用它。
+flowgpu/compiler/grammar.lark 定义终结符，独立词法视图和解析器共用它。
 
 ### 13.2 Parser / AST
 
@@ -383,7 +383,7 @@ CUDA 支持上述索引表达式融合；独立物化模式仍可用于对照。
 第八批语言样例保留 FP32 的 LSE 中间值；全无效权重保留参考语义的 NaN 输出和 -inf LSE。
 当前样例不表达可选参数/返回 None、原地 scatter、副作用或动态压缩。
 
-v0.5（2026-10-20）：值层补全（`compiler/backend/value_layer.py`）。
+v0.5（2026-10-20）：值层补全（`flowgpu/compiler/backend/value_layer.py`）。
 
 起因不是设想，而是普查：把 115 道题的**参考实现**逐题读下来，按它实际调用的原语分类
 （`the language-gap survey`），最大缺口在字段级运算而不是寻址——
@@ -429,7 +429,7 @@ Task152 的 `cumsum` 解决了"沿轴累积"，但每段在 `seg_start` 处重�
     y[..., t] = cumsum(x)[..., t] - (cumsum(x)[..., s[t] - 1] if s[t] > 0 else 0)
 
 `s`（`seg_start`）逐位置给出所在段的首元素下标。语言把它注册为一等算子，但**后端不发射它**：
-`compiler/ir/composite_ops.py` 在融合与 13.7 缓冲规划之前把节点展开成既有算子——
+`flowgpu/compiler/ir/composite_ops.py` 在融合与 13.7 缓冲规划之前把节点展开成既有算子——
 
 | 展开步骤 | 复用的 lowering |
 |---|---|
@@ -540,7 +540,7 @@ v0.7（2026-10-22）：带索引归约 `argmax_last` / `argmin_last`（`reduce_w
 
 承载"归约时把获胜位置也带出来"这一结构特征的，是**一个**算子族，不是两个算子：
 DSL 没有字符串字面量模式参数，所以方向由名字拼写；`argmax_last` 与 `argmin_last`
-共用同一条类型规则、同一份 lowering（`compiler/backend/reduce_with_index_backend.py`）
+共用同一条类型规则、同一份 lowering（`flowgpu/compiler/backend/reduce_with_index_backend.py`）
 和同一个 kernel 种类 `reduce_with_index`。审计的分母因此只计 1。
 
 | 算子 | 语义 | 类型规则与契约 |
@@ -664,7 +664,7 @@ fp32 位模式上反复做同样的取指/移位/掩码；把中间值**共享**
 **单-use 表达式树**：每个使用点重新算一遍，保住了"1 个 kernel"，代价是 ~2 倍的 ALU。
 
 这两种代价本来不该由写程序的人承担：**同一个内核里**两个结构相同、操作数相同的表达式，
-是**一条**设备指令，不是一次内存边界。`compiler/backend/cse.py` 的开关 +
+是**一条**设备指令，不是一次内存边界。`flowgpu/compiler/backend/cse.py` 的开关 +
 两个发射点（`indexed_backend` 的 `canonical()` 与 `_pointwise_kernel` 的
 `subexpressions`）在发射时做**局部哈希 consing**：
 

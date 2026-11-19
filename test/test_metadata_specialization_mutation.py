@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from compiler.backend.metadata_specialization import specialize_host
+from flowgpu.compiler.backend.metadata_specialization import specialize_host
 
 
 CONTEXT=[dict(shape=[7,3],stride=[3,1],dtype='torch.float32',device='cuda:0',alignment_mod128=0)]

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from compiler.cli import main
+from flowgpu.compiler.cli import main
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = REPO_ROOT / "examples"

@@ -8,11 +8,11 @@ and why it composes with `scatter_by_index`, which is what actually moves rows.
 """
 import pytest
 
-from compiler.analysis.access_shape import BLOCK, of_op
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.operator import OPERATORS
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.analysis.access_shape import BLOCK, of_op
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.operator import OPERATORS
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 PROGRAM = """
 pipeline dispatch {

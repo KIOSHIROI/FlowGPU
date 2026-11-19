@@ -1,7 +1,7 @@
 import pytest
 
-from compiler.frontend.ast_node import IntLiteral
-from compiler.frontend.scalars import ScalarType, TypedScalar, static_int
+from flowgpu.compiler.frontend.ast_node import IntLiteral
+from flowgpu.compiler.frontend.scalars import ScalarType, TypedScalar, static_int
 
 
 def test_axis_literal_has_static_int32_type():

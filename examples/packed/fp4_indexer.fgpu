@@ -8,7 +8,7 @@
 #         sf = [n, 4, 1] int32, one exponent per group, packed further by the
 #         wrapper into the task's [n] int32 word (e0 | e1<<8 | e2<<16 | e3<<24).
 #
-# Semantics (byte-for-byte checked against compiler/packed_layout.py::NVFP4 in
+# Semantics (byte-for-byte checked against flowgpu/compiler/packed_layout.py::NVFP4 in
 # test/test_packed_dsl.py):
 #   amax = max(|x|) per group; sf = max(amax/6, 1e-4);
 #   exp = clamp(ceil_ue8m0(sf), 1, 254); scale = 2 ** (exp - 127);

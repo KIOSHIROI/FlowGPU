@@ -1,11 +1,11 @@
 """Synthetic cache evidence tests are contracts, never performance evidence."""
 from pathlib import Path
 
-from compiler.compile import compile_source
-from compiler.backend.triton_backend import module
-from compiler.optimization.strategy import candidates,compare_strategies
-from compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
-from compiler.optimization.measurement import digest,select_paired,_atomic_json
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.optimization.strategy import candidates,compare_strategies
+from flowgpu.compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
+from flowgpu.compiler.optimization.measurement import digest,select_paired,_atomic_json
 
 
 def test_merged_policy_roundtrip_and_stale_opt_in_rejection(tmp_path):

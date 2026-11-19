@@ -60,8 +60,8 @@ def main(argv=None) -> int:
               "GPU runner and set the GPU_RUNNER repository variable to use this workflow")
         return 2 if args.require_device else 0
 
-    from compiler import compile_source
-    from compiler.backend.triton_backend import module
+    from flowgpu.compiler import compile_source
+    from flowgpu.compiler.backend.triton_backend import module
 
     failures = []
 
@@ -104,7 +104,7 @@ def main(argv=None) -> int:
         constants = (1e-30, 448.0, -448.0, 0, 1, 23, 255, 0x7FFFFF, 254)
         values = (torch.randn(4, 2, 32, device="cuda", dtype=torch.float32) * 3.0)
         produced = packed_ns["run_mxfp8_quantize"](values, *constants)
-        from compiler.packed_layout import quantize_mxfp8
+        from flowgpu.compiler.packed_layout import quantize_mxfp8
         codes, scales = quantize_mxfp8(values.reshape(-1).cpu().tolist(), [4, 2, 32])
         got_codes = produced["q"].view(torch.uint8).reshape(-1).cpu().tolist()
         got_scales = produced["s"].reshape(-1).cpu().tolist()
@@ -124,7 +124,7 @@ def main(argv=None) -> int:
                          0, 1, -1, 4, 8, 16, 23, 24, 31, 254, 255, 0x7FFFFF)
         fp4_x = torch.randn(4, 4, 32, device="cuda", dtype=torch.float32) * 3.0
         fp4_out = fp4_ns["run_quantize_fp4_indexer"](fp4_x, *fp4_constants)
-        from compiler.packed_layout import quantize_nvfp4_indexer
+        from flowgpu.compiler.packed_layout import quantize_nvfp4_indexer
         fp4_codes, fp4_words = quantize_nvfp4_indexer(
             fp4_x.reshape(-1).cpu().tolist(), [4, 128])
         if fp4_out["q"].reshape(-1).cpu().tolist() != fp4_codes:

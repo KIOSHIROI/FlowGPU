@@ -1,5 +1,5 @@
-from compiler.compile import compile_source
-from compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
 import pytest
 
 SOURCE='''pipeline p {

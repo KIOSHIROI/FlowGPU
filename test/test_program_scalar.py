@@ -33,18 +33,18 @@ import types
 
 import pytest
 
-from compiler.analysis import write_address
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import module
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
-from compiler.frontend.program_scalar import (
+from flowgpu.compiler.analysis import write_address
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.frontend.program_scalar import (
     STAGED_OPERATOR,
     infer_program_scalar,
     register as register_program_scalar,
     unregister as unregister_program_scalar,
 )
-from compiler.ir.program_scalar_ir import (
+from flowgpu.compiler.ir.program_scalar_ir import (
     PROGRAM_SCALAR_INDEX,
     STAGED_PROGRAM_SCALAR_OP,
     AddressTerm,
@@ -55,7 +55,7 @@ from compiler.ir.program_scalar_ir import (
     ScalarRef,
 )
 from test import segmented_support
-from compiler.frontend.diagnostic import RuleError
+from flowgpu.compiler.frontend.diagnostic import RuleError
 
 TEXT256 = (
     "pipeline p { input table:int32[S] input x:int32[M,N] "
@@ -89,7 +89,7 @@ def test_the_staged_frontend_name_is_the_ir_name():
 
 
 def test_the_staged_operator_is_not_in_the_default_registry():
-    from compiler.frontend.operator import OPERATORS
+    from flowgpu.compiler.frontend.operator import OPERATORS
     assert STAGED_OPERATOR not in OPERATORS
 
 
@@ -153,7 +153,7 @@ def test_affine_address_terms_are_lane_or_program_uniform_only():
 
 
 def test_the_staged_rule_returns_a_rank_zero_integer_value():
-    from compiler.frontend.ast_node import TensorType
+    from flowgpu.compiler.frontend.ast_node import TensorType
     result = infer_program_scalar([TensorType("int32", ["S"])])
     assert result.is_scalar
     assert result.dtype == "int32"
@@ -164,7 +164,7 @@ def test_the_staged_rule_returns_a_rank_zero_integer_value():
     ("int32", ["M", "N"]),    # table with more than one axis
 ])
 def test_the_staged_rule_refuses_a_non_scalar_read(table, staged_operator):
-    from compiler.frontend.ast_node import TensorType
+    from flowgpu.compiler.frontend.ast_node import TensorType
     dtype, shape = table
     with pytest.raises(RuleError, match='program_scalar'):
         infer_program_scalar([TensorType(dtype, shape)])
@@ -540,8 +540,8 @@ def test_the_pointwise_and_rowwise_corpus_has_only_affine_writes():
 
 def test_host_checkable_matches_what_the_host_guard_does():
     """The IR property is not decorative: the backend reads it."""
-    from compiler.backend.program_scalar import host_guards
-    from compiler.ir.program_scalar_ir import ScalarRef
+    from flowgpu.compiler.backend.program_scalar import host_guards
+    from flowgpu.compiler.ir.program_scalar_ir import ScalarRef
 
     trusted_device = ProgramScalar(
         table="table", index=ScalarRef(name="idx", host_visible=False),

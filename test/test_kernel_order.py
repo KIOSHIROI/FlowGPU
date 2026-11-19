@@ -19,8 +19,8 @@ import math
 
 import pytest
 
-from compiler.backend import reference
-from compiler.compile import compile_source
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.compile import compile_source
 
 #: The smallest shape that reproduces it: a pointwise chain (`add` -> `mul` ->
 #: `mul` -> `add`) fused into one region whose two non-input operands (`q`, `r`)

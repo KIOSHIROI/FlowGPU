@@ -13,4 +13,4 @@ part of this repository. The included suite contains 1,600+ passing CPU tests an
 IR, fusion, buffer planning, layout operators, frontends, reference semantics,
 Triton source emission, scalar placement and public API.
 
-CI runs the suite with a coverage gate (`fail_under = 55` in `pyproject.toml`). The current public suite covers ~82% of `compiler/` lines.
+CI runs the suite with a coverage gate (`fail_under = 55` in `pyproject.toml`). The current public suite covers ~82% of `flowgpu/compiler/` lines.

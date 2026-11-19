@@ -23,7 +23,7 @@ compile a shape-generic program.
 ## 2. Inspect the typed pipeline
 
 ```sh
-.venv/bin/python -m compiler.cli hello.fgpu --emit summary
+.venv/bin/python -m flowgpu hello.fgpu --emit summary
 ```
 
 You should see the pipeline name, its typed values and a final `OK`. The summary
@@ -32,7 +32,7 @@ is a quick way to catch shape or dtype mistakes before emission.
 ## 3. Inspect the generated Triton
 
 ```sh
-.venv/bin/python -m compiler.cli hello.fgpu --emit triton
+.venv/bin/python -m flowgpu hello.fgpu --emit triton
 ```
 
 The output contains a complete module: a `@triton.jit` kernel plus a host wrapper
@@ -42,7 +42,7 @@ kernel is compiler output, not a template string.
 ## 4. Run the reference backend
 
 ```sh
-.venv/bin/python -m compiler.cli hello.fgpu --run
+.venv/bin/python -m flowgpu hello.fgpu --run
 ```
 
 The reference backend interprets the same typed pipeline in Python and prints
@@ -59,8 +59,8 @@ pipeline row_sum {
 ```
 
 ```sh
-.venv/bin/python -m compiler.cli row_sum.fgpu --emit summary
-.venv/bin/python -m compiler.cli row_sum.fgpu --emit triton
+.venv/bin/python -m flowgpu row_sum.fgpu --emit summary
+.venv/bin/python -m flowgpu row_sum.fgpu --emit triton
 ```
 
 `sum_axis` reduces the last axis; the generated kernel contains the reduction
@@ -76,7 +76,7 @@ CompileError: type error at line 3, column 9: ...
 ```
 
 The message includes a source position and a concrete explanation. If a
-construct is not supported by the compiler/backend, the compiler emits a
+construct is not supported by the flowgpu/compiler/backend, the compiler emits a
 refusal instead of silently approximating it.
 
 ## Next

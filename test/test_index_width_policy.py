@@ -21,10 +21,10 @@ import math
 
 import pytest
 
-from compiler.backend.platform_configs import (
+from flowgpu.compiler.backend.platform_configs import (
     MAX_INDEX32, PlatformConfig, emitted_index_dtype, resolve_platform)
-from compiler.backend.triton_backend import module
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.compile import compile_source
 from test import segmented_support
 from test.index_width_support import (
     SWIGLU, evaluate_index_bound, execute_module, execute_module_expect_error,

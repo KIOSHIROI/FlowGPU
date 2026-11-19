@@ -24,7 +24,7 @@ python -m venv .venv
    old bytes.
 4. Platform claims are measurements: add measured contracts with a fixture and
    a document; do not infer one backend's behaviour from another.
-5. Hand-written Triton wrapped by `compiler/extern.py` is labelled extern;
+5. Hand-written Triton wrapped by `flowgpu/compiler/extern.py` is labelled extern;
    generated and hand-written results are reported separately.
 
 ## Pull requests

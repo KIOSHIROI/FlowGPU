@@ -11,11 +11,11 @@ judgement the official board made, now available before emission.
 """
 import pytest
 
-from compiler.analysis.access_shape import PERMUTED, plan_shape, platform_conflicts
-from compiler.backend.platform_configs import PLATFORMS
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.analysis.access_shape import PERMUTED, plan_shape, platform_conflicts
+from flowgpu.compiler.backend.platform_configs import PLATFORMS
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 
 def program(x="bf16[1,4,8,8]", ph=2, pw=2):

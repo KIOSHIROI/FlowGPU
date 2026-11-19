@@ -7,8 +7,8 @@ import sys
 
 import pytest
 
-from compiler.compile import compile_pipelines
-from compiler.frontends.triton_importer import import_triton
+from flowgpu.compiler.compile import compile_pipelines
+from flowgpu.compiler.frontends.triton_importer import import_triton
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -53,7 +53,7 @@ def test_imports_pointwise_and_matches_the_dsl_graph():
     assert pipeline.triton.complete
     assert [node.op for node in pipeline.dataflow.nodes] == ["input", "input", "add", "output"]
     # same logical graph as the DSL expression
-    from compiler import compile_source
+    from flowgpu.compiler import compile_source
     dsl = compile_source(
         "pipeline p { input x:fp32[N] input y:fp32[N] z=add(x,y) output z }"
     ).pipelines[0]
@@ -108,8 +108,8 @@ def k(x_ptr, out_ptr, BLOCK: tl.constexpr):
 def test_importer_does_not_load_the_dsl_or_lark():
     code = (
         "import sys; "
-        "from compiler.frontends.triton_importer import import_triton; "
-        "from compiler.compile import compile_pipelines; "
+        "from flowgpu.compiler.frontends.triton_importer import import_triton; "
+        "from flowgpu.compiler.compile import compile_pipelines; "
         "src = '''\n"
         "@triton.jit\n"
         "def k(x_ptr, out_ptr, BLOCK: tl.constexpr):\n"
@@ -121,7 +121,7 @@ def test_importer_does_not_load_the_dsl_or_lark():
         "k = import_triton(src, input_types={'x_ptr': 'fp32[N]'}, output_types={'out_ptr': 'fp32[N]'}); "
         "r = compile_pipelines(k.pipelines); "
         "assert r.pipelines[0].triton.complete; "
-        "assert 'compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
+        "assert 'flowgpu.compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
         "assert 'lark' not in sys.modules, 'lark was imported'; "
         "print('ok')"
     )

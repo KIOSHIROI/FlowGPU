@@ -21,10 +21,10 @@ from pathlib import Path
 
 import pytest
 
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import module as emit
-from compiler.compile import compile_source
-from compiler.runtime.tile_selection import emitted_tiles, tile_options
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import module as emit
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.runtime.tile_selection import emitted_tiles, tile_options
 
 EXAMPLES = Path(__file__).resolve().parents[1] / 'examples'
 LSE = EXAMPLES / 'batch8' / 'dcp_lse_combine.fgpu'
@@ -69,7 +69,7 @@ def test_asking_for_recompute_still_requires_cuda_indexed_and_reduction_fusion()
 
 def test_auto_is_a_named_mode_not_a_silent_choice_of_a_candidate():
     """The rule is structural -- fuse if there is something to fuse -- not a table."""
-    from compiler.compile import auto_cross_domain_config
+    from flowgpu.compiler.compile import auto_cross_domain_config
     config = auto_cross_domain_config()
     assert (config.indexed_columns, config.indexed_rows) == (4096, 16)
     assert config.reduction_block_limit == 65536

@@ -11,8 +11,8 @@ import types
 
 import pytest
 
-from compiler.backend import reference
-from compiler.compile import compile_source
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.compile import compile_source
 from test import segmented_support
 
 

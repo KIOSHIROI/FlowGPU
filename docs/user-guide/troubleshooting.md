@@ -5,7 +5,7 @@
 Use the module form from a checkout:
 
 ```sh
-python -m compiler.cli --version
+python -m flowgpu --version
 ```
 
 or install the package in the active environment:

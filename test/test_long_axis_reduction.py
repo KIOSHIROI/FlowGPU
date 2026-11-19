@@ -10,8 +10,8 @@ inventing a ceiling.
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
 
 SOFTMAX_D = """pipeline soft {
     input x : bf16[N,D]
@@ -222,7 +222,7 @@ def test_the_limit_appears_in_emitted_metadata():
 def test_cli_emits_the_chunked_form_with_a_limit(tmp_path, capsys):
     path = tmp_path / "soft.fgpu"
     path.write_text(SOFTMAX_D)
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     assert main(["--emit", "triton", str(path), "--reduction-block-limit", "256"]) == 0
     out = capsys.readouterr().out
     assert out.count("for chunk in range(0, tl.cdiv(D, ROW))") == 2
@@ -232,7 +232,7 @@ def test_cli_emits_the_chunked_form_with_a_limit(tmp_path, capsys):
 def test_cli_rejects_a_non_power_of_two_limit(tmp_path, capsys):
     path = tmp_path / "soft.fgpu"
     path.write_text(SOFTMAX_D)
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     assert main(["--emit", "triton", str(path), "--reduction-block-limit", "300"]) == 2
     assert "reduction_block_limit" in capsys.readouterr().err
 
@@ -242,7 +242,7 @@ def test_cli_default_cuda_emission_is_chunked_for_symbolic_rows(tmp_path, capsys
     symbolic row lowers to the chunked form without any flag."""
     path = tmp_path / "soft.fgpu"
     path.write_text(SOFTMAX_D)
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     assert main(["--emit", "triton", str(path)]) == 0
     out = capsys.readouterr().out
     assert out.count("for chunk in range(0, tl.cdiv(D, ROW))") == 2
@@ -254,7 +254,7 @@ def test_cli_can_raise_the_ceiling(tmp_path, capsys):
     row then chunks at the caller's width instead of 4096."""
     path = tmp_path / "soft.fgpu"
     path.write_text(SOFTMAX_D)
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     assert main(["--emit", "triton", str(path),
                  "--reduction-block-limit", "8192"]) == 0
     out = capsys.readouterr().out

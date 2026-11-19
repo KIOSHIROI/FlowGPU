@@ -1,11 +1,10 @@
 """FlowGPU public package namespace.
 
-The compiler implementation currently lives in the top-level ``compiler``
-package for historical reasons.  New code should import the public API from
-``flowgpu``; the legacy ``compiler`` imports remain supported while the
-implementation is moved behind this namespace.
+The compiler implementation lives in ``flowgpu.compiler`` and the optional
+migration CLI in ``flowgpu.migration``.  The former top-level ``compiler`` and
+``migration`` packages were removed in 0.18.0; use the ``flowgpu`` namespace.
 """
-from compiler import (
+from .compiler import (
     CompileError,
     CompileResult,
     __version__,

@@ -1,8 +1,8 @@
 # FlowGPU quickstart: one pointwise program, three things to do with it.
 #
-#   python -m compiler.cli examples/quickstart/add.fgpu --emit summary
-#   python -m compiler.cli examples/quickstart/add.fgpu --run
-#   python -m compiler.cli examples/quickstart/add.fgpu --run-gpu
+#   python -m flowgpu examples/quickstart/add.fgpu --emit summary
+#   python -m flowgpu examples/quickstart/add.fgpu --run
+#   python -m flowgpu examples/quickstart/add.fgpu --run-gpu
 #
 # The shapes are literal so the generated kernel needs no runtime shape guards;
 # the symbolic form in examples/gpu_mode/vectoradd.fgpu works just as well once

@@ -87,8 +87,8 @@ jobs:
           python -m venv /tmp/wheelcheck
           /tmp/wheelcheck/bin/python -m pip install dist/*.whl
           /tmp/wheelcheck/bin/python - <<'PY'
-          import compiler
-          from compiler import compile_source
+          import flowgpu.compiler
+          from flowgpu.compiler import compile_source
           result = compile_source("pipeline p { input x:fp16[64] input y:fp16[64] out = add(x, y) output out }")
           assert result.pipelines[0].triton.complete
           print("wheel import ok")
@@ -98,7 +98,7 @@ jobs:
           python -m venv /tmp/sdistcheck
           /tmp/sdistcheck/bin/python -m pip install dist/*.tar.gz
           /tmp/sdistcheck/bin/python - <<'PY'
-          from compiler import __version__, compile_source
+          from flowgpu.compiler import __version__, compile_source
           result = compile_source("pipeline p { input x:fp16[4] input y:fp16[4] out = add(x, y) output out }")
           assert result.pipelines[0].triton.complete
           print("sdist import ok", __version__)

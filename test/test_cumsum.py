@@ -21,9 +21,9 @@ see, both fixed here and pinned below:
 """
 import pytest
 
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 
 def program(body="out = cumsum_axis(x, 1)", dtype="fp32[8,16]"):
@@ -131,7 +131,7 @@ def test_a_fused_scan_neighbour_is_emitted_in_the_scan_kernel():
     it, and the fix was to emit the epilogue rather than to keep the anchor
     opaque.
     """
-    from compiler.backend import reference
+    from flowgpu.compiler.backend import reference
 
     epilogue = compile_source(
         "pipeline p { input x : fp32[8,16] y = cumsum(x) z = add(y, y) output z }"
@@ -190,7 +190,7 @@ def test_cumsum_totals_returns_the_scan_and_its_carry():
     the whole tensor a second time (measured on GPU MODE: 2.564 ms -> the
     totals form removes ~1 GB of traffic per 2**28-element call).
     """
-    from compiler.backend import reference
+    from flowgpu.compiler.backend import reference
 
     source = ('pipeline p {\n'
               '    input x : fp32[3,5]\n'
@@ -220,7 +220,7 @@ def test_cumsum_totals_returns_the_scan_and_its_carry():
 def test_a_two_level_prefix_sum_is_exact():
     """The composition the GPU MODE submission ships, checked on the reference
     oracle at a literal shape: row-local scan, row-carried totals, offsets."""
-    from compiler.backend import reference
+    from flowgpu.compiler.backend import reference
 
     source = ('pipeline p {\n'
               '    input x : fp32[2,4]\n'

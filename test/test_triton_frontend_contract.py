@@ -9,7 +9,7 @@ Python and was rejected by Triton 3.3.1 with
     chained boolean operators (A or B or C) are not supported;
     use parentheses to split the chain.
 
-`triton/compiler/code_generator.py` accepts exactly two values per `BoolOp` and
+`triton/flowgpu/compiler/code_generator.py` accepts exactly two values per `BoolOp` and
 exactly one operator per `Compare`. Those are the two rules encoded here, so a
 future code generator is caught on CPU instead of on a GPU.
 """
@@ -18,8 +18,8 @@ from pathlib import Path
 
 import pytest
 
-from compiler.backend.platform_configs import resolve_platform
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
 
 EXAMPLES = sorted(Path(__file__).resolve().parents[1].glob('examples/*.fgpu'))
 

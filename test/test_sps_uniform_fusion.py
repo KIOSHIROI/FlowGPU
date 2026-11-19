@@ -3,10 +3,10 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from compiler.compile import compile_pipelines
-from compiler.core.program_scalar import register, unregister
-from compiler.frontends.python_edsl import program
-from compiler.optimization.scalar_placement import Placement, plan_placements
+from flowgpu.compiler.compile import compile_pipelines
+from flowgpu.compiler.core.program_scalar import register, unregister
+from flowgpu.compiler.frontends.python_edsl import program
+from flowgpu.compiler.optimization.scalar_placement import Placement, plan_placements
 
 
 def _scalar_pipeline():

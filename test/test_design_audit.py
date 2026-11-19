@@ -1,17 +1,17 @@
 """Dispatch/cache and malformed-IR regressions from the design audit."""
 import ast
 import pytest
-from compiler.ast_node import TensorType
-from compiler.backends import library_dispatch
-from compiler.cache import cached_module
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.dataflow import DataflowGraph, Node, INPUT, OUTPUT
-from compiler.diagnostic import CompileError, DiagnosticKind
-from compiler.fusion import fuse
-from compiler.liveness import plan
-from compiler.reference import lower as lower_reference
-from compiler.triton_backend import lower as lower_triton
+from flowgpu.compiler.ast_node import TensorType
+from flowgpu.compiler.backends import library_dispatch
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.dataflow import DataflowGraph, Node, INPUT, OUTPUT
+from flowgpu.compiler.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler.fusion import fuse
+from flowgpu.compiler.liveness import plan
+from flowgpu.compiler.reference import lower as lower_reference
+from flowgpu.compiler.triton_backend import lower as lower_triton
 
 GEMM = ('pipeline p { input a : fp16[M,K] input b : fp16[K,N] '
         'y=matmul(a,b) z=silu(y) output z }')
@@ -26,7 +26,7 @@ def test_library_policy_cache_keys_and_actual_artifacts_do_not_collide(tmp_path,
     ast.parse(selective[0]); ast.parse(forced[0])
     def forbidden(*args, **kwargs):
         raise AssertionError('cache hit must not recompile')
-    monkeypatch.setattr('compiler.compile.compile_source', forbidden)
+    monkeypatch.setattr('flowgpu.compiler.compile.compile_source', forbidden)
     for policy, expected in [('unfused', selective), ('all', forced)]:
         assert cached_module(GEMM, cache_dir=tmp_path, gpu_backend='hybrid',
                              library_matmul=policy) == (expected[0], True, expected[2])

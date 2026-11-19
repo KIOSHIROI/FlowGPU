@@ -38,13 +38,13 @@ import types
 
 import pytest
 
-from compiler.analysis import access_shape, write_address
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import module
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
-from compiler.frontend.operator import OPERATORS
-from compiler.frontend.store_at import (
+from flowgpu.compiler.analysis import access_shape, write_address
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.frontend.operator import OPERATORS
+from flowgpu.compiler.frontend.store_at import (
     STAGED_OPERATOR,
     STAGED_OPERATORS,
     TRUSTED_OPERATOR,
@@ -52,7 +52,7 @@ from compiler.frontend.store_at import (
     unregister as unregister_store_at,
 )
 from test import segmented_support
-from compiler.frontend.diagnostic import RuleError
+from flowgpu.compiler.frontend.diagnostic import RuleError
 
 LITERAL = (
     "pipeline lit { input dst:bf16[256] input starts:int32[4] "
@@ -110,7 +110,7 @@ def test_store_at_is_staged_until_the_coordinated_registry_commit():
     present = [name in OPERATORS for name in STAGED_OPERATORS]
     assert all(present) or not any(present)
     if all(present):
-        from compiler.frontend.store_at_rule import infer_store_at
+        from flowgpu.compiler.frontend.store_at_rule import infer_store_at
         for name in STAGED_OPERATORS:
             assert OPERATORS[name].infer is infer_store_at
             assert OPERATORS[name].pointwise is False
@@ -118,8 +118,8 @@ def test_store_at_is_staged_until_the_coordinated_registry_commit():
 
 
 def test_a_program_uniform_base_requires_a_rank_one_integer_table(staged):
-    from compiler.frontend.store_at import infer_store_at
-    from compiler.frontend.ast_node import TensorType
+    from flowgpu.compiler.frontend.store_at import infer_store_at
+    from flowgpu.compiler.frontend.ast_node import TensorType
 
     dst = TensorType("bf16", ["T"])
     values = TensorType("bf16", ["C", "L"])
@@ -221,7 +221,7 @@ def test_store_at_is_an_opaque_anchor_so_upstream_pointwise_stays_its_own_kernel
 
 def test_the_emitter_refuses_a_non_affine_store_address():
     """Contract 3, unconditionally: the classifier runs on the emitter's output."""
-    from compiler.backend import store_at_backend
+    from flowgpu.compiler.backend import store_at_backend
 
     bad = """def k(out_ptr):
     idx = tl.program_id(0) * 16 + tl.arange(0, 16)
@@ -345,7 +345,7 @@ def test_a_fully_tiled_symbolic_destination_skips_the_copy_launch(staged):
 
 
 def test_the_generated_reference_matches_the_oracle_and_the_emitted_source(staged):
-    from compiler.backend.reference import module as reference_module
+    from flowgpu.compiler.backend.reference import module as reference_module
 
     program = pipeline(LITERAL).triton
     dst = _values(256)

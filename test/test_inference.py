@@ -1,10 +1,10 @@
 import pytest
 
-from compiler.compile import CompileError
-from compiler.diagnostic import DiagnosticKind
-from compiler.parser import parse_ast
-from compiler.symbol_table_builder import SymbolTableBuilder
-from compiler.type_inference import TypeInference
+from flowgpu.compiler.compile import CompileError
+from flowgpu.compiler.diagnostic import DiagnosticKind
+from flowgpu.compiler.parser import parse_ast
+from flowgpu.compiler.symbol_table_builder import SymbolTableBuilder
+from flowgpu.compiler.type_inference import TypeInference
 
 
 def setup(source: str):

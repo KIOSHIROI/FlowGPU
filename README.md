@@ -53,9 +53,9 @@ Requires **Python 3.11, 3.12 or 3.13**.
 ## Quickstart (no GPU needed)
 
 ```sh
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit summary
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit triton
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit summary
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit triton
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run
 ```
 
 The one-command demo compiles the same program and prints its generated kernels:
@@ -71,7 +71,7 @@ After installation the same commands are available as `flowgpu ...`.
 On a CUDA machine with PyTorch and Triton installed:
 
 ```sh
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run-gpu
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run-gpu
 ```
 
 It compares generated Triton against the reference backend and exits non-zero if
@@ -99,8 +99,8 @@ print(pipeline.reference.host)   # CPU reference implementation
 ```
 
 The public surface is `compile_source`, `compile_pipelines`, `CompileError` and
-`CompileResult`, available from the `flowgpu` package. The legacy `compiler`
-import path remains supported during the pre-1.0 transition. See the [Python API guide](docs/user-guide/api.md) for the objects and
+`CompileResult`, available from the `flowgpu` package. The former top-level
+`compiler` import was removed in 0.18.0. See the [Python API guide](docs/user-guide/api.md) for the objects and
 common options.
 
 ## What works today
@@ -142,8 +142,8 @@ The deeper design/evidence notes live in [`docs/`](docs/).
 
 | Path | Purpose |
 |---|---|
-| `compiler/` | parser, typed IR, optimization, backends, CLI |
-| `migration/` | operator coverage/evidence tooling |
+| `flowgpu/compiler/` | parser, typed IR, optimization, backends, CLI |
+| `flowgpu/migration/` | operator coverage/evidence tooling |
 | `examples/` | runnable `.fgpu` programs |
 | `models/` | small model operator manifests |
 | `test/` | public CPU test suite |

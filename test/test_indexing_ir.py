@@ -1,6 +1,6 @@
 import pytest
 
-from compiler.ir.indexing_ir import IndexSpec, ScatterWriteSpec
+from flowgpu.compiler.ir.indexing_ir import IndexSpec, ScatterWriteSpec
 
 
 def test_index_spec_makes_mask_and_bounds_policy_explicit():

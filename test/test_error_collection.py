@@ -15,9 +15,9 @@ quietly gets away with.
 
 import json
 
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError
 
 # Two mistakes that do not depend on each other: both assignments are wrong, and
 # neither name is read afterwards, so neither failure can produce the other.

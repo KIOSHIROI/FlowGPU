@@ -1,6 +1,6 @@
 import pytest
 
-from compiler.analysis.layout_candidates import compare_layout_reduction
+from flowgpu.compiler.analysis.layout_candidates import compare_layout_reduction
 
 
 def test_direct_layout_reduction_is_analysis_only_and_lower_traffic():

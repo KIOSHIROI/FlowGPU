@@ -1,8 +1,8 @@
 import pytest
 from lark.exceptions import UnexpectedInput
 
-from compiler.ast_node import Assignment
-from compiler.parser import parse_ast, parser
+from flowgpu.compiler.ast_node import Assignment
+from flowgpu.compiler.parser import parse_ast, parser
 
 
 def parse(source: str):
@@ -414,7 +414,7 @@ def test_infix_is_sugar_for_the_operator_call(infix, call):
 
 def test_multiplication_binds_tighter_than_addition():
     """优先级来自语法分层，不来自任何优先级声明。"""
-    from compiler.ast_node import Call, Name
+    from flowgpu.compiler.ast_node import Call, Name
 
     assert expression_of("x + r * s") == Call(
         name="add",
@@ -432,7 +432,7 @@ def test_multiplication_on_the_left_of_a_sum_is_allowed():
 
 
 def test_subtraction_is_left_associative():
-    from compiler.ast_node import Call, Name
+    from flowgpu.compiler.ast_node import Call, Name
 
     assert expression_of("x - r - s") == Call(
         name="sub",

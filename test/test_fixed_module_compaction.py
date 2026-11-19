@@ -3,9 +3,9 @@ import ast
 from dataclasses import replace
 from types import SimpleNamespace
 import pytest
-from compiler.compile import compile_source
-from compiler.backend.triton_backend import module
-from compiler.analysis.module_compaction import compact_source
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.analysis.module_compaction import compact_source
 
 
 def program(name, dtype, out='fp32'):

@@ -6,9 +6,9 @@ import weakref
 
 import pytest
 
-from compiler.optimization import measurement
-from compiler.optimization.measurement import measure_calls,digest
-from compiler.optimization.strategy_tuning import policy_identity,bound_comparison
+from flowgpu.compiler.optimization import measurement
+from flowgpu.compiler.optimization.measurement import measure_calls,digest
+from flowgpu.compiler.optimization.strategy_tuning import policy_identity,bound_comparison
 from test.test_strategy_tuning import observed,SOURCE
 
 

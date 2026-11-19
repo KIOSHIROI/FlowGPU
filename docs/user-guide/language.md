@@ -47,7 +47,7 @@ for real programs.
 
 - No arbitrary control flow or loops. A pipeline is a dataflow graph.
 - No implicit dtype coercion that would silently change precision.
-- No task-specific special cases in the compiler.
+- No task-specific special cases in the flowgpu.compiler.
 
 If a program cannot be expressed or lowered exactly, the compiler reports a
 diagnostic or refusal rather than approximating it.
@@ -55,10 +55,10 @@ diagnostic or refusal rather than approximating it.
 ## Inspecting a program
 
 ```sh
-.venv/bin/python -m compiler.cli program.fgpu --emit dataflow
-.venv/bin/python -m compiler.cli program.fgpu --emit fusion
-.venv/bin/python -m compiler.cli program.fgpu --emit buffers
-.venv/bin/python -m compiler.cli program.fgpu --emit triton
+.venv/bin/python -m flowgpu program.fgpu --emit dataflow
+.venv/bin/python -m flowgpu program.fgpu --emit fusion
+.venv/bin/python -m flowgpu program.fgpu --emit buffers
+.venv/bin/python -m flowgpu program.fgpu --emit triton
 ```
 
 The `--emit` stages are useful when learning the compiler or debugging a

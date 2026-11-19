@@ -1,7 +1,7 @@
 """P0: layout-view fusion removes split/concat/reshape materialisation kernels."""
 from __future__ import annotations
 
-from compiler import compile_source
+from flowgpu.compiler import compile_source
 
 SPLIT = "pipeline p { input x:fp32[32,64] a,b=split(x) out=add(a,b) output out }"
 RESHAPE = "pipeline p { input x:fp32[32,64] y=reshape(x,[64,32]) out=relu(y) output out }"
@@ -31,7 +31,7 @@ def test_cuda_default_fuses_layout_anchors():
 
 
 def test_non_cuda_default_keeps_materialisation():
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
     pipeline = _compile(SPLIT, platform_config=resolve_platform("kunlunxin"))
     # kunlunxin refuses the layout lowering, but the fusion decision is still
     # the materialising one: no indexed layout-view group on a non-CUDA default.

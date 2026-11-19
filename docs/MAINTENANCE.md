@@ -23,13 +23,13 @@ uv build
 ```
 
 The public suite must be green on Python 3.11, 3.12 and 3.13 in CI. The wheel
-must install in a clean environment and `from compiler import compile_source`
+must install in a clean environment and `from flowgpu.compiler import compile_source`
 must work.
 
 ## Release
 
 1. Update `CHANGELOG.md` with the user-visible changes.
-2. Bump `version` in `pyproject.toml` and `compiler/__init__.py`.
+2. Bump `version` in `pyproject.toml` and `flowgpu/compiler/__init__.py`.
 3. Commit, push, wait for CI.
 4. Create an annotated tag `vX.Y.Z` and push it. The `release` workflow verifies
    that the tag matches the package version, builds sdist+wheel, keeps the

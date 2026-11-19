@@ -2,13 +2,13 @@ import ast
 import math
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.triton_backend import module
-from compiler.cache import cached_module
-from compiler.platform_configs import resolve_platform
-from compiler.traffic import plan_traffic, ratio_at
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.traffic import plan_traffic, ratio_at
+from flowgpu.compiler.cli import main
 
 GEMM='pipeline mm { input a : fp16[M,K] input b : fp16[K,N] y = silu(matmul(a,b)) output y }'
 
@@ -33,7 +33,7 @@ def test_autotune_uses_selected_meta_for_grid_and_owns_launch_parameters(group):
 
 
 def test_autotune_platform_gate_and_pruning_remain_explicit():
-    from compiler.autotune import configs_for
+    from flowgpu.compiler.autotune import configs_for
     configs=configs_for('kunlunxin')
     assert configs and all(m<=64 and n<=64 and k<=32 and stages==2 for m,n,k,stages,warps in configs)
     with pytest.raises(ValueError,match='explicitly enabling'):
@@ -49,14 +49,14 @@ def test_module_cache_hit_invalidation_and_corrupt_entry(tmp_path,monkeypatch):
     assert not hit
     def forbidden(*args,**kwargs):raise AssertionError('cache hit recompiled')
     with monkeypatch.context() as m:
-        m.setattr('compiler.compile.compile_source',forbidden)
+        m.setattr('flowgpu.compiler.compile.compile_source',forbidden)
         assert cached_module(GEMM,cache_dir=tmp_path)==(code,True,key)
     assert cached_module(GEMM,cache_dir=tmp_path,autotune=True)[2]!=key
     assert cached_module(GEMM.replace('silu','relu'),cache_dir=tmp_path)[2]!=key
     (tmp_path/(key+'.json')).write_text('{broken')
     assert not cached_module(GEMM,cache_dir=tmp_path)[1]
     with monkeypatch.context() as m:
-        m.setattr('compiler.cache.compiler_fingerprint',lambda:'changed')
+        m.setattr('flowgpu.compiler.cache.compiler_fingerprint',lambda:'changed')
         assert cached_module(GEMM,cache_dir=tmp_path)[2]!=key
 
 
@@ -105,7 +105,7 @@ def test_lse_language_program_matches_independent_math_and_all_invalid(base_e):
 
 
 def test_invalid_broadcast_dtype_and_reduction_are_diagnosed():
-    from compiler.diagnostic import CompileError
+    from flowgpu.compiler.diagnostic import CompileError
     for src in ['pipeline p { input x : fp32[2,3] input z : fp32[2,4] y=broadcast_like(x,z) output y }',
                 'pipeline p { input x : int32[2,3] y=sum_last(x) output y }',
                 'pipeline p { input x : fp32[2,3] y=where(x,x,x) output y }']:

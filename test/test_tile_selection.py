@@ -1,6 +1,6 @@
 """The measured-selection space must equal the geometry the emitter would emit.
 
-``compiler/runtime/tile_selection.py`` decides what to try and computes each
+``flowgpu/compiler/runtime/tile_selection.py`` decides what to try and computes each
 candidate's geometry with ``tile_from_config`` rather than parsing the emitter.
 That is only honest while the two agree, so these tests recover the real tiles
 from the emitted launch text and compare.
@@ -14,10 +14,10 @@ from pathlib import Path
 
 import pytest
 
-from compiler.backend.triton_backend import module as emit
-from compiler.compile import compile_source
-from compiler.optimization.strategy import candidates
-from compiler.runtime.tile_selection import (
+from flowgpu.compiler.backend.triton_backend import module as emit
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.optimization.strategy import candidates
+from flowgpu.compiler.runtime.tile_selection import (
     MATERIALIZE, SPACE, assert_emitted_tiles, dimension_values, emitted_tiles, space_for,
     tile_dimensions, tile_from_config, tile_options)
 
@@ -143,7 +143,7 @@ def test_a_single_kernel_program_with_no_tile_still_refuses():
 
 
 def test_the_extents_space_matches_the_shape_space_where_both_apply():
-    from compiler.runtime.tile_selection import space_for_extents
+    from flowgpu.compiler.runtime.tile_selection import space_for_extents
     shape = (4096, 1, 1, 1024)
     assert space_for_extents(shape[0], shape[3]) == space_for(shape)
 
@@ -177,7 +177,7 @@ def test_the_metadata_follows_the_declaration_order_not_the_argument_position():
 
 
 def test_both_declaration_orders_produce_the_same_selection_space():
-    from compiler.runtime.tile_selection import space_for_extents
+    from flowgpu.compiler.runtime.tile_selection import space_for_extents
     original = emit([compile_source(EXAMPLE.read_text()).pipelines[0].triton])
     swapped = emit([compile_source(swapped_declaration()).pipelines[0].triton])
     here = dimension_values(original, 'lse', (_Tensor((4096, 1, 1, 1024)), _Tensor((4096, 1, 1))))
@@ -186,7 +186,7 @@ def test_both_declaration_orders_produce_the_same_selection_space():
 
 
 def test_a_module_that_launches_several_kernels_is_refused_rather_than_guessed():
-    from compiler.runtime.tile_selection import launched_kernel
+    from flowgpu.compiler.runtime.tile_selection import launched_kernel
     code = emit([compile_source(EXAMPLE.read_text(),
                                 cross_domain_strategy='materialize').pipelines[0].triton])
     with pytest.raises(ValueError, match='expected one launched kernel'):

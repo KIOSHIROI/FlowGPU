@@ -6,7 +6,7 @@ rowwise emitter really sweeps rather than splitting the axis across programs.
 """
 import pytest
 
-from compiler.analysis.reduction_coverage import (
+from flowgpu.compiler.analysis.reduction_coverage import (
     ILLEGAL,
     ONLINE,
     SINGLE_PROGRAM,
@@ -15,8 +15,8 @@ from compiler.analysis.reduction_coverage import (
     group_coverage,
     require_legal,
 )
-from compiler.backend.platform_configs import resolve_platform
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
 
 RMS = """pipeline rms {
     input x : bf16[B,D]

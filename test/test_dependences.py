@@ -6,10 +6,10 @@ which buffer is written before it is read, and with what certainty.
 """
 import pytest
 
-from compiler.analysis.dependences import (
+from flowgpu.compiler.analysis.dependences import (
     MAY, MUST, READ, WRITE, AccessSummary, accesses, conflicts, report,
 )
-from compiler.compile import compile_source
+from flowgpu.compiler.compile import compile_source
 
 
 def plan(body, inputs, output="out"):
@@ -58,5 +58,5 @@ def test_the_report_is_serialisable_and_names_the_boundary():
     assert data["kernels"] == [kernel.name for kernel in kernels]
     assert data["conflicts"] and data["conflicts"][0]["kind"] == "RAW"
     # the module's docstring states what it does not analyse; pin that claim
-    from compiler.analysis import dependences
+    from flowgpu.compiler.analysis import dependences
     assert "loop-carried" in dependences.__doc__

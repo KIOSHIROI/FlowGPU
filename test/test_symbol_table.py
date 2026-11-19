@@ -1,9 +1,9 @@
 import pytest
 
-from compiler.compile import CompileError
-from compiler.diagnostic import DiagnosticKind
-from compiler.parser import parse_ast
-from compiler.symbol_table_builder import SymbolTableBuilder
+from flowgpu.compiler.compile import CompileError
+from flowgpu.compiler.diagnostic import DiagnosticKind
+from flowgpu.compiler.parser import parse_ast
+from flowgpu.compiler.symbol_table_builder import SymbolTableBuilder
 
 
 def build(source: str):

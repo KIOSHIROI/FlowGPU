@@ -1,6 +1,6 @@
 """Packed layout v2: NVFP4 (E2M1 + UE8M0) and AWQ int4, byte for byte.
 
-The oracles in ``compiler/packed_layout.py`` are compared with independent
+The oracles in ``flowgpu/compiler/packed_layout.py`` are compared with independent
 translations of the two competition statements (FlagOS tasks 172 and 161),
 written here with plain integer/bit operations rather than by calling the
 module under test.  Both tasks are graded exact, so the tests compare packed
@@ -14,7 +14,7 @@ import struct
 
 import pytest
 
-from compiler.packed_layout import (
+from flowgpu.compiler.packed_layout import (
     AWQ_INT4, AWQ_ORDER, E2M1_MAX, E2M1_THRESHOLDS, MXFP8, NVFP4,
     PackedLayout, awq_dequantize, e2m1_code, e2m1_value,
     dequantize_nvfp4_indexer, pack_nibbles, pack_scale_exponents_le,

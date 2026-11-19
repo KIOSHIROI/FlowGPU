@@ -23,7 +23,7 @@ program-uniform placement 和 fusion-aware 成本。
 
 ## S3：program-uniform placement 进入同一 plan
 
-`compiler/optimization/scalar_placement.py` 现在识别 dataflow 中
+`flowgpu/compiler/optimization/scalar_placement.py` 现在识别 dataflow 中
 `op == "program_scalar"` 的 rank-0 producer，并给出 `Placement.UNIFORM`
 decision；`PlacementPlan.uniform_scalars` 可直接读取。
 

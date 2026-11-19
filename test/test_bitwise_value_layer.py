@@ -11,10 +11,10 @@ value, these reinterpret the same bits -- so they have their own dtype rules.
 """
 import pytest
 
-from compiler.backend import reference
-from compiler.backend.value_layer import BITWISE, BITS, NAMES
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.backend.value_layer import BITWISE, BITS, NAMES
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError
 
 BITS_PROGRAM = '''
 pipeline bits {

@@ -23,7 +23,7 @@ import ast
 
 import pytest
 
-from compiler.compile import compile_source
+from flowgpu.compiler.compile import compile_source
 
 
 # The Task160 shape, in the post-`cast_to` form the Lead's builder emits: two

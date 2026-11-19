@@ -11,9 +11,9 @@ GPU numerical execution is covered by tools/run_gemm_benchmark.py, not these tes
 
 import ast
 import unittest
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
-from compiler.triton_backend import module as triton_module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.triton_backend import module as triton_module
 
 
 class TestGemmSwizzling(unittest.TestCase):

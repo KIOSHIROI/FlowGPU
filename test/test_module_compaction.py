@@ -1,9 +1,9 @@
 import ast
 from types import SimpleNamespace
 import pytest
-from compiler.module_compaction import compact_source
-from compiler.compile import compile_source
-from compiler.triton_backend import module
+from flowgpu.compiler.module_compaction import compact_source
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.triton_backend import module
 
 
 SOURCE = '''

@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import pytest
 
-from compiler import compile_source
-from compiler.backend import reference
-from compiler.backend.triton_backend import module as triton_module
-from compiler.diagnostic import CompileError
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.backend.triton_backend import module as triton_module
+from flowgpu.compiler.diagnostic import CompileError
 
 PROGRAM = """
 pipeline il {

@@ -3,12 +3,12 @@ import copy
 import json
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.cache import cached_module
-from compiler.gather_strategy import compare_gather_strategies
-from compiler.gather_tuning import select_paired, policy_identity, save_policy, load_policy
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.gather_strategy import compare_gather_strategies
+from flowgpu.compiler.gather_tuning import select_paired, policy_identity, save_policy, load_policy
+from flowgpu.compiler.cli import main
 
 SOURCE='''pipeline p { input i : int64[N] input a : fp32[T,A] input b : int32[T,B]
  input c : int64[T] input d : fp16[T,D]
@@ -108,7 +108,7 @@ def test_policy_cache_rechecks_source_context_module_and_corruption(tmp_path):
 
 
 def test_cache_does_not_trust_changed_selection_even_with_valid_digest(tmp_path):
-    from compiler.gather_tuning import digest
+    from flowgpu.compiler.gather_tuning import digest
     r,e,context,device=observed()
     identity=policy_identity(SOURCE,BINDINGS,device,context,'wall_us','unit-test',.05,.05)
     _,path=save_policy(tmp_path,identity,r,e);entry=json.loads(path.read_text())

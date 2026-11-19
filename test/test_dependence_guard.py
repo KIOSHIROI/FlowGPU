@@ -17,8 +17,8 @@ from pathlib import Path
 
 import pytest
 
-from compiler.analysis.liveness import plan
-from compiler.compile import compile_source
+from flowgpu.compiler.analysis.liveness import plan
+from flowgpu.compiler.compile import compile_source
 
 ROOT = Path(__file__).resolve().parents[1]
 

@@ -1,7 +1,7 @@
 import pytest
 
-from compiler.compile import compile_source
-from compiler.lowering_ir import (
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.lowering_ir import (
     AutoReduce,
     IndexSpace,
     LayoutMap,

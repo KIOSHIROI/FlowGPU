@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flowgpu"
-version = "0.17.0"
+version = "0.18.0"
 description = "A dataflow DSL compiler for GPU operator pipelines targeting Triton and a portable reference backend"
 authors = [{name = "The FlowGPU Authors"}]
 keywords = ["compiler", "triton", "dataflow", "dsl", "gpu", "llm"]
@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.scripts]
-flowgpu = "compiler.cli:main"
-flowgpu-migration = "migration.cli:main"
+flowgpu = "flowgpu.compiler.cli:main"
+flowgpu-migration = "flowgpu.migration.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -50,10 +50,10 @@ Issues = "https://github.com/KIOSHIROI/FlowGPU/issues"
 Changelog = "https://github.com/KIOSHIROI/FlowGPU/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["compiler*", "migration*", "flowgpu*"]
+include = ["flowgpu*"]
 
 [tool.setuptools.package-data]
-compiler = ["*.lark"]
+"flowgpu.compiler" = ["*.lark"]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]

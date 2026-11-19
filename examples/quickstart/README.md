@@ -10,9 +10,9 @@ python -m venv .venv
 Then, with no GPU at all:
 
 ```sh
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit summary
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --emit triton
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit summary
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit triton
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run
 ```
 
 * `--emit summary` shows the typed pipeline;
@@ -24,7 +24,7 @@ With a CUDA device and `torch` + `triton` installed, one more command runs the
 generated Triton and compares it against the same reference:
 
 ```sh
-.venv/bin/python -m compiler.cli examples/quickstart/add.fgpu --run-gpu
+.venv/bin/python -m flowgpu examples/quickstart/add.fgpu --run-gpu
 ```
 
 Expected shape of that command:

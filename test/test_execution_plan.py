@@ -9,10 +9,10 @@ from pathlib import Path
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.backend.triton_backend import module,device_key_source
-from compiler.backend.specialization import freeze_autotune
-from compiler.runtime.execution_plan import build_execution_plan,PreparedExecutionPlan
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.triton_backend import module,device_key_source
+from flowgpu.compiler.backend.specialization import freeze_autotune
+from flowgpu.compiler.runtime.execution_plan import build_execution_plan,PreparedExecutionPlan
 
 
 SOURCE='pipeline p { input x : fp32[N] y=relu(x) output y }'
@@ -56,7 +56,7 @@ def loaded(monkeypatch,descriptor):
                 out.values[:]=[max(0,v) for v in x.values]
             return run
     host=next(n for n in ast.parse(descriptor.code).body if isinstance(n,ast.FunctionDef) and n.name=='run_into_p')
-    import compiler.runtime.execution_plan as api
+    import flowgpu.compiler.runtime.execution_plan as api
     namespace={'torch':torch,'p_k0':Kernel(),'_flowgpu_device_key':lambda index:'proof'}
     for n in ast.parse(descriptor.code).body:
         if isinstance(n,ast.ImportFrom) and n.module==api.__name__:
@@ -102,7 +102,7 @@ def test_bad_inputs_or_buffers_rejected_before_launch(monkeypatch,bad):
 
 
 def test_workspace_pairs_and_unknown_keys_are_rejected(monkeypatch):
-    import compiler.runtime.execution_plan as api
+    import flowgpu.compiler.runtime.execution_plan as api
     plan=build_execution_plan(prepared(),pipeline='p');loaded(monkeypatch,plan)
     x=Tensor(stride=(2,));a=Tensor(ptr=8192);b=Tensor(ptr=8192)
     with pytest.raises(ValueError,match='overlap'):

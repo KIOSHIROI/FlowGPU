@@ -11,9 +11,9 @@ import json
 
 import pytest
 
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.traffic import at_unit, plan_traffic, ratio_at
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.traffic import at_unit, plan_traffic, ratio_at
 
 FULLY_FUSED = """
 pipeline fused {
@@ -205,7 +205,7 @@ def test_the_same_program_always_produces_the_same_report():
     second = traffic_of(open("examples/mlp.fgpu").read())[1]
 
     # Building the expressions from sets put them in hash order, which made the
-    # printed report differ between runs of the same compiler.
+    # printed report differ between runs of the same flowgpu.compiler.
     assert first.floor_expression == second.floor_expression
     assert first.moved_expression == second.moved_expression
 

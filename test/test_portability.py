@@ -16,10 +16,10 @@ import json
 
 import pytest
 
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.portability import measure
-from compiler.traffic import plan_traffic
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.portability import measure
+from flowgpu.compiler.traffic import plan_traffic
 
 EXAMPLES = [
     "examples/residual_norm.fgpu",
@@ -57,8 +57,8 @@ def test_layout_operators_lower_where_the_platform_allows():
     refuses it with the allowed-kinds message, so the operator is either
     lowered or refused, never silently dropped.
     """
-    from compiler.backends import KERNELS, REFUSED
-    from compiler.platform_configs import resolve_platform
+    from flowgpu.compiler.backends import KERNELS, REFUSED
+    from flowgpu.compiler.platform_configs import resolve_platform
 
     assert {"reshape", "split", "concat"} <= set(KERNELS["layout"])
     assert REFUSED == {}  # no operator is left with no decision at all

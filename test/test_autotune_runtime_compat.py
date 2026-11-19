@@ -3,9 +3,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from compiler.backend.autotune import cache_options_source
-from compiler.backend.triton_backend import module
-from compiler.compile import compile_source
+from flowgpu.compiler.backend.autotune import cache_options_source
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.compile import compile_source
 
 
 @pytest.mark.parametrize('persistent', [False, True])

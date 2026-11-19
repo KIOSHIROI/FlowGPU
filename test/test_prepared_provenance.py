@@ -4,11 +4,11 @@ from pathlib import Path
 import sys
 from types import SimpleNamespace
 
-from compiler.runtime.preparation import prepare_pipeline
+from flowgpu.compiler.runtime.preparation import prepare_pipeline
 
 
 def test_cross_directory_module_reuse_reports_existing_actual_source(monkeypatch,tmp_path):
-    import compiler.runtime.preparation as preparation
+    import flowgpu.compiler.runtime.preparation as preparation
     class Device:
         type='cuda';index=0
         def __str__(self):return 'cuda:0'

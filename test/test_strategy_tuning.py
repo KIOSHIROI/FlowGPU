@@ -5,11 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.backend.triton_backend import module
-from compiler.optimization.strategy import candidates,compare_strategies
-from compiler.optimization.measurement import digest,select_paired,_atomic_json
-from compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.optimization.strategy import candidates,compare_strategies
+from flowgpu.compiler.optimization.measurement import digest,select_paired,_atomic_json
+from flowgpu.compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
 
 SOURCE=Path('examples/batch8/dcp_lse_combine.fgpu').read_text()
 
@@ -72,7 +72,7 @@ def test_unbound_evidence_is_rejected(field):
     elif field=='resources':record['kernels'][0]['n_regs']=-1
     elif field=='rounds':record['samples']['wall_us']=[1.]
     else:record['samples']['wall_us'][0]=float('nan')
-    with pytest.raises(ValueError, match="(?:candidate/context ordering mismatch|evidence source/compiler/device mismatch|paired round count mismatch|prepared execution source mismatch|stale or incomplete observations: recompute-r1024-d4 \\['invalid or missing wall_us samples'\\]|stale or incomplete observations: recompute-r1024-d4 \\['invalid resource counters'\\])"):bound_comparison(SOURCE,identity,evidence)
+    with pytest.raises(ValueError, match="(?:candidate/context ordering mismatch|evidence source/flowgpu/compiler/device mismatch|paired round count mismatch|prepared execution source mismatch|stale or incomplete observations: recompute-r1024-d4 \\['invalid or missing wall_us samples'\\]|stale or incomplete observations: recompute-r1024-d4 \\['invalid resource counters'\\])"):bound_comparison(SOURCE,identity,evidence)
 
 
 def test_cache_reconstructs_hosts_and_reselects_instead_of_trusting_digest(tmp_path):

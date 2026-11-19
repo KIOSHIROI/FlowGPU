@@ -1,12 +1,12 @@
 import ast
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler import reference, triton_backend
-from compiler.diagnostic import CompileError
-from compiler.platform_configs import resolve_platform
-from compiler.cache import cached_module
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference, triton_backend
+from flowgpu.compiler.diagnostic import CompileError
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
 
 
 def evaluate(src, args, **options):
@@ -92,7 +92,7 @@ def test_invalid_mapping_and_tile_are_rejected():
 
 def test_explainable_unequal_width_candidate_counts_and_cli(capsys):
     import json
-    from compiler.gather_strategy import compare_gather_strategies
+    from flowgpu.compiler.gather_strategy import compare_gather_strategies
     src = Path('examples/batch8/gather_spec_extras.fgpu').read_text()
     dims = dict(N=17,Tp=33,Ti=35,Tt=37,Th=39,Kp=7,Ki=11,D=129)
     comparison=compare_gather_strategies(src,dims,sm_count=108)
@@ -114,7 +114,7 @@ def test_explainable_unequal_width_candidate_counts_and_cli(capsys):
 
 
 def test_comparison_does_not_borrow_stale_device_evidence():
-    from compiler.gather_strategy import compare_gather_strategies
+    from flowgpu.compiler.gather_strategy import compare_gather_strategies
     src='pipeline p { input x : fp32[3,2] input i : int32[2] y=gather_rows(x,i) output y }'
     evidence={'schema_version':1,'compiler_fingerprint':'stale','source_sha256':'stale',
               'device':{'sm_count':108},'records':[]}
@@ -123,7 +123,7 @@ def test_comparison_does_not_borrow_stale_device_evidence():
 
 
 def test_evidence_requires_correctness_bit_even_when_hashes_match():
-    from compiler.gather_strategy import compare_gather_strategies
+    from flowgpu.compiler.gather_strategy import compare_gather_strategies
     src='pipeline p { input x : fp32[3,2] input i : int32[2] y=gather_rows(x,i) output y }'
     structural=compare_gather_strategies(src,{},sm_count=108)
     item=next(i for i in structural['candidates'] if i['name']=='flat-fused')

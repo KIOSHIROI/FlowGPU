@@ -1,12 +1,12 @@
 from dataclasses import replace
 
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
-from compiler.backend import reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.backend import reference
 import pytest
-from compiler.frontend.ast_node import TensorType
-from compiler.frontend.operator import OPERATORS, register_operator
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.frontend.ast_node import TensorType
+from flowgpu.compiler.frontend.operator import OPERATORS, register_operator
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 
 SOURCE='pipeline p { input x : fp32[2,3] y=relu(add(x,x)) output y }'

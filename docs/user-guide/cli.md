@@ -5,7 +5,7 @@ The CLI compiles, inspects and runs `.fgpu` programs.
 ```sh
 flowgpu path/to/program.fgpu --emit summary
 # or, from a checkout without installing the console script:
-python -m compiler.cli path/to/program.fgpu --emit summary
+python -m flowgpu path/to/program.fgpu --emit summary
 ```
 
 ## Inspect

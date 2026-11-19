@@ -15,7 +15,7 @@ def test_public_version_is_consistent():
     import ast
     import tomllib
     declared = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
-    tree = ast.parse((ROOT / "compiler" / "__init__.py").read_text())
+    tree = ast.parse((ROOT / "flowgpu" / "compiler" / "__init__.py").read_text())
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign) and any(
                 isinstance(t, ast.Name) and t.id == "__version__" for t in node.targets):

@@ -11,7 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from compiler import compile_source
+from flowgpu.compiler import compile_source
 source = (ROOT / "examples" / "quickstart" / "add.fgpu").read_text()
 compiled = compile_source(source)
 pipeline = compiled.pipelines[0].triton
@@ -23,4 +23,4 @@ for kernel in pipeline.kernels:
 print("\nGenerated host wrapper (first 12 lines):")
 for line in pipeline.host.splitlines()[:12]:
     print("  " + line)
-print("\nNext: python -m compiler.cli examples/quickstart/add.fgpu --run")
+print("\nNext: python -m flowgpu examples/quickstart/add.fgpu --run")

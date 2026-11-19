@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from compiler.compile import compile_pipelines
-from compiler.frontends.python_edsl import program
-from compiler.optimization.scalar_placement import (Placement, PlacementCostModel,
+from flowgpu.compiler.compile import compile_pipelines
+from flowgpu.compiler.frontends.python_edsl import program
+from flowgpu.compiler.optimization.scalar_placement import (Placement, PlacementCostModel,
                                                     plan_placements)
 
 
@@ -76,7 +76,7 @@ def test_bad_specialisation_names_and_options_are_rejected():
 
 
 def test_imported_triton_constants_can_be_specialised():
-    from compiler.frontends.triton_importer import import_triton
+    from flowgpu.compiler.frontends.triton_importer import import_triton
     source = '''
 @triton.jit
 def scale_kernel(x_ptr, out_ptr, n_elements, BLOCK: tl.constexpr):

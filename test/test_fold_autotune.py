@@ -3,12 +3,12 @@ import json
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.backend.autotune import fold_configs
-from compiler.platform_configs import resolve_platform
-from compiler.triton_backend import module
-from compiler.cache import cached_module
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.autotune import fold_configs
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
 
 
 POOL = '''pipeline pool { input kv : fp32[B,K,D] input scores : fp32[B,K,D]

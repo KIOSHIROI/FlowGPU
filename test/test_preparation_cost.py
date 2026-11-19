@@ -1,6 +1,6 @@
 import pytest
 
-from compiler.optimization.preparation_cost import PhaseLedger,compare_lifetime_cost
+from flowgpu.compiler.optimization.preparation_cost import PhaseLedger,compare_lifetime_cost
 
 
 def test_phase_clock_records_failures_and_keeps_unattributed_overhead():

@@ -4,13 +4,13 @@ import math
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
-from compiler import reference
-from compiler.triton_backend import module
-from compiler.traffic import domain_read_count, at_unit
-from compiler.cache import cached_module
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler import reference
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler.traffic import domain_read_count, at_unit
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
 
 
 POOL = '''pipeline pool {

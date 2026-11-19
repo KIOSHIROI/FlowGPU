@@ -8,10 +8,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from compiler.backend.paired_views import adjacent_view_condition
-from compiler.backend.platform_configs import resolve_platform
-from compiler.compile import compile_source
-from compiler.runtime.cache import cache_key
+from flowgpu.compiler.backend.paired_views import adjacent_view_condition
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.runtime.cache import cache_key
 
 
 class Metadata:
@@ -69,7 +69,7 @@ def test_default_cache_identity_cli_and_boolean_validation(tmp_path, capsys):
     for value in (1, 'yes', None):
         with pytest.raises(ValueError, match='boolean'):
             replace(base, paired_view_loads=value)
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     path = tmp_path / 'pair.fgpu'
     path.write_text(source)
     assert main([str(path), '--paired-view-loads', '--emit', 'json']) == 0

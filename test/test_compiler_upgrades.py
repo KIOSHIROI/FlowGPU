@@ -1,8 +1,8 @@
 import pytest
 
-from compiler.backend_policy import make_backend_policy
-from compiler.compile import compile_source
-from compiler.shape_constraints import divisible, equal, ge
+from flowgpu.compiler.backend_policy import make_backend_policy
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.shape_constraints import divisible, equal, ge
 
 
 def test_backend_policy_is_shared_and_schedule_is_exposed():

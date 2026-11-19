@@ -15,11 +15,11 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from compiler.ast_node import Assignment, ShapeLiteral
-from compiler.compile import compile_source
-from compiler.diagnostic import CompileError, DiagnosticKind
-from compiler.parser import parser
-from compiler.ast_builder import ASTBuilder
+from flowgpu.compiler.ast_node import Assignment, ShapeLiteral
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler.parser import parser
+from flowgpu.compiler.ast_builder import ASTBuilder
 
 
 SPLIT3 = """
@@ -333,7 +333,7 @@ def test_a_layout_round_trip_restores_the_input():
     }
     """)
     program = result.pipelines[0]
-    from compiler import reference as reference_backend
+    from flowgpu.compiler import reference as reference_backend
 
     namespace = {}
     exec(compile(reference_backend.module([program.reference]), "<reference>", "exec"), namespace)
@@ -346,7 +346,7 @@ def test_the_reshape_runtime_guard_fires_at_run_time():
     """The symbolic conservation the type layer cannot prove is checked by
     the generated code, with the value in hand: a caller whose N makes the
     counts disagree gets the error, not silent garbage."""
-    from compiler import reference as reference_backend
+    from flowgpu.compiler import reference as reference_backend
 
     program = compile_source("""
     pipeline wrong {

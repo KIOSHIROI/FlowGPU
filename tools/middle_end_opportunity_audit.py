@@ -27,7 +27,7 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from compiler import compile_source  # noqa: E402
+from flowgpu.compiler import compile_source  # noqa: E402
 
 PROGRAMS = {
     "pointwise_chain": "pipeline p { input x:fp32[1024] y=relu(x) z=add(y,x) out=mul(z,x) output out }",

@@ -2,12 +2,12 @@ import ast
 import math
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.triton_backend import module
-from compiler.cache import cached_module
-from compiler.platform_configs import resolve_platform
-from compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.platform_configs import resolve_platform
+from flowgpu.compiler.cli import main
 
 
 def run(src, args, dims=None, **options):
@@ -113,7 +113,7 @@ def test_cache_and_cli_control_keep_platform_validation_gate(tmp_path,capsys):
 
 def test_json_reports_reshape_regions_and_replicated_broadcast_reads(capsys):
     import json
-    from compiler.traffic import indexed_read_count, at_unit
+    from flowgpu.compiler.traffic import indexed_read_count, at_unit
     src=Path('examples/batch8/dcp_lse_combine.fgpu').read_text()
     p=compile_source(src,shape_bindings={'R':7,'B':2,'H':3,'D':33},
                      cross_domain_strategy='materialize').pipelines[0]

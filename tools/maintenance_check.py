@@ -20,14 +20,14 @@ def main() -> int:
     problems = []
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
     declared = pyproject["project"]["version"]
-    init_text = (ROOT / "compiler" / "__init__.py").read_text()
+    init_text = (ROOT / "flowgpu" / "compiler" / "__init__.py").read_text()
     version = None
     for node in ast.walk(ast.parse(init_text)):
         if isinstance(node, ast.Assign) and any(
                 isinstance(t, ast.Name) and t.id == "__version__" for t in node.targets):
             version = ast.literal_eval(node.value)
     if version != declared:
-        problems.append(f"compiler.__version__ {version!r} != pyproject {declared!r}")
+        problems.append(f"flowgpu.compiler.__version__ {version!r} != pyproject {declared!r}")
     changelog = (ROOT / "CHANGELOG.md").read_text()
     if f"## {declared}" not in changelog and "## Unreleased" not in changelog:
         problems.append("CHANGELOG has neither the current version nor an Unreleased entry")

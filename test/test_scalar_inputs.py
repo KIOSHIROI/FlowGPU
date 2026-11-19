@@ -17,11 +17,11 @@ import re
 
 import pytest
 
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.ast_node import TensorType
-from compiler.frontend.diagnostic import CompileError
-from compiler.frontend.parser import parse_ast
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.ast_node import TensorType
+from flowgpu.compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.frontend.parser import parse_ast
 from lark.exceptions import UnexpectedToken
 
 
@@ -527,7 +527,7 @@ def test_reference_module_accepts_a_number():
     program = compile_one(
         "pipeline p { input x:fp32[M,N] input a:fp32 y=mul(x,a) output y }"
     )
-    from compiler.backend.reference import module as reference_module
+    from flowgpu.compiler.backend.reference import module as reference_module
 
     namespace = {}
     exec(reference_module([program.reference]), namespace)
@@ -540,7 +540,7 @@ def test_reference_fp32_mode_converts_the_scalar_itself():
     program = compile_one(
         "pipeline p { input x:fp32[M,N] input a:fp32 y=mul(x,a) output y }"
     )
-    from compiler.backend.reference import module as reference_module
+    from flowgpu.compiler.backend.reference import module as reference_module
 
     code = reference_module([program.reference], numeric_mode="fp32")
     assert "a = fp32(a)" in code
@@ -572,7 +572,7 @@ def test_scalar_never_gets_a_storage_slot():
 
 def test_json_metadata_marks_the_input_as_a_scalar(tmp_path, capsys):
     import json
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     path = tmp_path / "scalar.fgpu"
     path.write_text(ONE_SCALAR, encoding="utf-8")
@@ -602,7 +602,7 @@ def test_kernel_abi_pruning_keeps_a_used_scalar():
 
 
 def test_compact_fixed_module_accepts_a_scalar_program():
-    from compiler.backend.triton_backend import module
+    from flowgpu.compiler.backend.triton_backend import module
 
     program = compile_one(ONE_SCALAR, prune_kernel_abi=True)
     code = module([program.triton], compact_fixed=True)
@@ -641,7 +641,7 @@ def test_task160_parameter_count_before_and_after(prune, before, after):
 
 
 def test_task160_scalar_program_compiles_to_one_kernel_everywhere():
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
 
     for platform in ("cuda", "ascend", "kunlunxin"):
         config = resolve_platform(

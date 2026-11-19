@@ -10,11 +10,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from compiler.analysis.access_shape import SCATTER, plan_shape, platform_conflicts
-from compiler.backend.platform_configs import PLATFORMS
-from compiler.backend.reference import inputs_for, run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.analysis.access_shape import SCATTER, plan_shape, platform_conflicts
+from flowgpu.compiler.backend.platform_configs import PLATFORMS
+from flowgpu.compiler.backend.reference import inputs_for, run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 SOURCE = ("pipeline scatter {\n"
           " input base:fp32[8,4] input index:int32[3] input values:fp32[3,4]\n"

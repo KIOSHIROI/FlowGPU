@@ -19,8 +19,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from compiler.compile import compile_source
-from compiler.triton_backend import module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.triton_backend import module
 
 
 POINTWISE = """
@@ -141,7 +141,7 @@ def test_two_outputs_are_returned_as_a_tuple():
 @pytest.mark.parametrize("count", [2, 3])
 def test_multi_output_schema_declares_each_tensor_without_ellipsis(count):
     from typing import get_args
-    from compiler.custom_ops import returns_annotation
+    from flowgpu.compiler.custom_ops import returns_annotation
     tensor = object()
     annotation = eval(returns_annotation(count), {"torch": SimpleNamespace(Tensor=tensor)})
     assert get_args(annotation) == (tensor,) * count

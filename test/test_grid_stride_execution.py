@@ -17,9 +17,9 @@ import math
 
 import pytest
 
-from compiler.backend import triton_backend
-from compiler.backend.platform_configs import PLATFORMS
-from compiler.compile import compile_source
+from flowgpu.compiler.backend import triton_backend
+from flowgpu.compiler.backend.platform_configs import PLATFORMS
+from flowgpu.compiler.compile import compile_source
 from test import segmented_support
 
 

@@ -6,13 +6,13 @@ from pathlib import Path
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import module
-from compiler.optimization.strategy import candidates,compare_strategies
-from compiler.optimization.strategy_tuning import policy_identity
-from compiler.optimization.measurement import digest
-from compiler.runtime.cache import cached_module
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import module
+from flowgpu.compiler.optimization.strategy import candidates,compare_strategies
+from flowgpu.compiler.optimization.strategy_tuning import policy_identity
+from flowgpu.compiler.optimization.measurement import digest
+from flowgpu.compiler.runtime.cache import cached_module
 from test.segmented_support import Buffer,inputs,oracle,check,execute
 
 SOURCE_PATH=Path(__file__).resolve().parent/'source.fgpu'

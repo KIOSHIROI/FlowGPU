@@ -1,7 +1,7 @@
 """The NVFP4 DSL program is the promoted replacement for task 172's extern kernel.
 
 The program is compiled and executed through the reference backend; its packed
-data bytes and packed scale word must match ``compiler.packed_layout`` exactly
+data bytes and packed scale word must match ``flowgpu.compiler.packed_layout`` exactly
 (the task grades both outputs exact).  The oracle itself is pinned against the
 statement in ``test_packed_layout_v2.py``.
 """
@@ -10,9 +10,9 @@ from __future__ import annotations
 import pathlib
 import random
 
-from compiler import compile_source
-from compiler.backend import reference
-from compiler.packed_layout import quantize_nvfp4_indexer
+from flowgpu.compiler import compile_source
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.packed_layout import quantize_nvfp4_indexer
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / "examples/packed/fp4_indexer.fgpu"

@@ -13,7 +13,7 @@
 
 ## 2. view vs materialise 成本模型
 
-`compiler/optimization/layout_view_cost.py`：
+`flowgpu/compiler/optimization/layout_view_cost.py`：
 
 - `view_cost(numel, layout_ops, consumer_ops)`：一次 launch + 每元素索引重映射
   + consumer 算术；

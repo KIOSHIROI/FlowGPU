@@ -9,10 +9,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import _view_offset
-from compiler.compile import compile_source
-from compiler.runtime.cache import cache_key
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import _view_offset
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.runtime.cache import cache_key
 
 
 def offset_code(rank, linearize, coordinates=None):
@@ -92,7 +92,7 @@ def test_opt_in_has_its_own_cache_identity_and_preserves_numerical_statements():
 
 
 def test_cli_emits_the_opt_in_and_rejects_strategy_modes_that_own_their_configs(tmp_path,capsys):
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
     path=tmp_path/'view.fgpu';path.write_text('pipeline p { input x : fp32[B,D] y=exp(x) output y }')
     assert main([str(path),'--linear-view-indexing','--emit','json'])==0
     result=json.loads(capsys.readouterr().out)

@@ -1,7 +1,7 @@
 """P0 cost model for view vs materialise."""
 from __future__ import annotations
 
-from compiler.optimization.layout_view_cost import (LayoutViewCostModel,
+from flowgpu.compiler.optimization.layout_view_cost import (LayoutViewCostModel,
                                                     materialize_cost,
                                                     should_fuse_layout_view,
                                                     view_cost)

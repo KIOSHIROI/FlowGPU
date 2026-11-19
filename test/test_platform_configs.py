@@ -7,10 +7,10 @@ from math import isqrt
 
 import pytest
 
-from compiler.cli import main
-from compiler.compile import compile_source
-from compiler.platform_configs import PlatformConfig, resolve_platform
-from compiler.triton_backend import module
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import PlatformConfig, resolve_platform
+from flowgpu.compiler.triton_backend import module
 
 
 POINTWISE = """pipeline point {

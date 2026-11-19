@@ -27,7 +27,7 @@ from dataclasses import replace
 
 import pytest
 
-from compiler.analysis.access_shape import (
+from flowgpu.compiler.analysis.access_shape import (
     BLOCK,
     GATHER,
     PERMUTED,
@@ -35,9 +35,9 @@ from compiler.analysis.access_shape import (
     group_conflicts,
     group_shape,
 )
-from compiler.backend.platform_configs import PLATFORMS
-from compiler.compile import compile_source
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.backend.platform_configs import PLATFORMS
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.diagnostic import CompileError
 
 PROGRAMS = {
     "gather": ("pipeline g {\n input x:fp32[8,4] input i:int32[4]\n"
@@ -86,7 +86,7 @@ def test_the_plan_is_judged_over_every_group_not_only_the_emitted_ones():
     contains both groups, so `group_shape` reads `permuted` and the gate can
     refuse what the post-hoc view would call legal.
     """
-    from compiler.analysis.access_shape import plan_shape
+    from flowgpu.compiler.analysis.access_shape import plan_shape
 
     source = open("examples/batch10/normalize_and_patchify.fgpu", encoding="utf-8").read()
     pipeline = compile_source(source, platform_config=PLATFORMS["kunlunxin"]).pipelines[0]
@@ -180,7 +180,7 @@ def test_the_two_contracts_agree_on_the_case_where_both_speak():
     """The IR verdict and the text verdict are derived from different things --
     operator identity vs emitted expressions -- so agreement is evidence and
     disagreement is a bug in one of them."""
-    from compiler.backend.contracts import violations
+    from flowgpu.compiler.backend.contracts import violations
 
     pipeline = compile_source(PROGRAMS["gather"],
                               platform_config=MEASURED_BUT_PERMITTED).pipelines[0]
@@ -222,7 +222,7 @@ def test_the_gate_flags_the_task154_plan():
 # the CLI surfaces both halves
 # --------------------------------------------------------------------------
 def test_the_contracts_view_prints_the_plan_and_the_source(capsys):
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     assert main(["examples/batch10/normalize_and_patchify.fgpu",
                  "--emit", "contracts"]) == 0
@@ -234,7 +234,7 @@ def test_the_contracts_view_prints_the_plan_and_the_source(capsys):
 
 
 def test_the_cli_gate_refuses_and_exits_non_zero(tmp_path, capsys):
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     path = tmp_path / "patched.fgpu"
     path.write_text(PROGRAMS["permuted"])
@@ -249,7 +249,7 @@ def test_the_cli_gate_refuses_and_exits_non_zero(tmp_path, capsys):
 def test_the_json_view_carries_the_verdict(capsys):
     import json as _json
 
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     main(["examples/batch10/normalize_and_patchify.fgpu", "--platform", "kunlunxin",
           "--emit", "json"])
@@ -266,7 +266,7 @@ def test_the_contracts_view_separates_partial_from_disagreement(capsys):
     says `permuted`, the emitted `mul` kernel is clean, and the honest verdict is
     "partial": one group was never written, so it could not be checked twice.
     """
-    from compiler.cli import main
+    from flowgpu.compiler.cli import main
 
     assert main(["examples/batch10/normalize_and_patchify.fgpu",
                  "--platform", "kunlunxin", "--emit", "contracts"]) == 0

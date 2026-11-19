@@ -26,11 +26,11 @@ host wrapper (allocations, launches, scalar ABI)
 
 | Stage | Package | Contract |
 |---|---|---|
-| Frontend | `compiler/frontend`, `compiler/core` | parse and type-check a program; diagnostics carry source positions |
-| Dataflow IR | `compiler/core/ir.py` | SSA values, construction-order nodes, alias resolution |
-| Optimization | `compiler/optimization` | fusion, index regions, layout views, reduction/scan rewrites, liveness |
-| Backends | `compiler/backend` | emit complete Triton modules or execute the reference interpreter |
-| Public API | `compiler/compile.py` | `compile_source`, `compile_pipelines`, `CompileError` |
+| Frontend | `flowgpu/compiler/frontend`, `flowgpu/compiler/core` | parse and type-check a program; diagnostics carry source positions |
+| Dataflow IR | `flowgpu/compiler/core/ir.py` | SSA values, construction-order nodes, alias resolution |
+| Optimization | `flowgpu/compiler/optimization` | fusion, index regions, layout views, reduction/scan rewrites, liveness |
+| Backends | `flowgpu/compiler/backend` | emit complete Triton modules or execute the reference interpreter |
+| Public API | `flowgpu/compiler/compile.py` | `compile_source`, `compile_pipelines`, `CompileError` |
 
 The reference backend is the semantic oracle. The Triton backend must produce
 the same values; tests execute emitted source through a CPU Triton double, so CI

@@ -14,18 +14,18 @@ compile_source(source, layout_views=True)
 
 ## 实现
 
-- `compiler.optimization.indexed_fusion.fuse_indexed(..., layout_views=...)`：
+- `flowgpu.compiler.optimization.indexed_fusion.fuse_indexed(..., layout_views=...)`：
   - opt-in 允许 `split`/`concat` 进入 indexed region；
   - 当 region 没有 primitive/reduction anchor 时，允许以**最后一个 pointwise
     sink** 作为 anchor（此前直接 `continue`，所以 layout+pointwise 永远不融合）；
-- `compiler/backend/triton_backend.py` 与 `reference.py`：
+- `flowgpu/compiler/backend/triton_backend.py` 与 `reference.py`：
   - `group.indexed` 的 kernel 统一走 primitive/indexed dispatch，不再按 anchor
     op 误判为 `pointwise`；
-- `compiler/backend/indexed_backend.py`：
+- `flowgpu/compiler/backend/indexed_backend.py`：
   - 新增 `concat` 的 view 映射（左右 operand 各自带 mask，避免越界 load）；
   - `split` 的 view 映射沿用已有分支；
   - reference indexed emitter 同样支持 concat/split，保持参考后端可执行；
-- `compiler/compile.py`：新增 `layout_views` 选项（默认 **False**，保持现有
+- `flowgpu/compiler/compile.py`：新增 `layout_views` 选项（默认 **False**，保持现有
   emission 不变）。
 
 ## H100 结果（interleaved，median µs，与 default 输出逐元素对照）

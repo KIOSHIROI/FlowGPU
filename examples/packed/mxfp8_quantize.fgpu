@@ -8,7 +8,7 @@
 # (`shl`/`shr`/`bitand`) only mixes scalars with tensors through ordinary
 # arithmetic, so the masks and shift counts must enter as scalar inputs.
 #
-# Reference oracle: compiler/packed_layout.py::quantize_mxfp8.
+# Reference oracle: flowgpu/compiler/packed_layout.py::quantize_mxfp8.
 # This program replaces the hand-written `to_mxfp8` extern kernel: the language
 # can state it, and test/test_packed_layout.py pins the two to the same bytes.
 pipeline mxfp8_quantize {

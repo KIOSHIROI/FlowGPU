@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from compiler.lexer import tokenize
+from flowgpu.compiler.lexer import tokenize
 from lark.exceptions import UnexpectedCharacters
 
 
@@ -45,9 +45,9 @@ def test_there_is_exactly_one_grammar():
     file plus two Python dictionaries, and had already drifted (int64 and
     bool were missing). Sharing one file is what makes that impossible.
     """
-    from compiler.lexer import GRAMMAR_FILE
+    from flowgpu.compiler.lexer import GRAMMAR_FILE
 
-    grammar_dir = Path(__file__).resolve().parents[1] / "compiler"
+    grammar_dir = Path(__file__).resolve().parents[1] / "flowgpu" / "compiler"
 
     assert GRAMMAR_FILE == grammar_dir / "grammar.lark"
     assert [path.name for path in sorted(grammar_dir.glob("*.lark"))] == [
@@ -56,7 +56,7 @@ def test_there_is_exactly_one_grammar():
 
 
 def test_every_dtype_the_lexer_knows_the_parser_accepts():
-    from compiler.parser import parse
+    from flowgpu.compiler.parser import parse
 
     dtypes = [value for kind, value in tokens_of(
         "bf16 fp16 fp32 int32 int64 bool"
@@ -213,8 +213,8 @@ def test_no_token_is_declared_without_a_rule_behind_it():
     and that is exactly how they disagreed -- the lexer produced a DIV token
     while the parser answered "no terminal matches '/'".
     """
-    from compiler.lexer import lexer
-    from compiler.parser import parser
+    from flowgpu.compiler.lexer import lexer
+    from flowgpu.compiler.parser import parser
 
     declared = {token.name for token in lexer.terminals}
     reachable = {token.name for token in parser.terminals}
@@ -238,9 +238,9 @@ def test_every_infix_token_desugars_to_a_registered_operator():
     forgotten: DIV once sat at the head of this chain with nothing behind
     it -- a token no rule could reach and no operator could type.
     """
-    from compiler.ast_builder import INFIX_OPERATORS
-    from compiler.lexer import lexer
-    from compiler.operator import OPERATORS
+    from flowgpu.compiler.ast_builder import INFIX_OPERATORS
+    from flowgpu.compiler.lexer import lexer
+    from flowgpu.compiler.operator import OPERATORS
 
     signs = {"+", "-", "*", "/", "%"}
     infix_tokens = {

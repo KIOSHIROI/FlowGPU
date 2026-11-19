@@ -4,13 +4,13 @@ from dataclasses import replace
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler import reference
-from compiler.cache import cached_module
-from compiler.cli import main
-from compiler.diagnostic import CompileError, DiagnosticKind
-from compiler.semantic_ir import normalize, OperationAttributes
-from compiler.shape_constraints import equal
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler import reference
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.diagnostic import CompileError, DiagnosticKind
+from flowgpu.compiler.semantic_ir import normalize, OperationAttributes
+from flowgpu.compiler.shape_constraints import equal
 
 
 def compiled(source, folding=True):

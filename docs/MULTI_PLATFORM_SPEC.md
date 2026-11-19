@@ -15,8 +15,8 @@
 ## 使用与实验性放行
 
 ```python
-from compiler.compile import compile_source
-from compiler.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.platform_configs import resolve_platform
 
 # actual_vector_core_count 必须来自当前设备属性。
 profile = resolve_platform("ascend-910b", device_cores=actual_vector_core_count)

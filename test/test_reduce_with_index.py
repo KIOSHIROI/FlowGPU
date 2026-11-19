@@ -17,17 +17,17 @@ from dataclasses import replace
 
 import pytest
 
-from compiler.analysis.write_address import store_addresses
-from compiler.analysis.write_address import violations as address_violations
-from compiler.backend.contracts import violations as contract_violations
-from compiler.backend.platform_configs import PLATFORMS
-from compiler.backend.reference import inputs_for, module as reference_module
-from compiler.backend.reference import run as run_reference
-from compiler.compile import compile_source
-from compiler.frontend.ast_node import TensorType
-from compiler.frontend.diagnostic import RuleError
-from compiler.frontend.diagnostic import CompileError
-from compiler.frontend.operator import (
+from flowgpu.compiler.analysis.write_address import store_addresses
+from flowgpu.compiler.analysis.write_address import violations as address_violations
+from flowgpu.compiler.backend.contracts import violations as contract_violations
+from flowgpu.compiler.backend.platform_configs import PLATFORMS
+from flowgpu.compiler.backend.reference import inputs_for, module as reference_module
+from flowgpu.compiler.backend.reference import run as run_reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.ast_node import TensorType
+from flowgpu.compiler.frontend.diagnostic import RuleError
+from flowgpu.compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.frontend.operator import (
     OPERATORS,
     infer_argmax_last,
     infer_argmin_last,
@@ -117,7 +117,7 @@ def test_the_two_names_are_one_registered_feature():
         assert spec.acc is None      # selecting an extreme accumulates nothing
 
     from types import SimpleNamespace
-    from compiler.backend.backends import KERNELS, kernel_kind
+    from flowgpu.compiler.backend.backends import KERNELS, kernel_kind
 
     assert set(KERNELS["reduce_with_index"]) == set(OPERATORS_UNDER_TEST)
     for name in OPERATORS_UNDER_TEST:
@@ -435,7 +435,7 @@ def test_a_large_leading_row_count_is_strided_inside_the_kernel():
     contract the pointwise emitter keeps).  Small row counts keep the
     one-row-per-program source byte-for-byte, which is what the other tests pin.
     """
-    from compiler.backend.platform_configs import resolve_platform
+    from flowgpu.compiler.backend.platform_configs import resolve_platform
 
     kinds = ('pointwise', 'rowwise', 'primitive', 'layout', 'transpose', 'rope',
              'reduce_with_index')

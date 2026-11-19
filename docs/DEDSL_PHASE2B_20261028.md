@@ -5,11 +5,11 @@ backend 对 frontend import 路径的收敛。
 
 ## 1. Triton importer
 
-`compiler/frontends/triton_importer.py`：
+`flowgpu/compiler/frontends/triton_importer.py`：
 
 ```python
-from compiler.frontends.triton_importer import import_triton
-from compiler.compile import compile_pipelines
+from flowgpu.compiler.frontends.triton_importer import import_triton
+from flowgpu.compiler.compile import compile_pipelines
 
 imported = import_triton(source,
                          input_types={"x_ptr": "fp32[N]", "y_ptr": "fp32[N]"},
@@ -38,10 +38,10 @@ shape/dtype，这是诚实的 importer 边界，而不是隐藏假设。
 
 ## 2. Backend/compile import 收敛
 
-- `compiler/backend/*` 不再 import `compiler.frontend.*`，改用
-  `compiler.core.ast/types`；
-- `compiler/compile.py` 的 parser/ASTBuilder/LarkError 只在 parse 分支 lazy
-  import；`import compiler.compile` 不加载 lark；
+- `flowgpu/compiler/backend/*` 不再 import `flowgpu.compiler.frontend.*`，改用
+  `flowgpu.compiler.core.ast/types`；
+- `flowgpu/compiler/compile.py` 的 parser/ASTBuilder/LarkError 只在 parse 分支 lazy
+  import；`import flowgpu.compiler.compile` 不加载 lark；
 - 因此 `compile_pipelines(imported.pipelines)` 的完整编译路径不依赖 DSL 文本。
 
 ## 3. 验证
@@ -52,11 +52,11 @@ shape/dtype，这是诚实的 importer 边界，而不是隐藏假设。
 - reduction（`tl.sum` → `sum_last`）；
 - `x * 2.0` 生成显式标量输入并编译；
 - 拒绝非 jit/错误指针/控制流/未 store 的 output；
-- 子进程验证 importer + 完整编译后 `compiler.frontend.parser` 与 `lark` 都不在
+- 子进程验证 importer + 完整编译后 `flowgpu.compiler.frontend.parser` 与 `lark` 都不在
   `sys.modules`。
 
 `test/test_frontend_boundary.py` 新增 2 条：backend 全目录无 frontend import；
-`compiler.compile` 模块级无 frontend import 且 import 不加载 lark。
+`flowgpu.compiler.compile` 模块级无 frontend import 且 import 不加载 lark。
 
 全量：2902 tests / 0 failures / 6 skipped。
 

@@ -7,8 +7,8 @@ import pathlib
 
 import pytest
 
-from compiler.frontends.python_edsl import T, program
-from compiler.compile import compile_pipelines
+from flowgpu.compiler.frontends.python_edsl import T, program
+from flowgpu.compiler.compile import compile_pipelines
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -30,7 +30,7 @@ def test_edsl_builds_the_same_core_ast_and_compiles():
     assert pipeline.triton.complete
     assert [node.op for node in pipeline.dataflow.nodes] == ["input", "relu", "add", "output"]
     # differential check: the DSL lowers the same graph for the same program
-    from compiler import compile_source
+    from flowgpu.compiler import compile_source
     dsl = compile_source(
         "pipeline p { input x:fp32[N] t1=relu(x) t2=add(t1,x) output t2 }"
     ).pipelines[0]
@@ -77,9 +77,9 @@ def test_edsl_rejects_unknown_operator_and_bad_output():
 def test_edsl_import_and_compile_do_not_load_the_dsl_parser():
     code = (
         "import sys; "
-        "from compiler.frontends.python_edsl import program; "
-        "from compiler.compile import compile_pipelines; "
-        "assert 'compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
+        "from flowgpu.compiler.frontends.python_edsl import program; "
+        "from flowgpu.compiler.compile import compile_pipelines; "
+        "assert 'flowgpu.compiler.frontend.parser' not in sys.modules, sorted(sys.modules); "
         "assert 'lark' not in sys.modules, 'lark was imported'; "
         "p = program('p'); "
         "x = p.input('x', 'fp32[N]'); "

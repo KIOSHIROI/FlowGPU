@@ -20,9 +20,9 @@ probe exists.
 """
 import pytest
 
-from compiler.backend import reference
-from compiler.compile import compile_source
-from compiler.frontend.operator import OPERATORS
+from flowgpu.compiler.backend import reference
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.frontend.operator import OPERATORS
 
 PROGRAM = '''
 pipeline p {{

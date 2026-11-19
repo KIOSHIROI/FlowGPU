@@ -25,7 +25,7 @@ mkdocs build --strict
    bytes.
 4. **Platform claims are measurements.** Add measured contracts with a fixture
    and a document; do not infer one backend's behaviour from another.
-5. **Attribution.** Hand-written Triton wrapped by `compiler/extern.py` is
+5. **Attribution.** Hand-written Triton wrapped by `flowgpu/compiler/extern.py` is
    labelled extern; generated and hand-written results are reported separately.
 
 ## Pull requests

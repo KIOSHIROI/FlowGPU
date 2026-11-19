@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from compiler.compile import CompileError, compile_source
-from compiler.diagnostic import DiagnosticKind
+from flowgpu.compiler.compile import CompileError, compile_source
+from flowgpu.compiler.diagnostic import DiagnosticKind
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = REPO_ROOT / "examples"

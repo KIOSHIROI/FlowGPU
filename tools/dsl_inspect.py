@@ -3,8 +3,8 @@
 The compiler already exposes ``--emit tokens`` and ``--emit ast``; this tool is
 the explicit, dependency-free demonstration for the course rubric (lexer output,
 AST visualisation, semantic stage hand-off).  It does not duplicate the lexer or
-parser: it calls ``compiler.frontend.lexer.tokenize`` and
-``compiler.frontend.parser.parse_ast``, so it cannot drift from the language.
+parser: it calls ``flowgpu.compiler.frontend.lexer.tokenize`` and
+``flowgpu.compiler.frontend.parser.parse_ast``, so it cannot drift from the language.
 
     python tools/dsl_inspect.py examples/mapping_pointwise.fgpu --tokens
     python tools/dsl_inspect.py examples/mapping_pointwise.fgpu --ast
@@ -22,8 +22,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from compiler.frontend.lexer import tokenize  # noqa: E402
-from compiler.frontend.parser import parse_ast  # noqa: E402
+from flowgpu.compiler.frontend.lexer import tokenize  # noqa: E402
+from flowgpu.compiler.frontend.parser import parse_ast  # noqa: E402
 
 
 def ast_to_obj(node):

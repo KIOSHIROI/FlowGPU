@@ -1,10 +1,10 @@
 from dataclasses import replace
 import pytest
 
-from compiler.compile import compile_source
-from compiler.ir.index_maps import inverse_coordinates,permutation_of
-from compiler.ir.semantic_ir import OperationAttributes
-from compiler.frontend.diagnostic import CompileError,DiagnosticKind
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.ir.index_maps import inverse_coordinates,permutation_of
+from flowgpu.compiler.ir.semantic_ir import OperationAttributes
+from flowgpu.compiler.frontend.diagnostic import CompileError,DiagnosticKind
 
 
 def test_axis_lowering_retains_typed_maps_on_generated_rotations():

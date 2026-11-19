@@ -9,16 +9,16 @@ from pathlib import Path
 
 import pytest
 
-from compiler.compile import compile_source
-from compiler.backend.platform_configs import resolve_platform
-from compiler.backend.triton_backend import module,device_key_source
-from compiler.backend.specialization import freeze_autotune
-from compiler.analysis.traffic import plan_traffic,ratio_at
-from compiler.optimization.strategy import candidates,compare_strategies,launch_value
-from compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
-from compiler.optimization.measurement import digest,select_paired,_atomic_json
-from compiler.runtime.cache import cached_module
-from compiler.frontend.diagnostic import CompileError
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.backend.platform_configs import resolve_platform
+from flowgpu.compiler.backend.triton_backend import module,device_key_source
+from flowgpu.compiler.backend.specialization import freeze_autotune
+from flowgpu.compiler.analysis.traffic import plan_traffic,ratio_at
+from flowgpu.compiler.optimization.strategy import candidates,compare_strategies,launch_value
+from flowgpu.compiler.optimization.strategy_tuning import policy_identity,bound_comparison,load_policy,_prepared_proof
+from flowgpu.compiler.optimization.measurement import digest,select_paired,_atomic_json
+from flowgpu.compiler.runtime.cache import cached_module
+from flowgpu.compiler.frontend.diagnostic import CompileError
 from test.segmented_support import inputs,oracle,check,execute,Buffer
 
 SOURCE=Path(__file__).resolve().parents[1].joinpath('examples/batch8/dcp_lse_combine.fgpu').read_text()

@@ -3,12 +3,12 @@ import json
 import math
 from pathlib import Path
 import pytest
-from compiler.compile import compile_source
-from compiler.triton_backend import module
-from compiler import reference
-from compiler.cache import cached_module
-from compiler.cli import main
-from compiler.platform_configs import resolve_platform
+from flowgpu.compiler.compile import compile_source
+from flowgpu.compiler.triton_backend import module
+from flowgpu.compiler import reference
+from flowgpu.compiler.cache import cached_module
+from flowgpu.compiler.cli import main
+from flowgpu.compiler.platform_configs import resolve_platform
 
 
 def run(src,args,dims=None,**options):
@@ -85,7 +85,7 @@ def test_equal_dimensions_do_not_turn_right_aligned_broadcast_into_row_broadcast
 
 
 def test_shared_domain_traffic_counts_two_lse_sweeps_and_no_repeated_max_per_column():
-    from compiler.traffic import domain_read_count,at_unit
+    from flowgpu.compiler.traffic import domain_read_count,at_unit
     src=Path('examples/batch8/dcp_lse_combine.fgpu').read_text()
     p=compile_source(src,shape_bindings={'R':7,'B':2,'H':3,'D':33},
                      cross_domain_strategy='materialize').pipelines[0]

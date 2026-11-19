@@ -9,7 +9,7 @@ arithmetic is right.
 """
 import pytest
 
-from compiler.analysis.access_shape import (
+from flowgpu.compiler.analysis.access_shape import (
     BLOCK,
     GATHER,
     SCATTER,
@@ -23,8 +23,8 @@ from compiler.analysis.access_shape import (
     underdetermined,
     worst,
 )
-from compiler.analysis.layout_candidates import compare_layout_reduction
-from compiler.ir.view_ir import ViewSpec
+from flowgpu.compiler.analysis.layout_candidates import compare_layout_reduction
+from flowgpu.compiler.ir.view_ir import ViewSpec
 
 
 def test_a_contiguous_view_is_a_block_and_the_run_is_its_last_extent():
@@ -121,8 +121,8 @@ def test_a_plan_is_judged_from_the_ir_before_any_text_exists():
     must be available there."""
     from types import SimpleNamespace
 
-    from compiler.analysis.access_shape import of_plan, plan_shape, platform_conflicts
-    from compiler.backend.platform_configs import PLATFORMS
+    from flowgpu.compiler.analysis.access_shape import of_plan, plan_shape, platform_conflicts
+    from flowgpu.compiler.backend.platform_configs import PLATFORMS
 
     copy_plan = [SimpleNamespace(ops=("pad_cat",))]
     assert plan_shape(copy_plan).kind == BLOCK

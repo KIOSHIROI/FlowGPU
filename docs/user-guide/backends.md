@@ -57,7 +57,7 @@ explicit `layout_views=True` on those profiles fails closed. Use
 
 ## Generated vs. hand-written code
 
-`compiler/extern.py` lets a pipeline record a hand-written Triton kernel as an
+`flowgpu/flowgpu/compiler/extern.py` lets a pipeline record a hand-written Triton kernel as an
 extern. The evidence/tooling keeps generated and extern kernels separate; see
 [`docs/EXTERN_LEDGER.md`](https://github.com/KIOSHIROI/FlowGPU/blob/main/docs/EXTERN_LEDGER.md).
 

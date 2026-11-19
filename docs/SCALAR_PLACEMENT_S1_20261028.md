@@ -7,7 +7,7 @@ AST + dataflow graph，所以 DSL、Python eDSL、Triton import 三条前端路�
 
 ## 1. 规划器
 
-`compiler/optimization/scalar_placement.py`：
+`flowgpu/compiler/optimization/scalar_placement.py`：
 
 - 收集 core AST 中所有 rank-0 `InputDecl`（标量输入）；
 - 对每个标量在 HOST / CONSTEXPR 之间选择：

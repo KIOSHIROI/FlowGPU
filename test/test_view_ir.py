@@ -1,6 +1,6 @@
 import pytest
 
-from compiler.ir.view_ir import PackedKVSlice, ViewSpec
+from flowgpu.compiler.ir.view_ir import PackedKVSlice, ViewSpec
 
 
 def test_packed_kv_slice_is_explicit_read_only_view_contract():
