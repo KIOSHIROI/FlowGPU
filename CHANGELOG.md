@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add macOS CPU CI coverage and a governance document.
+
 ## 0.19.1
 
 - Add the PEP 561 `py.typed` marker and ship it in the wheel.

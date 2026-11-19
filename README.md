@@ -164,6 +164,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence-first contribution
 rules, [PUBLIC_TESTS.md](docs/PUBLIC_TESTS.md) for the public test scope, and
 [MAINTAINERS.md](MAINTAINERS.md) for maintenance.
 
+## Project governance
+
+FlowGPU is maintainer-led; see [GOVERNANCE.md](GOVERNANCE.md) and [MAINTAINERS.md](MAINTAINERS.md).
+
 ## Support
 
 - Usage questions and bug reports: [GitHub Issues](https://github.com/KIOSHIROI/FlowGPU/issues)
