@@ -22,7 +22,10 @@
           "fp16"
         ]
       ],
-      "oracle": "add"
+      "oracle": "add",
+      "output": "out",
+      "atol": 0.002,
+      "rtol": 0.002
     },
     {
       "name": "vectoradd_symbolic",
@@ -50,7 +53,10 @@
           "fp16"
         ]
       ],
-      "oracle": "add"
+      "oracle": "add",
+      "output": "out",
+      "atol": 0.002,
+      "rtol": 0.002
     },
     {
       "name": "matmul_symbolic",
@@ -79,7 +85,10 @@
           "fp16"
         ]
       ],
-      "oracle": "matmul"
+      "oracle": "matmul",
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02
     },
     {
       "name": "softmax_wide",
@@ -99,7 +108,10 @@
           "fp32"
         ]
       ],
-      "oracle": "softmax"
+      "oracle": "softmax",
+      "output": "q",
+      "atol": 0.0001,
+      "rtol": 0.0001
     },
     {
       "name": "residual_norm",
@@ -135,7 +147,10 @@
         ]
       ],
       "oracle": "residual_norm",
-      "oracle_atol": 0.01
+      "oracle_atol": 0.01,
+      "output": "z",
+      "atol": 0.01,
+      "rtol": 0.01
     },
     {
       "name": "mapping_pointwise",
@@ -160,7 +175,10 @@
           "int32"
         ]
       ],
-      "oracle": "int_pointwise"
+      "oracle": "int_pointwise",
+      "output": "z",
+      "atol": 0,
+      "rtol": 0
     }
   ]
 }

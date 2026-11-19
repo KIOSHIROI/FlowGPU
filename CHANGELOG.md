@@ -4,6 +4,8 @@
 
 - Add the CPU competitive probe, six-case matrix, independent CPU oracles and
   competitive roadmap; wire compile/oracle checks into CI.
+- Add the M2 device runner with shared inputs/tolerance and separate CUDA-Graph
+  and full-call metrics for FlowGPU vs eager vs TorchInductor.
 
 ## 0.23.0
 

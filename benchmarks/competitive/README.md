@@ -16,12 +16,18 @@ python benchmarks/competitive/probe.py --check
 The case list is `cases.json`; it uses only public examples, so the probe is
 reproducible without private fixtures.
 
-Next layers:
+The M2 device runner is `device_runner.py`:
 
-1. correctness: FlowGPU reference vs an independent PyTorch oracle on the same
-   numbers;
-2. device latency: FlowGPU Triton vs Torch eager / `torch.compile` / a pinned
-   Triton baseline on the same shapes;
-3. dynamic-shape dispatch: per-shape cache hit rate and rebuild cost;
-4. competitor columns (TVM/Relax, FlagOS/Triton-Ascend) only after their
-   installation, versions and tolerances are pinned.
+```sh
+python benchmarks/competitive/device_runner.py --check   # CPU/CI matrix validation
+python benchmarks/competitive/device_runner.py --json    # CUDA measurements
+```
+
+It uses the same generated tensors for every backend and the same float64
+oracle/tolerance. It separates **CUDA Graph replay** (no host guards/allocation/
+dispatch) from **full-call** (guarded host call) and reports both. Backends are
+FlowGPU-generated Triton, PyTorch eager, and `torch.compile` (TorchInductor).
+
+The device runner is not executed in CI because CI has no GPU. A handwritten
+Triton baseline and TVM/FlagOS columns can be added after their versions and
+tolerances are pinned.
