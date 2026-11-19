@@ -34,7 +34,7 @@ jobs:
         run: python -m pytest -q --junitxml=pytest.xml
       - name: upload test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pytest-${{ matrix.python }}
           path: pytest.xml
@@ -64,7 +64,7 @@ jobs:
           assert result.pipelines[0].triton.complete
           print("wheel import ok")
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/*
