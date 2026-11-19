@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.21.6
+
+- Validate the release pipeline against the upgraded GitHub Actions and record
+  the Dependabot resolution.
+
 ## Unreleased
 
 - Apply the grouped Dependabot GitHub Actions upgrades to the workflow files;
