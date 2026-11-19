@@ -13,3 +13,4 @@ dist/
 results/
 *.log
 .DS_Store
+site/

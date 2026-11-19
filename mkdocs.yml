@@ -1,0 +1,43 @@
+site_name: FlowGPU
+site_description: A dataflow DSL compiler for GPU operator pipelines
+repo_url: https://github.com/KIOSHIROI/FlowGPU
+repo_name: KIOSHIROI/FlowGPU
+edit_uri: edit/main/docs/user-guide/
+docs_dir: docs/user-guide
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Tutorial: tutorial.md
+  - Examples: examples.md
+  - Language: language.md
+  - CLI: cli.md
+  - Python API: api.md
+  - Backends: backends.md
+  - FAQ: faq.md
+  - Troubleshooting: troubleshooting.md

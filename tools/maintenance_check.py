@@ -32,7 +32,8 @@ def main() -> int:
     if f"## {declared}" not in changelog and "## Unreleased" not in changelog:
         problems.append("CHANGELOG has neither the current version nor an Unreleased entry")
     for relative in ("LICENSE", "README.md", "CONTRIBUTING.md", "SECURITY.md",
-                     "MAINTAINERS.md", "docs/MAINTENANCE.md",
+                     "MAINTAINERS.md", "SUPPORT.md", "Makefile", "mkdocs.yml",
+                     "docs/MAINTENANCE.md", "docs/user-guide/index.md",
                      ".github/workflows/ci.yml", ".github/workflows/release.yml",
                      ".github/dependabot.yml"):
         if not (ROOT / relative).exists():

@@ -5,7 +5,19 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "flowgpu"
 version = "0.16.1"
-description = "An agent-oriented dataflow DSL for GPU computation pipelines in LLM inference runtimes"
+description = "A dataflow DSL compiler for GPU operator pipelines targeting Triton and a portable reference backend"
+authors = [{name = "The FlowGPU Authors"}]
+keywords = ["compiler", "triton", "dataflow", "dsl", "gpu", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Compilers",
+]
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -25,6 +37,17 @@ dev = [
     "ruff>=0.5",
     "build>=1",
 ]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/KIOSHIROI/FlowGPU"
+Repository = "https://github.com/KIOSHIROI/FlowGPU"
+Documentation = "https://github.com/KIOSHIROI/FlowGPU/tree/main/docs"
+Issues = "https://github.com/KIOSHIROI/FlowGPU/issues"
+Changelog = "https://github.com/KIOSHIROI/FlowGPU/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["compiler*", "migration*"]
