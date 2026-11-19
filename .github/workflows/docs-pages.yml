@@ -4,6 +4,12 @@ name: docs-pages
 # settings first, then run this workflow from the Actions tab.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs/user-guide/**"
+      - "mkdocs.yml"
+      - ".github/workflows/docs-pages.yml"
 
 permissions:
   contents: read
@@ -23,6 +29,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: actions/configure-pages@v5
       - name: install docs dependencies
         run: |
           python -m pip install --upgrade pip
