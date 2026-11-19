@@ -19,8 +19,8 @@ jobs:
     runs-on: ${{ vars.GPU_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -33,7 +33,7 @@ jobs:
         run: python tools/gpu_smoke.py --require-device 2>&1 | tee gpu-smoke.log
       - name: keep the device log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gpu-smoke-${{ github.run_id }}
           path: gpu-smoke.log

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Apply the grouped Dependabot GitHub Actions upgrades to the workflow files.
+
 ## 0.21.5
 
 - Remove internal research/competition path references from public code comments.
