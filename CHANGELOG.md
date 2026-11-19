@@ -2,7 +2,6 @@
 
 ## Unreleased
 
-- Add Windows CPU CI coverage.
 
 ## 0.21.1
 
