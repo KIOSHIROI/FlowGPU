@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.19.1
+
+- Add the PEP 561 `py.typed` marker and ship it in the wheel.
+- Add `.editorconfig` and pre-commit configuration for contributors.
+
 ## Unreleased
 
 - Harden workflow permissions and add job timeouts to prevent stuck CI.

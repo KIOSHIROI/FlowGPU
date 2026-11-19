@@ -9,6 +9,8 @@ change is explicitly about emission.
 ```sh
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[dev,docs]"
+.venv/bin/python -m pip install pre-commit
+pre-commit install
 .venv/bin/python -m pytest -q
 .venv/bin/python -m ruff check .
 mkdocs build --strict
