@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21.1
+
+- Neutralize remaining customer/engagement positioning in the public migration
+  tooling and bundled model provenance.
+- Add internal-positioning phrases to the public-boundary check.
+
 ## 0.21.0
 
 - Remove the internal commercial pricing module and `flowgpu-migration price`

@@ -49,7 +49,7 @@ def _coverage(args) -> int:
 
 
 def _init(args) -> int:
-    """Create a customer workspace: model profile, evidence skeleton, runbook."""
+    """Create a migration workspace: model profile, evidence skeleton, runbook."""
     import hashlib as _hashlib
     workspace = pathlib.Path(args.out)
     workspace.mkdir(parents=True, exist_ok=False)

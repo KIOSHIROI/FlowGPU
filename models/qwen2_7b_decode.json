@@ -1,7 +1,7 @@
 {
   "schema": "flowgpu.migration.model/1",
   "model": "Qwen2-7B inference decode path (operator inventory v0)",
-  "provenance": "Manual inventory from the public Qwen2 architecture and public inference-framework operator lists (vLLM/FlagGems/SGLang). This is a *starting* inventory, not a torch.fx trace: a live engagement must regenerate it from the customer's actual exported graph and pin the trace artifact.",
+  "provenance": "Manual inventory from the public Qwen2 architecture and public inference-framework operator lists (vLLM/FlagGems/SGLang). This is a *starting* inventory, not a torch.fx trace: a real deployment must regenerate it from the actual exported graph and pin the trace artifact.",
   "operators": [
     {"name": "rms_norm", "frontend": "rms_norm", "where": "pre/post attention normalization"},
     {"name": "rope", "frontend": "rope", "where": "q/k rotary embedding"},

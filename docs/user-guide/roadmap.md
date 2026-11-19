@@ -14,5 +14,5 @@ than by benchmark score.
 5. **Packaging and docs** — reproducible wheels, Python 3.11–3.13 CI, a docs
    site, nightly GPU smoke when a runner is available.
 
-The detailed internal roadmap is
+The detailed roadmap is
 [ROADMAP.md](https://github.com/KIOSHIROI/FlowGPU/blob/main/docs/ROADMAP.md).
