@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add Windows CPU CI coverage.
+
 ## 0.21.1
 
 - Neutralize remaining customer/engagement positioning in the public migration
