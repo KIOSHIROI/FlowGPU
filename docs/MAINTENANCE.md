@@ -40,6 +40,11 @@ must work.
 
 ## Public/private boundary
 
+`tools/check_public_boundary.py` scans for personal host paths, credential-shaped
+text, key-like files and organizer-shaped files; `tools/publish_guard.py` checks
+the known private directories. Both are release checks and the boundary checker
+runs in the public test suite.
+
 This repository is a curated standalone public tree. Private competition
 material, organizer task packages, evidence runs, research data and personal
 infrastructure are intentionally absent. Never copy them into this repository;

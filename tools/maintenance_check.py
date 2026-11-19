@@ -37,7 +37,7 @@ def main() -> int:
                      "docs/user-guide/getting-started.md", "docs/user-guide/tutorial.md",
                      "docs/user-guide/api.md", "docs/user-guide/faq.md",
                      ".devcontainer/devcontainer.json",
-                     "tools/check_docs_links.py",
+                     "tools/check_docs_links.py", "tools/check_public_boundary.py",
                      ".github/workflows/ci.yml", ".github/workflows/release.yml",
                      ".github/workflows/codeql.yml", ".github/workflows/security-audit.yml",
                      ".github/dependabot.yml"):

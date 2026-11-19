@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a public-boundary check for personal paths, credentials and organizer files.
+
+## Unreleased
+
 - Remove stale version numbers from the security policy and getting-started docs.
 
 ## Unreleased
