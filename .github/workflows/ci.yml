@@ -85,6 +85,8 @@ jobs:
           python -m pip install -e ".[docs]"
       - name: check relative links
         run: python tools/check_docs_links.py
+      - name: competitive structural probe
+        run: python benchmarks/competitive/probe.py --check
       - name: build docs strictly
         run: mkdocs build --strict
       - uses: actions/upload-artifact@v7

@@ -138,6 +138,7 @@ Start here:
 - [Security and release verification](docs/user-guide/security.md)
 - [Limitations](docs/user-guide/limitations.md)
 - [Optimization pipeline](docs/user-guide/optimization.md)
+- [Competitive roadmap](docs/user-guide/competitive-roadmap.md)
 - [Prepared deployment](docs/user-guide/deployment.md)
 - [Upgrading from pre-0.18](docs/user-guide/upgrading.md)
 

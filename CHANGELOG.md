@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add the CPU competitive probe, six-case matrix, independent CPU oracles and
+  competitive roadmap; wire compile/oracle checks into CI.
+
 ## 0.23.0
 
 - Add a declarative, contract-filtered tuning-space generator for measured

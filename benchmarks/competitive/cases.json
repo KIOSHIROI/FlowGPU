@@ -1,0 +1,166 @@
+{
+  "schema": "flowgpu.competitive.cases/1",
+  "cases": [
+    {
+      "name": "add_literal",
+      "source": "examples/quickstart/add.fgpu",
+      "pipeline": "quickstart_add",
+      "bindings": {},
+      "inputs": [
+        [
+          "a",
+          [
+            1024
+          ],
+          "fp16"
+        ],
+        [
+          "b",
+          [
+            1024
+          ],
+          "fp16"
+        ]
+      ],
+      "oracle": "add"
+    },
+    {
+      "name": "vectoradd_symbolic",
+      "source": "examples/gpu_mode/vectoradd.fgpu",
+      "pipeline": "vectoradd",
+      "bindings": {
+        "M": 128,
+        "N": 128
+      },
+      "inputs": [
+        [
+          "a",
+          [
+            128,
+            128
+          ],
+          "fp16"
+        ],
+        [
+          "b",
+          [
+            128,
+            128
+          ],
+          "fp16"
+        ]
+      ],
+      "oracle": "add"
+    },
+    {
+      "name": "matmul_symbolic",
+      "source": "examples/gpu_mode/matmul.fgpu",
+      "pipeline": "matmul",
+      "bindings": {
+        "M": 64,
+        "K": 128,
+        "N": 64
+      },
+      "inputs": [
+        [
+          "a",
+          [
+            64,
+            128
+          ],
+          "fp16"
+        ],
+        [
+          "b",
+          [
+            128,
+            64
+          ],
+          "fp16"
+        ]
+      ],
+      "oracle": "matmul"
+    },
+    {
+      "name": "softmax_wide",
+      "source": "examples/batch8/wide_row_softmax.fgpu",
+      "pipeline": "wide_plain",
+      "bindings": {
+        "B": 8,
+        "V": 1024
+      },
+      "inputs": [
+        [
+          "x",
+          [
+            8,
+            1024
+          ],
+          "fp32"
+        ]
+      ],
+      "oracle": "softmax"
+    },
+    {
+      "name": "residual_norm",
+      "source": "examples/residual_norm.fgpu",
+      "pipeline": "residual_norm",
+      "bindings": {
+        "N": 8,
+        "D": 512
+      },
+      "inputs": [
+        [
+          "x",
+          [
+            8,
+            512
+          ],
+          "bf16"
+        ],
+        [
+          "residual",
+          [
+            8,
+            512
+          ],
+          "bf16"
+        ],
+        [
+          "weight",
+          [
+            512
+          ],
+          "bf16"
+        ]
+      ],
+      "oracle": "residual_norm",
+      "oracle_atol": 0.01
+    },
+    {
+      "name": "mapping_pointwise",
+      "source": "examples/mapping_pointwise.fgpu",
+      "pipeline": "mapping_pointwise",
+      "bindings": {
+        "N": 1024
+      },
+      "inputs": [
+        [
+          "x",
+          [
+            1024
+          ],
+          "int32"
+        ],
+        [
+          "y",
+          [
+            1024
+          ],
+          "int32"
+        ]
+      ],
+      "oracle": "int_pointwise"
+    }
+  ]
+}
