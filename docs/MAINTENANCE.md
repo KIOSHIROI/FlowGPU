@@ -8,7 +8,7 @@
 | `tools/maintenance_check.py` | release and scheduled maintenance |
 | Dependabot updates | weekly, grouped where practical |
 | Issue/PR triage | at least weekly |
-| Security advisories | as reported |
+| Security advisories / CodeQL | as reported |
 | Release | when user-facing changes accumulate |
 
 ## Required checks
@@ -47,3 +47,7 @@ infrastructure are intentionally absent. Never copy them into this repository;
 ## Docs site
 
 `mkdocs build --strict` runs in CI. After enabling GitHub Pages (Settings -> Pages -> GitHub Actions), run the manual `docs-pages` workflow to deploy. The site is built from `docs/user-guide/`.
+
+## Dependency review
+
+`dependency-review-action` requires the repository dependency graph to be enabled in GitHub Settings -> Code security and analysis. It is not enabled in this repository, so the workflow was removed rather than shipping a permanently failing check. Once enabled, re-add the standard `pull_request` dependency-review workflow.

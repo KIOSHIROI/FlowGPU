@@ -28,3 +28,7 @@ Dependabot regrouped the three action bumps into PR #5
 `actions/upload-artifact`). Its CI run is green. It remains open because the
 maintainer session has SSH push access but no GitHub API token for merging or
 closing pull requests.
+
+## Dependency graph note
+
+`dependency-review-action` cannot run because the repository dependency graph is not enabled. The workflow was removed; Dependabot and CodeQL remain active. Re-add dependency review after enabling dependency graph in repository security settings.
