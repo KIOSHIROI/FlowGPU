@@ -44,3 +44,14 @@ explicitly.
 
 Open an issue with `flowgpu --version`, the previous working version, a minimal
 program and the exact failure. Compatibility bugs are treated as real bugs.
+
+## Platforms
+
+| Platform | CI status |
+|---|---|
+| Linux | tested on Python 3.11–3.14 |
+| macOS | tested on Python 3.13 |
+| Windows | not CI-verified; use WSL2 |
+
+Device execution (`--run-gpu`) additionally requires a Linux CUDA environment
+with a compatible PyTorch/Triton pair.

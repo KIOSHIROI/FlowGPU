@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Document the tested platform matrix (Linux/macOS; Windows via WSL2).
+
+## Unreleased
+
 
 ## 0.21.1
 

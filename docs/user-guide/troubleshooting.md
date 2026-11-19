@@ -65,6 +65,12 @@ Examples use literal shapes for clarity. Use symbolic dimensions in your own
 program when you need one compiled program to serve several shapes; the
 generated host wrapper checks the runtime shapes and dtypes.
 
+## Windows
+
+Native Windows is not part of the CI matrix. Use WSL2 for the supported Linux
+path; native Python may work for the compiler/reference backend but is not
+guaranteed.
+
 ## Collect environment details
 
 Run `flowgpu --doctor` and include its output in the issue; it avoids a long

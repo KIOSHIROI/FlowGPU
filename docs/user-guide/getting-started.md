@@ -19,6 +19,9 @@ python -m venv .venv
 ```
 
 On Windows PowerShell the interpreter path is `.venv\Scripts\python.exe`.
+Native Windows is not CI-verified; use **WSL2** for the supported Linux path.
+The compiler and reference backend may work natively, but the Windows test
+matrix is not maintained.
 
 ## Install a published release wheel
 
