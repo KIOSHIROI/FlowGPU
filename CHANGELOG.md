@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.2
+
+- Add the user-facing security and release-verification page.
+- Validate distributions with `twine check` in CI/release/publish workflows.
+- Add a VS Code/Codespaces dev container and contributor tooling polish.
+
 ## Unreleased
 
 - Validate wheel/sdist metadata with `twine check` in CI, release and
