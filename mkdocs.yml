@@ -44,6 +44,7 @@ nav:
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
   - Architecture: architecture.md
+  - Optimization pipeline: optimization.md
   - Contributing: contributing.md
   - Roadmap: roadmap.md
   - Stability and versioning: stability.md

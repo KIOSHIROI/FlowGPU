@@ -15,6 +15,7 @@ flowgpu program.fgpu --emit summary     # typed pipeline
 flowgpu program.fgpu --emit dataflow    # SSA dataflow graph
 flowgpu program.fgpu --emit fusion      # fusion groups
 flowgpu program.fgpu --emit buffers     # buffer/storage plan
+flowgpu program.fgpu --emit planning    # launches/traffic/buffer cost summary
 flowgpu program.fgpu --emit triton      # generated Triton module
 ```
 
@@ -66,6 +67,12 @@ reports or automation use the machine-readable form:
 ```sh
 flowgpu --doctor --doctor-format json
 ```
+
+## Optimization controls
+
+Graph identity folding, CSE and DCE run by default. Use `--no-optimize` to
+compile the conservative graph, or `--no-identity-folding` to keep identity view
+nodes while retaining CSE/DCE. `--emit planning` shows the structural plan cost.
 
 ## Help and errors
 

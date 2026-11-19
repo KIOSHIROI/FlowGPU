@@ -59,6 +59,7 @@ EMIT_CHOICES = (
     "semantic",
     "fusion",
     "buffers",
+    "planning",
     "stability",
     "precision",
     "portability",
@@ -114,6 +115,22 @@ def _statements_of(pipeline_result, kind):
         for statement in pipeline_result.pipeline.statements
         if isinstance(statement, kind)
     ]
+
+
+def _render_planning(pipeline_result) -> str:
+    summary = pipeline_result.planning
+    payload = {
+        "pipeline": pipeline_result.pipeline.name,
+        "cost": summary.as_dict() if summary is not None else None,
+        "optimization": [
+            {"name": record.name, "nodes_before": record.nodes_before,
+             "nodes_after": record.nodes_after,
+             "decisions": [dict(rule=d.rule, reason=d.reason)
+                           for d in record.decisions]}
+            for record in pipeline_result.optimization
+        ],
+    }
+    return json.dumps(payload, indent=2, ensure_ascii=False)
 
 
 def _render_summary(pipeline_result) -> str:
@@ -718,6 +735,14 @@ def _pipeline_as_json(pipeline_result) -> dict:
         # buffers share storage. `storage` is null for a value that needs
         # none, and "input" for one the caller provided.
         "platform_conflicts": list(pipeline_result.platform_conflicts),
+        "optimization": [
+            {"name": record.name, "nodes_before": record.nodes_before,
+             "nodes_after": record.nodes_after,
+             "decisions": [dict(rule=d.rule, reason=d.reason) for d in record.decisions]}
+            for record in pipeline_result.optimization
+        ],
+        "planning": (pipeline_result.planning.as_dict()
+                     if pipeline_result.planning is not None else None),
         "stability": _stability_as_json(pipeline_result),
         "precision": _precision_as_json(pipeline_result),
         "portability": _portability_as_json(pipeline_result),
@@ -895,6 +920,10 @@ def build_argument_parser() -> argparse.ArgumentParser:
                                  help="opt-in CUDA shared-index sibling row gathers in one launch")
     argument_parser.add_argument('--no-view-folding', action='store_true',
                                  help='retain identity permutation chains for a same-source control')
+    argument_parser.add_argument('--no-optimize', action='store_true',
+                                 help='disable the graph identity/CSE/DCE pipeline (conservative control)')
+    argument_parser.add_argument('--no-identity-folding', action='store_true',
+                                 help='run CSE/DCE but keep identity view nodes for a same-source control')
     argument_parser.add_argument("--compare-partial-gathers", action="store_true", help="include explicit width-based partial gather partitions in comparison")
     argument_parser.add_argument("--emulate-fp32", action="store_true", help="scalar FP32 reference arithmetic; not a GPU instruction simulator")
     argument_parser.add_argument("--gather-plan", help="explicit JSON file of gather partitions and per-group mappings")
@@ -1205,7 +1234,8 @@ def main(argv=None) -> int:
         result = compile_source(source, source_path=args.path, gpu_backend=args.gpu_backend, library_matmul=args.library_matmul,
                                 attention_impl=args.attention_impl, platform_config=platform_config,
                                 custom_ops=args.custom_ops, autotune=args.autotune, autotune_fold=args.autotune_fold, fusion_policy=args.fusion_policy, shape_bindings=dict(args.shape), index_fusion=not args.no_index_fusion, reduction_fusion=not args.no_reduction_fusion, cross_domain_strategy=args.cross_domain_strategy, gather_fusion=args.gather_fusion, gather_plan=gather_plan,
-                                semantic_view_folding=not args.no_view_folding, prune_kernel_abi=args.prune_kernel_abi, platform_gate=args.platform_gate)
+                                semantic_view_folding=not args.no_view_folding, prune_kernel_abi=args.prune_kernel_abi, platform_gate=args.platform_gate,
+                                optimize=not args.no_optimize, identity_folding=not args.no_identity_folding)
     except CompileError as exc:
         _report(exc, as_json=args.emit == "json")
         return 1
@@ -1282,6 +1312,13 @@ def main(argv=None) -> int:
         print(
             "\n\n".join(
                 _render_buffers(pipeline_result)
+                for pipeline_result in result.pipelines
+            )
+        )
+    elif args.emit == "planning":
+        print(
+            "\n\n".join(
+                _render_planning(pipeline_result)
                 for pipeline_result in result.pipelines
             )
         )

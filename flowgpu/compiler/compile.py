@@ -23,7 +23,10 @@ from flowgpu.compiler.ir.composite_ops import expand as expand_composed_operator
 from flowgpu.compiler.ir.dataflow_builder import DataflowBuilder
 from flowgpu.compiler.core.diagnostic import CompileError, DiagnosticKind
 from flowgpu.compiler.optimization.fusion import FusionReport, fuse, coalesce_store_cache_groups
+from flowgpu.compiler.optimization.optimizer import optimize_graph
 from flowgpu.compiler.analysis.liveness import MemoryPlan, plan
+from flowgpu.compiler.analysis.planning import summarize_plan
+from flowgpu.compiler.ir.verification import verify_graph
 from flowgpu.compiler.core.position import Position
 from flowgpu.compiler.analysis.access_shape import group_conflicts
 from flowgpu.compiler.backend.platform_configs import PlatformConfig, resolve_platform
@@ -91,6 +94,12 @@ class PipelineResult:
     #: IR-native scalar placement plan when ``scalar_placement='sps'``; the
     #: decisions are also applied to the Triton host/kernel ABI (S1).
     scalar_placement_plan: object = None
+    #: Records from the graph-optimisation pipeline (identity/CSE/DCE), empty
+    #: when ``optimize=False``. Kept on the result so a caller can explain why
+    #: the dataflow differs from a conservative build.
+    optimization: tuple = ()
+    #: Structural plan cost (launches, buffers, slots, modeled traffic A).
+    planning: object = None
 
 
 # The measured minimax arm for a cross-domain reduction is never worse than 1.16x
@@ -152,7 +161,7 @@ def auto_cross_domain_config():
 def compile_source(source: str, source_path: str | None = None, *, gpu_backend="triton", attention_impl="math", platform_config: PlatformConfig | None = None, custom_ops=False, autotune=False, autotune_fold=False, fusion_policy="traffic", library_matmul="unfused", shape_bindings=None, shape_constraints=None, index_fusion=True, reduction_fusion=True, cross_domain_strategy=DEFAULT_CROSS_DOMAIN_STRATEGY, gather_fusion=False, gather_plan=None, numeric_mode="fp64", concurrency="sequential", launch_cache=False, semantic_view_folding=True, prune_kernel_abi=False, emit=True, platform_gate=False,
     dependence_guard=False, split_views=False, layout_views=None, scan_epilogue=False, _pipelines=None,
     scalar_placement="off", scalar_specialization=None,
-    scalar_calls=1) -> CompileResult:
+    scalar_calls=1, optimize=True, identity_folding=True) -> CompileResult:
     """Parse and type-check `source`, or raise CompileError.
 
     A builtin TypeError or ValueError escaping from here is not a bad
@@ -166,6 +175,10 @@ def compile_source(source: str, source_path: str | None = None, *, gpu_backend="
         raise ValueError('prune_kernel_abi must be a bool')
     if type(launch_cache) is not bool:
         raise ValueError('launch_cache must be a bool')
+    if type(optimize) is not bool:
+        raise ValueError('optimize must be a bool')
+    if type(identity_folding) is not bool:
+        raise ValueError('identity_folding must be a bool')
     if type(split_views) is not bool:
         raise ValueError('split_views must be a bool')
     if layout_views not in (None, True, False, "cost", "experimental"):
@@ -395,6 +408,12 @@ def compile_source(source: str, source_path: str | None = None, *, gpu_backend="
         # buffer plan is what gives their components the ordinary treatment.
         dataflow, expansion = expand_composed_operators(dataflow)
         normalization = normalization + expansion
+        optimized = optimize_graph(dataflow, enabled=optimize, identity_folding=identity_folding)
+        dataflow = optimized.graph
+        optimization = optimized.records
+        # Even with optimization disabled, the pass layer's invariants must hold
+        # before fusion/liveness consume the graph.
+        verify_graph(dataflow)
         # Layout ops host no pointwise regions: their lowering is a host
         # copy with no registers to fuse into, so a relu epilogue on a split
         # would be a category error rather than an optimization.
@@ -477,6 +496,7 @@ def compile_source(source: str, source_path: str | None = None, *, gpu_backend="
         if resolved_cross_domain in {'segmented','segmented-merge'}:
             from flowgpu.compiler.ir.reduction_stages import plan_reduction_stages
             memory=replace(memory,stage_plan=plan_reduction_stages(dataflow,fusion,merge=resolved_cross_domain=='segmented-merge'))
+        planning = summarize_plan(dataflow, fusion, memory)
 
         # The pre-emission gate. `contracts.violations` reads emitted text, so by
         # the time it can answer, the target has already been handed a plan it
@@ -551,6 +571,8 @@ def compile_source(source: str, source_path: str | None = None, *, gpu_backend="
                 ) if triton_program is not None else None),
                 platform_conflicts=planned_conflicts,
                 scalar_placement_plan=placement_plan,
+                optimization=optimization,
+                planning=planning,
             )
         )
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.22.0
+
+- Add an explicit effect/alias model and graph verifier; stateful cache
+  operators are never removed or commoned.
+- Add a verified pass framework with graph-level CSE, DCE and guarded identity
+  folding, plus `--no-optimize` / `--no-identity-folding` controls.
+- Add a structural planning summary and `--emit planning`.
+- Document the static-only dynamic-shape boundary and the optimization pipeline.
+
 ## Unreleased
 
 - Prohibit private evidence-path tokens across the public tree and neutralize the

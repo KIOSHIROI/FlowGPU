@@ -51,8 +51,18 @@ Each `PipelineResult` exposes the intermediate and backend products:
 | `triton` | emitted Triton program (kernels, host source, refusals) |
 | `reference` | emitted reference program |
 | `platform_conflicts` | contract conflicts, if any |
+| `optimization` | graph pass records (identity/CSE/DCE) |
+| `planning` | structural plan-cost summary |
 
 ## Common options
+
+| option | default | meaning |
+|---|---|---|
+| `optimize` | `True` | run graph identity/CSE/DCE passes |
+| `identity_folding` | `True` | fold non-exported identity view nodes |
+
+Each `PipelineResult` exposes `optimization` records and a `planning` summary;
+the CLI JSON and `--emit planning` use the same objects.
 
 Only a small subset is needed for normal use. All are keyword-only after
 `source`.

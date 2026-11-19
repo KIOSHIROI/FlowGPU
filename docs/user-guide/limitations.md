@@ -20,6 +20,12 @@ hidden gaps.
 - Unsupported constructs are refused with a diagnostic rather than approximated.
 - Intended for inference-operator pipelines, not training/autograd.
 
+## Dynamic shapes
+
+FlowGPU compiles static shapes. A symbolic dimension can be specialized with
+`shape_bindings`, but there is no runtime dynamic-shape dispatch or guard path;
+compile a new specialization for a new shape.
+
 ## Platforms
 
 - Linux and macOS are CI-tested; native Windows is not, use WSL2.
