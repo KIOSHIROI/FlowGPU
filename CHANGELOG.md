@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Remove stale version numbers from the security policy and getting-started docs.
+
+## Unreleased
+
 - Require release and index-publication tags to be ancestors of `main`.
 
 ## Unreleased

@@ -51,7 +51,7 @@ This installs the runtime dependency (`lark`) and the `flowgpu` command.
 
 ```sh
 .venv/bin/python -m flowgpu --version
-# FlowGPU 0.16.1
+# prints the installed version, e.g. FlowGPU 0.x.y
 
 .venv/bin/python -m flowgpu examples/quickstart/add.fgpu --emit summary
 ```

@@ -9,7 +9,7 @@ on:
         description: 'Type "publish" to confirm the test-index decision'
         required: true
       tag:
-        description: 'Existing tag to publish (e.g. v0.18.1)'
+        description: 'Existing tag to publish (e.g. vX.Y.Z)'
         required: true
 
 permissions:

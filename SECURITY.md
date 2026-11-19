@@ -2,8 +2,8 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest released minor line (currently
-**0.16.x**). Older snapshots are not maintained.
+Security fixes are provided for the **latest released minor line**; older
+pre-1.0 minor lines and snapshots are not maintained.
 
 ## Reporting a vulnerability
 
