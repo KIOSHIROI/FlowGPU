@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sys
+import tarfile
 import zipfile
 
 
@@ -43,6 +44,22 @@ def main(argv=None) -> int:
                              "flowgpu-migration = flowgpu.migration.cli:main"):
                 if expected not in text:
                     problems.append(f"missing console script: {expected}")
+    sdists = sorted(pathlib.Path(args.dist).glob("*.tar.gz"))
+    if len(sdists) != 1:
+        problems.append(f"expected exactly one sdist, found {len(sdists)}")
+    else:
+        with tarfile.open(sdists[0]) as archive:
+            names = archive.getnames()
+            payload = [name for name in names if name.count("/") >= 1]
+            if not any(name.endswith("flowgpu/compiler/grammar.lark") for name in payload):
+                problems.append("sdist is missing flowgpu/compiler/grammar.lark")
+            if not any(name.endswith("flowgpu/py.typed") for name in payload):
+                problems.append("sdist is missing flowgpu/py.typed")
+            for name in payload:
+                inner = name.split("/", 1)[1]
+                if inner.startswith("compiler/") or inner.startswith("migration/"):
+                    problems.append(f"sdist contains removed top-level path: {inner}")
+                    break
     if problems:
         print("release metadata FAILED")
         for problem in problems:

@@ -23,8 +23,9 @@ uv build
 python tools/check_release_metadata.py --dist dist
 ```
 
-The metadata check requires a single `flowgpu` top-level package, the grammar
-file, both console scripts and a matching version.
+The metadata check inspects both the wheel and the sdist: a single `flowgpu`
+top-level package, the grammar file, `py.typed`, both console scripts, no removed
+top-level `compiler`/`migration` paths and a matching version.
 
 ## Tag
 

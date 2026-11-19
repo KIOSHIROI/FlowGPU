@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Validate sdist contents alongside the wheel in the release metadata check.
+
 ## 0.20.0
 
 - Add `flowgpu --doctor` environment diagnostics and document it.
