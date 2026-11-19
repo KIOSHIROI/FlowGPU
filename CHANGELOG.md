@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.21.5
+
+- Remove internal research/competition path references from public code comments.
+- Ship an explicit empty public extern ledger instead of reading a private path.
+
 ## 0.21.4
 
 - Fix the release workflow by keeping the runtime SBOM in the weekly

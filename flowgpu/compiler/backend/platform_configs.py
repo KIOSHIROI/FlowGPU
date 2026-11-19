@@ -226,7 +226,7 @@ class PlatformConfig:
     # line has no reuse. It is a *hint* -- it cannot change values -- and the
     # spelling is the Triton 3.3.1 keyword `eviction_policy="evict_first"` on
     # `tl.load`/`tl.store`, the same spelling the vendored FlagGems library in
-    # this tree uses (`research/open_source/flaggems-20261016/.../softmax.py`),
+    # this tree uses (the vendored FlagGems softmax source),
     # which is the strongest local evidence that the FlagTree-based backends
     # accept it. Off by default; a backend that ignores the policy produces the
     # same binary as before.
@@ -373,7 +373,7 @@ class PlatformConfig:
 # - kunlunxin 128: the batch-8 dcp_lse_combine submissions showed a
 #   next_power_of_2(D)-wide reduction tile dying in TritonXPU's MLIR pipeline
 #   with `OutOfResources: uni_sram`, while 128-lane kernels compiled and ran.
-# - cuda 4096: A800 CUDA-graph timing (results/reduction_forms_a800_20261002,
+# - cuda 4096: A800 CUDA-graph timing (internal evidence,
 #   45 configs, 0 wrong, sanity pair 0.0%) shows the single-tile form winning
 #   up to D=16384 (-27%..-37% vs chunked) and collapsing ~10x from D=32768
 #   (2088us vs 233us at width 16384); chunk width is flat 244-254us across
@@ -657,7 +657,7 @@ def resolve_platform(name="cuda", *, mapping_strategy=None, block_size=None,
         # (4096, 0.09)) is official-board evidence, not a hardware guess: Task160 on
         # 昆仑芯 read 1.58x at the flat default 1024 and 1.78x / 1.85x / 1.86x at the
         # peak 2048 across submissions on 2026-10-21
-        # (competition/season2/batch10/swiglu_oai_split/candidate-20261021{m,o}/
+        # (the two measured candidate variants/
         # submission-attempt-{13,15}.json). Before this, the only way a builder could
         # get the measured peak was to hard-code 2048, so every other caller silently
         # emitted the 0.65 relative point. cuda has no curve and does not move: a 2048

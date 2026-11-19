@@ -433,7 +433,7 @@ def _render_contracts(pipeline_result) -> str:
     speak about a plan; `backend/contracts.violations` judges the *expressions* in
     the emitted text, and can only speak about code that has been written. A
     disagreement between them is the interesting case -- one of the two is wrong,
-    and the earlier corrections in `research/kunlun_feasibility/RESULTS.md` were
+    and the earlier corrections in internal feasibility evidence were
     found exactly that way.
 
     This view exists so the comparison is a command rather than an exercise:

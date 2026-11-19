@@ -2,7 +2,7 @@
 
 Why this module exists at all.
 
-The 2026-10-20 content census (`research/language_gap_survey/classify.py`)
+The 2026-10-20 content census
 classified all 115 season-2 tasks by what their **reference implementation
 calls**, instead of by their names. The result inverted the earlier name-based
 ranking: the largest gap was not addressing (`moe_dispatch`, `topk`) but the

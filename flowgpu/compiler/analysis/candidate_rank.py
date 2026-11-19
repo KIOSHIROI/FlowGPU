@@ -25,7 +25,7 @@ larger tile and fewer programs, and the bandwidth model preferred the opposite.
 Calibration and what it is worth
 --------------------------------
 The constants were chosen on the *screen* shapes of one frozen corpus
-(``results/candidate_cost_20261004``) and then applied unchanged to shapes the
+(an earlier internal calibration) and then applied unchanged to shapes the
 search never saw. Across twenty-four such shapes, pruning seven candidates to
 two never removed the measured winner; pruning to one removed it four times.
 Pruning to two therefore halves the candidate set at no observed cost.

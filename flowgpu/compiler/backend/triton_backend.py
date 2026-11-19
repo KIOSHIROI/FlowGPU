@@ -2848,7 +2848,7 @@ def _fast_launch_lines(kernel, arguments, graph, names, device, indent):
     per-device cache. On the Task160 shape that dispatch is 16.6 us of the
     31.8 us full call, while launching the already-compiled handle is 6.99 us
     for the same kernel and byte-identical output (H100, guarded;
-    competition/season2/batch10/swiglu_oai_split/diagnosis-20261021).
+    an earlier internal diagnosis).
 
     The emitted form keeps the plain launch as its single fallback, textually
     exactly as before, so a Triton build that cannot hand out a launchable

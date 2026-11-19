@@ -1,6 +1,6 @@
 """IR-native scalar placement analysis (SPS S1).
 
-The standalone SPS prototype (``research/sps``) showed that the placement of a
+The standalone SPS prototype showed that the placement of a
 scalar is a constrained cost decision: host formal, constexpr specialisation,
 program-uniform device load, or materialised tile.  S1 moves the decision into
 the compiler and realises the first two placements for *scalar inputs*:
@@ -80,7 +80,7 @@ class PlacementCostModel:
     host_scalar_per_call_us: float = 0.10
     #: One compile of a specialised variant; measured compile cost is larger,
     #: but the planner only needs the crossover, and the H100 calibration in
-    #: research/sps used 10 ms.
+    #: the standalone prototype used 10 ms.
     constexpr_compile_us: float = 10_000.0
     #: Code-size/instruction-cache pressure per specialised scalar (amortised).
     constexpr_code_us: float = 0.0

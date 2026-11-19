@@ -1,6 +1,6 @@
 """Declared indexed write: `out = scatter_by_index(base, index, values)`.
 
-This is the operator the catalogue survey put first (`research/language_gap_survey/`:
+This is the operator the catalogue survey put first:
 `indexed_write` blocked 23 tasks). It is *declared*, not general indexing -- the
 index is an explicit tensor input, the ranks and the row width are static, and the
 address is the index value rather than an expression the language computes.

@@ -32,7 +32,7 @@ scarce submission -- is what this module is meant to prevent.
 
 Two checks below are adjacent and must not be confused; conflating them is a
 mistake this file made once and then paid for by missing two official
-observations (`research/kunlun_feasibility/RESULTS.md`):
+observations (internal feasibility evidence):
 
 * ``store_inside_loop_ok`` -- a **temporal** property: a stored value that
   depends on a register the same loop body updates.  There is no address
@@ -274,7 +274,7 @@ def gather_like(source, offset):
     """Whether a load address is a scatter rather than a blocked lane address.
 
     An access-*shape* judgement (2026-10-20, measured on ten official 昆仑芯
-    outcomes -- research/kunlun_feasibility/RESULTS.md), decided on the
+    outcomes -- internal feasibility evidence), decided on the
     coefficients the address is built from rather than on its text:
 
     * data-dependent (built from a loaded value) -> gather;

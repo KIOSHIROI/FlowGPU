@@ -47,7 +47,7 @@ KINDS = operator_kinds()
 
 
 def load_extern_ledger() -> dict:
-    path = ROOT / "competition/extern_ledger.json"
+    path = pathlib.Path(__file__).resolve().parent / "data" / "extern_ledger.json"
     if not path.exists():
         return {}
     data = json.loads(path.read_text())
