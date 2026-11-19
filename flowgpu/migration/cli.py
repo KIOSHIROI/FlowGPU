@@ -1,10 +1,10 @@
 """Cross-backend operator migration audit (product CLI).
 
-    python tools/migration_audit.py coverage --model models/qwen2_7b_decode.json \
+    flowgpu-migration coverage --model models/qwen2_7b_decode.json \
         --platforms ascend,ascend-wide,kunlunxin
-    python tools/migration_audit.py bundle new --model ... --platforms ... --out evidence/run
-    python tools/migration_audit.py bundle validate evidence/run
-    python tools/migration_audit.py bundle render evidence/run -o evidence/run/report.md
+    flowgpu-migration bundle new --model ... --platforms ... --out evidence/run
+    flowgpu-migration bundle validate evidence/run
+    flowgpu-migration bundle render evidence/run -o evidence/run/report.md
 """
 from __future__ import annotations
 
@@ -21,7 +21,6 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from flowgpu.migration import coverage as coverage_module  # noqa: E402
-from flowgpu.migration import pricing as pricing_module  # noqa: E402
 from flowgpu.migration import bundle as bundle_module  # noqa: E402
 
 
@@ -46,22 +45,6 @@ def _coverage(args) -> int:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         print(coverage_module.render_coverage(result))
-    return 0
-
-
-def _price(args) -> int:
-    if args.package:
-        print(json.dumps(pricing_module.quote(args.package), indent=2))
-    elif args.person_days:
-        print(json.dumps(pricing_module.custom_quote(args.person_days), indent=2))
-    else:
-        print("| package | person-days | price (CNY) | cost floor | margin | scope |")
-        print("|---|---:|---:|---:|---:|---|")
-        for record in pricing_module.price_menu():
-            print("| %s | %d | %d | %d | %.0f%% | %s |" % (
-                record["package"], record["person_days"], record["price"],
-                record["cost_floor"], record["gross_margin"] * 100,
-                record["scope"]))
     return 0
 
 
@@ -134,9 +117,9 @@ def _bundle_new(args) -> int:
         "operators": [{"name": entry["name"]} for entry in model["operators"]],
         "evidence": [],
         "gaps": [{"operator": row["operator"], "platform": row["platform"],
-                  "reason": f"{row['status']}: {row['reason']}"}
-                 for row in result["rows"] if row["status"] in {"refused", "missing"}],
-        "reproduction": ["python tools/migration_audit.py coverage --model %s --platforms %s"
+                  "reason": f"{row['status']}: {row['reason']}; no evidence recorded yet"}
+                 for row in result["rows"]],
+        "reproduction": ["flowgpu-migration coverage --model %s --platforms %s"
                          % (args.model, args.platforms)],
     }
     path = out / "manifest.json"
@@ -195,11 +178,6 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("demo")
     p.set_defaults(func=_demo)
-
-    p = sub.add_parser("price")
-    p.add_argument("--package", choices=sorted(pricing_module.PACKAGES))
-    p.add_argument("--person-days", type=int)
-    p.set_defaults(func=_price)
 
     p = sub.add_parser("bundle")
     subsub = p.add_subparsers(dest="bundle_command", required=True)

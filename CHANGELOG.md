@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.21.0
+
+- Remove the internal commercial pricing module and `flowgpu-migration price`
+  from the public package.
+- Fix `flowgpu-migration bundle new` to emit explicit gaps for every
+  operator/platform and update its reproduction command.
+- Prohibit internal pricing text in the public-boundary check.
+
 ## 0.20.1
 
 - Fix `flowgpu-migration demo` for the public tree: resolve repository paths
