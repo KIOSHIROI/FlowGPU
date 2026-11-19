@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Remove a staged `store_at` example that is not available in the public
+  frontend, and add a test that compiles every public example.
+
 ## 0.16.4
 
 - Add a GitHub Release on tag pushes with generated notes and wheel/sdist assets.

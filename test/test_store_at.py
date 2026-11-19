@@ -66,7 +66,15 @@ TRUSTED = (
     "pipeline tr { input dst:bf16[256] input starts:int32[4] "
     "input values:bf16[4,64] out=store_at_trusted(dst,starts,values) output out }"
 )
-EXAMPLE = "examples/batch10/kda_prologue_store.fgpu"
+EXAMPLE = """
+pipeline kda_prologue_store {
+    input dst    : bf16[T]
+    input starts : int32[C]
+    input values : bf16[C,BT,K]
+    out = store_at(dst, starts, values)
+    output out
+}
+"""
 
 
 @pytest.fixture
@@ -414,8 +422,7 @@ def test_a_kunlun_build_with_the_store_at_kind_emits_the_affine_write_path(stage
 
 
 def test_the_153_shaped_example_compiles_with_one_base_load_per_program(staged):
-    from pathlib import Path
-    program = pipeline(Path(EXAMPLE).read_text())
+    program = pipeline(EXAMPLE)
     assert program.triton.complete
     write = program.triton.kernels[-1]
     assert write.name == "kda_prologue_store_k0"

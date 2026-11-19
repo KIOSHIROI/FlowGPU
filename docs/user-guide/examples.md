@@ -42,6 +42,8 @@ flowgpu examples/errors/shape_mismatch.fgpu --emit summary
 
 ## Run the examples as tests
 
+Every non-error `.fgpu` example in this repository is compiled by the public CPU suite (`test/test_public_examples.py`), so an example cannot silently rot.
+
 The public test suite compiles and executes many examples on the CPU:
 
 ```sh
