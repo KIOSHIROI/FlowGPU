@@ -4,6 +4,7 @@
 
 - Add maintainer, maintenance and release-process documentation.
 - Add Dependabot and issue templates for ongoing maintenance.
+- Add weekly scheduled CI, a maintenance invariant check and a PR checklist.
 
 ## 0.16.1
 

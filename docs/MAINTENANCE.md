@@ -4,7 +4,8 @@
 
 | Check | When |
 |---|---|
-| CI (tests, lint, wheel) | every push / pull request |
+| CI (tests, lint, wheel) | every push / pull request, plus weekly schedule |
+| `tools/maintenance_check.py` | release and scheduled maintenance |
 | Dependabot updates | weekly, grouped where practical |
 | Issue/PR triage | at least weekly |
 | Security advisories | as reported |

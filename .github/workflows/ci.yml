@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Weekly maintenance run: the suite must stay green even without pushes.
+    - cron: "23 4 * * 1"
 
 concurrency:
   group: ci-${{ github.ref }}
