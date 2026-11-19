@@ -37,8 +37,9 @@ git push origin vX.Y.Z
 
 The `release` workflow verifies the tag is an ancestor of `main`, checks the
 version, builds sdist+wheel, generates `SHA256SUMS`, attests build provenance and
-creates a GitHub Release with `SHA256SUMS` and a runtime CycloneDX SBOM. The
-index-publication workflows apply the same ancestry guard.
+creates a GitHub Release with `SHA256SUMS`. The weekly security-audit workflow
+publishes a separate runtime CycloneDX SBOM artifact. The index-publication
+workflows apply the same ancestry guard.
 
 ## PyPI and TestPyPI
 

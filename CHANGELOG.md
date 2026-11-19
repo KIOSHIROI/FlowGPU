@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.21.4
+
+- Fix the release workflow by keeping the runtime SBOM in the weekly
+  security-audit artifact instead of the release job.
+
 ## 0.21.3
 
 - Attach the runtime CycloneDX SBOM to GitHub Release assets and checksums.

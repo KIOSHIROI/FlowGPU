@@ -16,7 +16,8 @@ supported versions, scope and disclosure expectations.
 | CycloneDX SBOM upload | with the runtime audit |
 | Dependabot | weekly Actions / pip / pre-commit updates |
 | GitHub build-provenance attestations | every release |
-| `SHA256SUMS` + CycloneDX `sbom.cdx.json` in GitHub Releases | every release |
+| `SHA256SUMS` in GitHub Releases | every release |
+| CycloneDX SBOM artifact | weekly/security-audit workflow |
 
 Dependency review is not enabled because the repository dependency graph is off;
 the audit above covers the published runtime dependency instead.
