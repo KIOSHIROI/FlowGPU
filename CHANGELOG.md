@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.21.7
+
+- Add `flowgpu --doctor-format json` for machine-readable environment reports.
+
 ## 0.21.6
 
 - Validate the release pipeline against the upgraded GitHub Actions and record

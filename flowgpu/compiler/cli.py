@@ -820,6 +820,10 @@ def build_argument_parser() -> argparse.ArgumentParser:
         help="print environment diagnostics and exit",
     )
     argument_parser.add_argument(
+        "--doctor-format", choices=("text", "json"), default="text",
+        help="format for --doctor (default: text)",
+    )
+    argument_parser.add_argument(
         "path",
         nargs="?",
         help="path to a .fgpu file, or - to read from stdin",
@@ -984,20 +988,34 @@ def _report(error: CompileError, as_json: bool) -> None:
         print(f"error: {diagnostic}", file=sys.stderr)
 
 
-def _doctor() -> int:
-    print("FlowGPU " + __version__)
-    print("Python: " + platform.python_version() + " (" + platform.platform() + ")")
-    print("Executable: " + sys.executable)
+def _doctor(output_format: str = "text") -> int:
     from importlib.util import find_spec
+    packages = {}
     for package in ("lark", "torch", "triton"):
         if find_spec(package) is None:
-            print(package + ": not installed")
+            packages[package] = None
             continue
         try:
-            version = importlib.metadata.version(package)
+            packages[package] = importlib.metadata.version(package)
         except importlib.metadata.PackageNotFoundError:
-            version = "unknown"
-        print(package + ": " + version)
+            packages[package] = "unknown"
+    info = {
+        "flowgpu": __version__,
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "executable": sys.executable,
+        "packages": packages,
+        "reference_backend": True,
+        "note": "environment report only; no GPU kernel is run",
+    }
+    if output_format == "json":
+        print(json.dumps(info, indent=2, ensure_ascii=False))
+        return 0
+    print("FlowGPU " + info["flowgpu"])
+    print("Python: " + info["python"] + " (" + info["platform"] + ")")
+    print("Executable: " + info["executable"])
+    for package, version in packages.items():
+        print(package + ": " + (version if version else "not installed"))
     print("Reference backend: available")
     print("Doctor only reports the environment; it does not run a GPU kernel.")
     return 0
@@ -1007,7 +1025,7 @@ def main(argv=None) -> int:
     argument_parser = build_argument_parser()
     args = argument_parser.parse_args(argv)
     if args.doctor:
-        return _doctor()
+        return _doctor(args.doctor_format)
     if args.path is None:
         argument_parser.error("the following arguments are required: path")
         return 2

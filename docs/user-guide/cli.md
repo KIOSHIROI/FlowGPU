@@ -60,7 +60,12 @@ flowgpu --doctor
 ```
 
 It reports the FlowGPU, Python, lark, torch and Triton versions and whether
-the reference backend is available; it never runs a GPU kernel.
+the reference backend is available; it never runs a GPU kernel. For issue
+reports or automation use the machine-readable form:
+
+```sh
+flowgpu --doctor --doctor-format json
+```
 
 ## Help and errors
 

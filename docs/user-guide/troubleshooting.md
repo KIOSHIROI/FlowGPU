@@ -73,8 +73,9 @@ guaranteed.
 
 ## Collect environment details
 
-Run `flowgpu --doctor` and include its output in the issue; it avoids a long
-back-and-forth about Python, lark, torch and Triton versions.
+Run `flowgpu --doctor` (or `--doctor-format json`) and include its output in
+the issue; it avoids a long back-and-forth about Python, lark, torch and Triton
+versions.
 
 ## Still stuck?
 
