@@ -3,6 +3,7 @@
 [![CI](https://github.com/KIOSHIROI/FlowGPU/actions/workflows/ci.yml/badge.svg)](https://github.com/KIOSHIROI/FlowGPU/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/KIOSHIROI/FlowGPU/actions/workflows/codeql.yml/badge.svg)](https://github.com/KIOSHIROI/FlowGPU/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/KIOSHIROI/FlowGPU)](https://github.com/KIOSHIROI/FlowGPU/releases)
+[![Docs](https://img.shields.io/badge/docs-live-blue)](https://kioshiroi.github.io/FlowGPU/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 
@@ -116,6 +117,8 @@ common options.
 | Production stability / ABI guarantees | ❌ not yet |
 
 ## Documentation
+
+**Docs site:** <https://kioshiroi.github.io/FlowGPU/>
 
 Start here:
 

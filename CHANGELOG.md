@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Publish the user guide on GitHub Pages and link it from the README.
+
+## Unreleased
+
 - Generate a CycloneDX runtime SBOM in the security-audit workflow.
 
 ## 0.17.0

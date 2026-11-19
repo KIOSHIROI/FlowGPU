@@ -1,4 +1,5 @@
 site_name: FlowGPU
+site_url: https://kioshiroi.github.io/FlowGPU/
 site_description: A dataflow DSL compiler for GPU operator pipelines
 repo_url: https://github.com/KIOSHIROI/FlowGPU
 repo_name: KIOSHIROI/FlowGPU

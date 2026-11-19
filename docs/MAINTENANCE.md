@@ -47,7 +47,7 @@ infrastructure are intentionally absent. Never copy them into this repository;
 
 ## Docs site
 
-`mkdocs build --strict` runs in CI. After enabling GitHub Pages (Settings -> Pages -> GitHub Actions), run the manual `docs-pages` workflow to deploy. The site is built from `docs/user-guide/`.
+`mkdocs build --strict` runs in CI. GitHub Pages is enabled; `.github/workflows/docs-pages.yml` deploys the site from `docs/user-guide/` on documentation changes and manual dispatch. The live site is https://kioshiroi.github.io/FlowGPU/.
 
 ## Dependency review
 
