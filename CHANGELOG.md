@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Extend the relative-link check to all public documentation.
+
+## Unreleased
+
 - Add an examples catalog and record the current roadmap status.
 
 ## Unreleased

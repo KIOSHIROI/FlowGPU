@@ -18,6 +18,9 @@ FILES = [
     ROOT / "CONTRIBUTING.md",
     ROOT / "SUPPORT.md",
     ROOT / "SECURITY.md",
+    ROOT / "GOVERNANCE.md",
+    ROOT / "MAINTAINERS.md",
+    *sorted((ROOT / "docs").glob("*.md")),
     *sorted((ROOT / "docs" / "user-guide").glob("*.md")),
 ]
 LINK = re.compile(r"\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
