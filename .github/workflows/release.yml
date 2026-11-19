@@ -39,6 +39,8 @@ jobs:
           result = compile_source("pipeline p { input x:fp16[64] input y:fp16[64] out = add(x, y) output out }")
           print("wheel import ok")
           PY
+      - name: generate checksums
+        run: (cd dist && sha256sum *.whl *.tar.gz > SHA256SUMS)
       - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ github.ref_name }}

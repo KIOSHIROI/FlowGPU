@@ -20,6 +20,20 @@ python -m venv .venv
 
 On Windows PowerShell the interpreter path is `.venv\Scripts\python.exe`.
 
+## Install a published release wheel
+
+Download the wheel from the latest
+[GitHub Release](https://github.com/KIOSHIROI/FlowGPU/releases), then verify it
+against the attached `SHA256SUMS` before installing:
+
+```sh
+sha256sum -c SHA256SUMS
+python -m pip install flowgpu-<version>-py3-none-any.whl
+```
+
+The release page also contains the sdist for environments that prefer building
+from source.
+
 ## Install from Git
 
 ```sh

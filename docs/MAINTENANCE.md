@@ -33,7 +33,8 @@ must work.
 3. Commit, push, wait for CI.
 4. Create an annotated tag `vX.Y.Z` and push it. The `release` workflow verifies
    that the tag matches the package version, builds sdist+wheel, keeps the
-   artifacts and creates a GitHub Release with generated notes and both files.
+   artifacts and creates a GitHub Release with generated notes, both files and
+   a `SHA256SUMS` checksum file.
 5. Do not publish to PyPI automatically. `publish-pypi.yml` is manual and guarded;
    configure a PyPI trusted publisher and the `pypi` environment before using it.
 

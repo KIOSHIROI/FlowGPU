@@ -1,9 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.16.5
 
-- Remove a staged `store_at` example that is not available in the public
-  frontend, and add a test that compiles every public example.
+- Keep every public example compilable (remove a staged `store_at` sample and
+  add a compile-all-examples test).
+- Attach `SHA256SUMS` to GitHub Releases.
+- Document installing a published release wheel and verifying its checksum.
 
 ## 0.16.4
 
