@@ -8,6 +8,8 @@
 
 ## Unreleased
 
+- Fix the storage-dtype arithmetic repair message to name `fp16`, not
+  `bp16`, before the arithmetic.
 - Add the CPU competitive probe, six-case matrix, independent CPU oracles and
   competitive roadmap; wire compile/oracle checks into CI.
 - Add the M2 device runner with shared inputs/tolerance and separate CUDA-Graph

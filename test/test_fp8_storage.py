@@ -105,3 +105,5 @@ def test_storage_arithmetic_error_names_the_repair():
     message = str(info.value)
     assert "storage dtype" in message
     assert "cast_to(x, fp32)" in message
+    assert "fp16/bf16" in message
+    assert "bp16" not in message

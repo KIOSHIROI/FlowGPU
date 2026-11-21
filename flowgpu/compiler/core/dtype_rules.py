@@ -96,7 +96,7 @@ def require_arithmetic(tensor_type, verb: str):
             DiagnosticKind.TYPE,
             f"Cannot {verb} a {dtype}: it is a storage dtype, so it has to be "
             f"widened to a compute dtype first; the repair is "
-            f"cast_to(x, fp32) (or bp16/bf16) before the arithmetic and "
+            f"cast_to(x, fp32) (or fp16/bf16) before the arithmetic and "
             f"cast_to(result, {dtype}) after it",
         )
 
