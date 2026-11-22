@@ -49,6 +49,7 @@ nav:
   - Contributing: contributing.md
   - Roadmap: roadmap.md
   - Competitive roadmap: competitive-roadmap.md
+  - Competitive M2 H100 result: competitive-m2-h100.md
   - Stability and versioning: stability.md
   - Upgrading from pre-0.18: upgrading.md
   - Releasing: releasing.md

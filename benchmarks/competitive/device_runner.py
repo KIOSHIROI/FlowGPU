@@ -6,6 +6,7 @@ the case matrix without importing torch; CI therefore runs that form.
 
 Backends:
 * ``flowgpu``  -- FlowGPU-generated Triton host;
+* ``flowgpu_prepared`` -- offline prepared plan with caller-owned buffers;
 * ``eager``    -- dtype-faithful PyTorch expression;
 * ``inductor`` -- ``torch.compile`` (TorchInductor, Triton backend);
 * ``triton``   -- explicitly hand-written Triton kernels in triton_baselines.py.
@@ -167,6 +168,24 @@ def _flowgpu_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
 def _eager_runner(case: DeviceCase, args):
     from benchmarks.competitive.torch_oracles import eager
     return lambda: eager(case.name, args)
+def _flowgpu_prepared_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
+    """Offline prepared plan: caller-owned buffers, no per-call allocation."""
+    from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+    import torch
+    source = (ROOT / case.source).read_text()
+    started = time.perf_counter()
+    plan = prepare_execution_plan(
+        source, pipeline=case.pipeline, args=args, cache_dir=str(cache_dir),
+        validator=lambda result: all(
+            bool(torch.isfinite(value).all()) for value in result.values()
+            if hasattr(value, "isfinite")),
+        shape_bindings=case.bindings,
+    )
+    prep_ms = (time.perf_counter() - started) * 1000.0
+    buffers = plan.allocate_buffers()
+    return (lambda: plan.run_into(*args, buffers=buffers)), prep_ms
+
+
 
 
 def main(argv=None) -> int:
@@ -176,7 +195,7 @@ def main(argv=None) -> int:
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--backends", default="flowgpu,eager,inductor,triton")
+    parser.add_argument("--backends", default="flowgpu,flowgpu_prepared,eager,inductor,triton")
     parser.add_argument("--warmup", type=int, default=10)
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--seed", type=int, default=0)
@@ -225,18 +244,31 @@ def main(argv=None) -> int:
                 runners["flowgpu"] = _flowgpu_runner(case, tensors, cache_dir=cache_dir)
             except Exception as error:
                 entry["flowgpu_error"] = type(error).__name__ + ": " + str(error)
+        if "flowgpu_prepared" in backends:
+            try:
+                runners["flowgpu_prepared"] = _flowgpu_prepared_runner(
+                    case, tensors, cache_dir=cache_dir / "prepared")
+            except Exception as error:
+                entry["flowgpu_prepared_error"] = type(error).__name__ + ": " + str(error)
         if "eager" in backends:
-            prepared = _eager_runner(case)
-            runners["eager"] = (prepared(tensors), 0.0)
+            runners["eager"] = (_eager_runner(case, tensors), 0.0)
         if "inductor" in backends:
-            eager_fn = _eager_runner(case)
-            def fn(*inner):
-                return eager_fn(inner)(*inner) if False else eager(case.name, inner)
-            started = __import__("time").perf_counter()
+            started = time.perf_counter()
             compiled = torch.compile(lambda *a: eager(case.name, a))
             compiled(*tensors)
+            torch.cuda.synchronize()
             compile_ms = (time.perf_counter() - started) * 1000.0
             runners["inductor"] = (lambda: compiled(*tensors), compile_ms)
+        if "triton" in backends:
+            try:
+                from benchmarks.competitive.triton_baselines import run as triton_run
+                started = time.perf_counter()
+                triton_run(case.name, tensors)
+                torch.cuda.synchronize()
+                compile_ms = (time.perf_counter() - started) * 1000.0
+                runners["triton"] = (lambda: triton_run(case.name, tensors), compile_ms)
+            except Exception as error:
+                entry["triton_error"] = type(error).__name__ + ": " + str(error)
         for name, (call, compile_ms) in runners.items():
             actual = call()
             correctness = _correctness(case, actual, expected, torch)

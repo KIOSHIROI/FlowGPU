@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add the prepared FlowGPU backend to the M2 device runner and publish the first
+  H100 GPU1 comparative result and optimization order.
+
 ## 0.24.0
 
 - Add `DynamicShapeRunner`: derive symbolic bindings per call and cache static

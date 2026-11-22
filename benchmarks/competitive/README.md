@@ -30,5 +30,7 @@ FlowGPU-generated Triton, PyTorch eager, `torch.compile` (TorchInductor) and an
 explicit hand-written Triton baseline (`triton_baselines.py`).
 
 The device runner is not executed in CI because CI has no GPU. A handwritten
-Triton baseline and TVM/FlagOS columns can be added after their versions and
-tolerances are pinned.
+Triton baseline is included; TVM/FlagOS columns can be added after their
+versions and tolerances are pinned. The first H100 GPU1 result is stored in
+`measurements/m2-h100-gpu1-20261122.json` and discussed in
+`docs/user-guide/competitive-m2-h100.md`.
