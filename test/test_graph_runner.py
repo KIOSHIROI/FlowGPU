@@ -3,7 +3,7 @@ import pytest
 
 pytest.importorskip("torch")
 
-from flowgpu.compiler.runtime.graph import GraphRunner
+from flowgpu.compiler.runtime.graph import GraphRunner, prepare_graph_pipeline
 
 
 class _Plan:
@@ -17,6 +17,10 @@ class _Plan:
 def test_graph_runner_requires_cuda_tensor_inputs():
     with pytest.raises(ValueError, match="CUDA tensors"):
         GraphRunner(_Plan(), (object(),))
+
+
+def test_prepare_graph_pipeline_is_exported():
+    assert callable(prepare_graph_pipeline)
 
 
 def test_graph_runner_requires_inputs():

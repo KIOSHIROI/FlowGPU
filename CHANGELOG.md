@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.36.0
+
+- Add `prepare_graph_pipeline` combining prepared execution plans with graph
+  capture; copy+replay measured 11.12/10.96 µs for add/residual on H100.
+
 ## 0.35.1
 
 - Add `ShapeRunner`, which selects symbolic vs literal dynamic handling from

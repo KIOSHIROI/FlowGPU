@@ -47,6 +47,27 @@ outside CUDA Graph capture; an unchanged cache hit performs no tuning.
 CUDA tensors and an independent validator.
 
 
+
+### Prepared graph pipeline
+
+`prepare_graph_pipeline` combines preparation and graph capture:
+
+```python
+from flowgpu.compiler.runtime.graph import prepare_graph_pipeline
+
+runner = prepare_graph_pipeline(
+    source, pipeline="quickstart_add", args=(x, y),
+    cache_dir=".flowgpu-cache", validator=lambda result: check(result),
+)
+runner(x, y)   # copy into captured inputs + replay
+```
+
+On H100 GPU1 this copy+replay path measured **11.12 µs** for add and **10.96 µs**
+for residual RMSNorm, versus 14.1/16.5 µs for the prepared allocation path.
+Pass `copy_inputs=False` when the caller owns the static buffers and can update
+them in place; then only `replay()` is needed.
+
+
 ## Prepared execution plan
 
 For fixed-shape, allocation-sensitive deployment, `prepare_execution_plan` builds

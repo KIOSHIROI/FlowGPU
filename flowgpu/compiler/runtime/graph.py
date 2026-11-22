@@ -107,9 +107,23 @@ class GraphRunner:
         return self._outputs
 
 
-def capture_prepared_plan(plan, args) -> GraphRunner:
+def capture_prepared_plan(plan, args, *, copy_inputs: bool = True) -> GraphRunner:
     """Convenience wrapper matching the ``prepare_execution_plan`` API."""
-    return GraphRunner(plan, tuple(args))
+    return GraphRunner(plan, tuple(args), copy_inputs=copy_inputs)
 
 
-__all__ = ["GraphRunner", "capture_prepared_plan"]
+def prepare_graph_pipeline(source, *, pipeline, args, cache_dir, validator,
+                           copy_inputs: bool = True, **options) -> GraphRunner:
+    """Prepare an execution plan and capture it into a ready GraphRunner.
+
+    With the default ``copy_inputs=True``, calls accept new tensors (metadata
+    must match) and copy them into the captured static inputs. With
+    ``copy_inputs=False``, callers must own and update ``runner.inputs``.
+    """
+    from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+    plan = prepare_execution_plan(source, pipeline=pipeline, args=args,
+                                  cache_dir=cache_dir, validator=validator, **options)
+    return GraphRunner(plan, tuple(args), copy_inputs=copy_inputs)
+
+
+__all__ = ["GraphRunner", "capture_prepared_plan", "prepare_graph_pipeline"]
