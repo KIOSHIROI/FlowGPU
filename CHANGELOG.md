@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.40.1
+
+- Keep a portable layer_norm expansion for symbolic or wider-than-4096 rows;
+  literal in-register rows still use the native kernel.
+
 ## 0.40.0
 
 - Support rank-0 scalar arguments in prepared execution plans and GraphRunner;

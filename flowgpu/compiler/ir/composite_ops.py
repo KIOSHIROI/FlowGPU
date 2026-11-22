@@ -85,6 +85,16 @@ def expand(graph):
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
             continue
+        if node.op == "layer_norm":
+            # Literal, in-register rows lower to one native kernel; symbolic or
+            # very wide rows keep the portable reduction/pointwise expansion.
+            shapes = [graph.values[value].shape for value in node.inputs[:3]]
+            literal = all(str(extent).isdigit() for shape in shapes for extent in shape)
+            width = int(graph.values[node.inputs[0]].shape[-1]) if literal else 0
+            if literal and width <= 4096:
+                nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
+                                  node.output, node.part, node.attributes))
+                continue
         if node.op == "conv2d":
             x, weight, bias = (resolve(value) for value in node.inputs)
             x_type, weight_type = values[x], values[weight]
@@ -114,6 +124,42 @@ def expand(graph):
             decisions.append(NormalizationDecision(
                 node.output, "expand_composition",
                 "conv2d 1x1 -> reshape + transpose + matmul + bias + reshape",
+            ))
+            continue
+        if node.op == "layer_norm":
+            x, weight, bias, eps = (resolve(value) for value in node.inputs)
+            def mean_of(value, count):
+                total = stage("sum_last", [value])
+                return stage("div", [total, count])
+            xf = stage("to_fp32", [x])
+            count = stage("sum_last", [stage("ones_like", [xf])])
+            mean = mean_of(xf, count)
+            mean_b = stage("broadcast_like", [mean, xf])
+            diff = stage("sub", [xf, mean_b])
+            sq = stage("mul", [diff, diff])
+            var = mean_of(sq, count)
+            var_eps = stage("add", [var, eps])
+            den = stage("sqrt", [var_eps])
+            den_b = stage("broadcast_like", [den, xf])
+            norm = stage("div", [diff, den_b])
+            wf = stage("to_fp32", [weight])
+            wb = stage("broadcast_like", [wf, xf])
+            scaled = stage("mul", [norm, wb])
+            bf = stage("to_fp32", [bias])
+            bb = stage("broadcast_like", [bf, xf])
+            biased = stage("add", [scaled, bb])
+            expected = type_of("cast_like", [biased, x])
+            if values[node.output] != expected:
+                raise CompileError(
+                    DiagnosticKind.INTERNAL,
+                    "layer_norm expansion changed the declared result type: "
+                    f"{values[node.output]} and {expected}",
+                    pipeline=graph.pipeline,
+                )
+            emit("cast_like", [biased, x], node.output)
+            decisions.append(NormalizationDecision(
+                node.output, "expand_composition",
+                "layer_norm (rank >= 2) -> mean/variance reductions, rsqrt, affine weight/bias",
             ))
             continue
         if node.op == "batch_norm":

@@ -150,6 +150,10 @@ Rank-0 scalar arguments (`eps`) now prepare and capture too: the prepared and
 graph runners accept a Python int/float alongside the tensors. All four FlowGPU
 paths pass correctness against the torch formula for eps 1e-5 and 1e-3.
 
+Literal rows up to 4096 use the native kernel; symbolic or wider rows keep the
+portable reduction/pointwise expansion, so the operator does not regress for
+dynamic shapes.
+
 Raw data: [`m2-h100-gpu1-layernorm-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-layernorm-20261122.json).
 
 ## Native mean_last

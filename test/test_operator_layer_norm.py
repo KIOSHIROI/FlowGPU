@@ -38,3 +38,23 @@ def test_layer_norm_native_lowering_matches_reference():
                         for i in range(width))
     got = values["out"]
     assert max(abs(a - b) for a, b in zip(got, expected)) < 2e-2
+
+
+SYMBOLIC = """
+pipeline p {
+  input x:fp16[N, D]
+  input weight:fp16[D]
+  input bias:fp16[D]
+  input eps:fp32
+  out = layer_norm(x, weight, bias, eps)
+  output out
+}
+"""
+
+
+def test_symbolic_layer_norm_keeps_the_portable_expansion():
+    compiled = compile_source(SYMBOLIC)
+    pipeline = compiled.pipelines[0]
+    assert pipeline.triton.kernels
+    assert any(decision.reason.startswith("layer_norm (rank >= 2)")
+               for decision in pipeline.normalization)
