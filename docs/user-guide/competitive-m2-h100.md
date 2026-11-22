@@ -90,6 +90,30 @@ Raw data: [`m2-h100-gpu1-multiseed-graph-20261122.json`](https://github.com/KIOS
 
 
 
+
+## Peak allocated memory
+
+`torch.cuda.max_memory_allocated()` after a reset at the start of each backend.
+Values are KiB and include JIT/warmup allocations, not just kernel working set.
+
+| case | flowgpu | prepared | graph | eager | inductor | triton |
+|---|---:|---:|---:|---:|---:|---:|
+| add | 42.5 | 40.5 | 40.5 | 42.5 | 42.5 | 42.5 |
+| vectoradd | 672.5 | 640.5 | 640.5 | 672.5 | 672.5 | 672.5 |
+| matmul | 32952.5 | 176.5 | 176.5 | 32952.5 | 32952.5 | 184.5 |
+| softmax | 384.5 | 352.5 | 352.5 | 384.5 | 384.5 | 384.5 |
+| residual_norm | 169.5 | 161.5 | 161.5 | 169.5 | 169.5 | 169.5 |
+| mapping | 56.0 | 52.0 | 52.0 | 56.0 | 56.0 | 56.0 |
+| neg | 40.5 | 38.5 | 38.5 | 40.5 | 40.5 | 40.5 |
+| pow | 42.5 | 40.5 | 40.5 | 42.5 | 42.5 | 42.5 |
+| mean_last | 5.0 | 4.5 | 4.5 | 5.0 | 5.0 | 5.0 |
+
+The matmul default's 32 MiB is dominated by first-use compilation allocation; the
+prepared/static paths report 176 KiB. This metric is useful for spotting that
+class of cost, not for claiming a smaller working set without a cleaner protocol.
+
+Raw data: [`m2-h100-gpu1-memory-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-memory-20261122.json).
+
 ## Symbolic compile cost
 
 The symbolic path compiles one module for several extents. On H100 GPU1:

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.34.2
+
+- Add peak-allocated-memory reporting to the M2 device runner and publish the
+  9-case result; prepared/static matmul avoids a 32 MiB first-use allocation.
+
 ## 0.34.1
 
 - Publish 3-seed medians including the zero-copy graph path: 2.99–4.31 µs

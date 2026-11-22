@@ -37,10 +37,12 @@ def merge(reports: list[dict]) -> dict:
             entry = cases.setdefault(case["name"], {"name": case["name"], "backend": {}})
             for backend, value in case["backend"].items():
                 target = entry["backend"].setdefault(backend, {"full": [], "graph": [],
-                                                               "compile": [], "passed": True})
+                                                               "compile": [], "peak": [],
+                                                               "passed": True})
                 target["full"].append(value["full_us"])
                 target["graph"].append(value.get("graph_us"))
                 target["compile"].append(value.get("compile_ms", 0.0))
+                target["peak"].append(value.get("peak_bytes", 0))
                 target["passed"] = target["passed"] and value["correctness"]["passed"]
     merged = []
     for entry in cases.values():
@@ -52,6 +54,7 @@ def merge(reports: list[dict]) -> dict:
                 "full_us_median": statistics.median(values["full"]),
                 "graph_us_median": statistics.median(graph) if graph else None,
                 "compile_ms_median": statistics.median(values["compile"]),
+                "peak_bytes_median": statistics.median(values["peak"]),
                 "seeds": len(values["full"]),
             }
         merged.append(output)

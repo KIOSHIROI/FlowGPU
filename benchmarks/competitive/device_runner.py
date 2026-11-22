@@ -300,6 +300,7 @@ def main(argv=None) -> int:
             except Exception as error:
                 entry["triton_error"] = type(error).__name__ + ": " + str(error)
         for name, (call, compile_ms) in runners.items():
+            torch.cuda.reset_peak_memory_stats()
             actual = call()
             correctness = _correctness(case, actual, expected, torch)
             full = _event_ms(torch, call, warmup=args.warmup, iters=args.iterations)
@@ -309,6 +310,7 @@ def main(argv=None) -> int:
                 "graph_us": graph,
                 "full_us": full,
                 "compile_ms": compile_ms,
+                "peak_bytes": int(torch.cuda.max_memory_allocated()),
             }
         report["cases"].append(entry)
 
