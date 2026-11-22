@@ -132,6 +132,32 @@ per-shape for a hot, single shape.
 
 Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/symbolic-h100-gpu1-20261122.json).
 
+
+## Prepared graph path
+
+`flowgpu_prepared_graph` prepares the plan, captures a graph over static inputs,
+and copies each call's tensors into those inputs before replay. It is a middle
+ground between the allocating prepared path and the zero-copy static path.
+
+| case | prepared | prepared+graph | zero-copy graph | eager | triton |
+|---|---:|---:|---:|---:|---:|
+| add | 15.04 | 11.73 | 2.98 | 5.27 | 14.48 |
+| vectoradd | 19.34 | 14.65 | 3.95 | 6.63 | 17.97 |
+| matmul | 15.56 | 11.04 | 4.32 | 9.76 | 16.50 |
+| softmax | 12.98 | 8.59 | 2.91 | 5.84 | 12.32 |
+| residual_norm | 17.24 | 11.92 | 2.89 | 63.76 | 12.80 |
+| mapping | 14.19 | 10.65 | 2.95 | 9.18 | 13.73 |
+| neg | 12.73 | 8.56 | 3.33 | 4.79 | 13.56 |
+| pow | 14.34 | 10.99 | 3.79 | 5.22 | 13.56 |
+| mean_last | 12.98 | 8.89 | 2.89 | 5.83 | 12.87 |
+
+Prepared+graph removes allocation and dispatch but still pays one batched input
+copy; it is 8.56–14.65 µs, generally better than the allocating prepared path
+but above eager on the simple cases. Zero-copy remains the fastest fixed-shape
+path.
+
+Raw data: [`m2-h100-gpu1-prepgraph-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-prepgraph-20261122.json).
+
 ## Static zero-copy graph path
 
 `flowgpu_graph` prepares the plan, captures a CUDA Graph over caller-owned static

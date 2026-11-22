@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.36.1
+
+- Add the prepared+graph M2 backend and publish the 9-case comparison;
+  copy+replay is 8.56–14.65 µs, faster than allocating prepared but slower than
+  zero-copy graph.
+
 ## 0.36.0
 
 - Add `prepare_graph_pipeline` combining prepared execution plans with graph
