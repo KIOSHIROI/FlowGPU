@@ -79,6 +79,35 @@ streams. A multi-pipeline source is accepted: the named pipeline is selected
 before preparation. Preparation itself still requires CUDA tensors and an
 independent validator, and must happen outside CUDA Graph capture.
 
+
+## Fixed-shape CUDA Graph
+
+For a fixed metadata context, capture a prepared plan once and replay only the
+graph:
+
+```python
+from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+from flowgpu.compiler.runtime.graph import GraphRunner
+
+plan = prepare_execution_plan(source, pipeline="p", args=(x, y),
+                              cache_dir=".flowgpu-cache",
+                              validator=lambda result: check(result))
+runner = GraphRunner(plan, (x, y))
+
+runner.inputs[0].copy_(new_x)   # caller updates the static buffers
+runner.inputs[1].copy_(new_y)
+out = runner.replay()           # no guards, allocation or Triton dispatch
+```
+
+`GraphRunner(plan, args)` allocates static inputs and captures the prepared plan.
+`replay()` is the hot path; `runner(*args)` is a convenience that copies caller
+tensors into the static inputs first and is therefore slower.
+
+The captured outputs alias the plan buffers: copy them before the next replay.
+Capture is fixed to shape, stride, dtype, device and pointer identity; a new
+metadata context needs a new capture. Capture outside an existing CUDA Graph
+capture.
+
 ## Per-shape specialization
 
 FlowGPU does not dispatch symbolic shapes at runtime. A deployment with several

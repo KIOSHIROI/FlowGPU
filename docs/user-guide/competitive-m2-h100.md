@@ -60,14 +60,35 @@ baseline in `benchmarks/competitive/triton_baselines.py`.
    input/output pointers; it is a deployment option, not a replacement for the
    dynamic-shape path.
 
+
+## Static-input graph replay
+
+`GraphRunner` (prepared plan + CUDA Graph) was measured on the same H100 GPU1:
+
+| case | replay (µs) | copy + replay (µs) |
+|---|---:|---:|
+| add | 3.37 | 13.80 |
+| vectoradd | 3.26 | 13.84 |
+| matmul | 4.00 | 13.88 |
+| softmax | 3.36 | 9.30 |
+| residual_norm | 3.31 | 18.31 |
+| mapping | 3.35 | 13.51 |
+
+Replay is below eager full-call on every simple case. The copy + replay path is
+not faster because each PyTorch `copy_` adds a dispatch; it only helps when the
+caller already owns static buffers and updates them in place. This is a
+fixed-shape deployment option, not a general dispatch replacement.
+
 ## Optimization order
 
 1. **Make the prepared path first-class** for fixed-shape deployment: document
    it, benchmark it, and remove its multi-pipeline restriction where safe.
+   The prepared path and fixed-shape `GraphRunner` are now implemented.
 2. **Reduce host overhead** (guards/allocation/dispatch) rather than tuning the
-   pointwise/softmax kernels. `launch_cache=True` saved ~2.5 µs and disabling
-   runtime guards saved ~2.5 µs in a separate host-variant probe; both are
-   opt-in and do not change kernels.
+   pointwise/softmax kernels. `GraphRunner.replay()` is 3.3–4.0 µs; the remaining
+   problem is copying caller tensors into static buffers. `launch_cache=True`
+   saved ~2.5 µs and disabling runtime guards saved ~2.5 µs in a separate
+   host-variant probe; both are opt-in and do not change kernels.
 3. **Matmul only**: graph is 4.10 vs 3.02 µs; a tile/policy change is justified
    after the host path reaches parity.
 4. Re-run with an exclusive GPU, multiple seeds and at least 200 iterations

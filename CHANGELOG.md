@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.0
+
+- Add `GraphRunner`: capture a prepared execution plan and replay fixed-shape
+  static buffers with no guards, allocation or Triton dispatch.
+- Measure graph replay on H100 GPU1 and document the fixed-shape deployment
+  contract.
+
 ## 0.24.1
 
 - Make the prepared execution-plan path first-class: select one named pipeline
