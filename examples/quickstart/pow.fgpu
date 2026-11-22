@@ -1,0 +1,7 @@
+# FlowGPU quickstart: elementwise power, float operands only.
+pipeline quickstart_pow {
+  input x:fp16[1024]
+  input exponent:fp16[1024]
+  out = pow(x, exponent)
+  output out
+}

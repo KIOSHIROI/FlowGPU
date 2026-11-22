@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.27.0
+
+- Add `pow` as a value-layer binary operator with torch-compatible NaN
+  semantics; H100 GPU1 matches torch.pow exactly, including NaN masks.
+- Update the coverage audit to 40/46 present.
+
 ## 0.26.0
 
 - Add `neg` as a value-layer unary operator with reference and Triton lowerings;

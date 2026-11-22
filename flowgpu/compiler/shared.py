@@ -42,7 +42,7 @@ REDUCTIONS = frozenset({'sum_last', 'max_last'})
 COMPARISONS = ("lt", "le", "gt", "ge", "eq", "ne")
 ORDERING = ("abs", "neg", "maximum", "minimum")
 ELEMENTARY = ("sqrt", "rsqrt", "tanh", "sigmoid", "softplus", "erf",
-              "gelu", "gelu_tanh")
+              "gelu", "gelu_tanh", "pow")
 BITWISE = ("bitand", "bitor", "bitxor", "shl", "shr")
 BITS = ("float_bits", "bits_float")
 VALUE_LAYER_OPS = COMPARISONS + ORDERING + ELEMENTARY + BITWISE + BITS

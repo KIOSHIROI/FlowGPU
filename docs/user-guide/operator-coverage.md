@@ -12,12 +12,11 @@ python tools/operator_coverage.py --markdown
 python tools/operator_coverage.py --json
 ```
 
-The current checklist has **39 present / 7 missing** of 46 representative
-operations; the frontend registers 86 operators across 18 kernel kinds.
+The current checklist has **40 present / 6 missing** of 46 representative
+operations; the frontend registers 87 operators across 18 kernel kinds.
 
 ## Missing in the current checklist
 
-- `pow` — elementwise power
 - `mean_last` — last-axis mean
 - `layer_norm` — row normalization (RMSNorm exists)
 - `batch_norm`
@@ -26,7 +25,7 @@ operations; the frontend registers 86 operators across 18 kernel kinds.
 - symbolic dynamic-shape dispatch (per-shape specialization exists)
 
 These are **gaps, not regressions**: the audit records what a model trace would
-need next. The next items are pointwise/reduction additions; convolution,
+need next. The next items are reduction/norm additions; convolution,
 batch norm, sort and symbolic dispatch are larger design items.
 
 ## Checklist
@@ -47,7 +46,7 @@ batch norm, sort and symbolic dispatch are larger design items.
 | pointwise | tanh | `tanh` | present | primitive |
 | pointwise | abs | `abs` | present | primitive |
 | pointwise | neg | `neg` | present | primitive |
-| pointwise | pow | `pow` | missing | - |
+| pointwise | pow | `pow` | present | primitive |
 | pointwise | where | `where` | present | primitive |
 | reduction | sum | `sum_last` | present | primitive |
 | reduction | max | `max_last` | present | primitive |

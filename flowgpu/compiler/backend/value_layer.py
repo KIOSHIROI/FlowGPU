@@ -123,6 +123,8 @@ TRITON = {
                   "tl.extra.cuda.libdevice.tanh(0.7978845608028654 * "
                   "({a}.to(tl.float32) + 0.044715 * {a}.to(tl.float32) * "
                   "{a}.to(tl.float32) * {a}.to(tl.float32)))))"),
+    "pow": ("tl.extra.cuda.libdevice.pow({a}.to(tl.float32), "
+            "{b}.to(tl.float32))"),
     # Integer rows.  Triton's `&`, `|`, `^`, `<<`, `>>` are elementwise on
     # integer tiles and take a tile or a scalar shift/mask on the right.
     "bitand": "({a} & {b})",
@@ -175,6 +177,7 @@ REFERENCE = {
     "erf": "math.erf({a})",
     "gelu": "_gelu({a})",
     "gelu_tanh": "_gelu_tanh({a})",
+    "pow": "_pow({a}, {b})",
     "bitand": "({a} & {b})",
     "bitor": "({a} | {b})",
     "bitxor": "({a} ^ {b})",
@@ -228,6 +231,20 @@ def _gelu_tanh(value):
     """`approximate="tanh"`, as `torch.nn.functional.gelu` spells it."""
     inner = 0.7978845608028654 * (value + 0.044715 * value * value * value)
     return 0.5 * value * (1.0 + math.tanh(inner))
+
+
+def _pow(a, b):
+    """torch.pow semantics: a negative base with a fractional exponent is NaN."""
+    if math.isnan(a) or math.isnan(b):
+        return math.nan
+    try:
+        return math.pow(a, b)
+    except ValueError:
+        if a == 0.0 and b < 0:
+            return math.inf
+        return math.nan
+    except OverflowError:
+        return math.inf
 
 
 def _float_bits(value):

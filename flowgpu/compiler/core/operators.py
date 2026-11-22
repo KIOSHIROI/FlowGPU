@@ -1425,6 +1425,17 @@ for name in ('sqrt', 'rsqrt', 'tanh', 'sigmoid', 'softplus', 'erf',
              'gelu', 'gelu_tanh'):
     register_operator(name, 1, float_unary(name), pointwise=False, acc=None)
 
+def infer_pow(args):
+    x, y = args[0], args[1]
+    require_float(x, 'pow')
+    require_float(y, 'pow')
+    require_same_dtype(x, y, 'pow')
+    require_same_shape(x, y, 'pow')
+    return TensorType(dtype=x.dtype, shape=x.shape.copy())
+
+
+register_operator('pow', 2, infer_pow, pointwise=False, acc=None)
+
 
 # 2026-10-24: integer bit manipulation (value_layer.BITWISE / BITS).
 #
