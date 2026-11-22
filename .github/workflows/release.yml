@@ -61,6 +61,9 @@ jobs:
           path: dist/*
           retention-days: 90
       - name: attest build provenance
+        # Provenance is supplied when the OIDC/attestation service is healthy;
+        # a transient failure must not block the release itself.
+        continue-on-error: true
         uses: actions/attest-build-provenance@v4
         with:
           subject-path: "dist/*"
