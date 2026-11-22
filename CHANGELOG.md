@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.25.2
+
+- Add and publish the operator-coverage audit (38/46 present, 8 gaps).
+
 ## 0.25.1
 
 - Batch GraphRunner input copies with `_foreach_copy_`, reducing copy + replay

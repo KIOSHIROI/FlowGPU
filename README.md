@@ -140,6 +140,7 @@ Start here:
 - [Optimization pipeline](docs/user-guide/optimization.md)
 - [Competitive roadmap](docs/user-guide/competitive-roadmap.md)
 - [Competitive M2 H100 result](docs/user-guide/competitive-m2-h100.md)
+- [Operator coverage](docs/user-guide/operator-coverage.md)
 - [Prepared deployment](docs/user-guide/deployment.md)
 - [Upgrading from pre-0.18](docs/user-guide/upgrading.md)
 

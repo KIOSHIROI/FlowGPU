@@ -89,6 +89,8 @@ jobs:
         run: python benchmarks/competitive/probe.py --check
       - name: competitive device matrix validation
         run: python benchmarks/competitive/device_runner.py --check
+      - name: operator coverage audit
+        run: python tools/operator_coverage.py --check
       - name: build docs strictly
         run: mkdocs build --strict
       - uses: actions/upload-artifact@v7
