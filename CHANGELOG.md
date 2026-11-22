@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.43.0
+
+- Support 4-D [O,C,KH,KW] weights and lower small KxK conv2d to an
+  implicit-GEMM tl.dot kernel; 3x3 is 4.03 us vs eager 50.25 us on H100.
+
 ## 0.42.1
 
 - Cap conv2d 1x1 tile extents (BM/BN 128, BK 64); a [4,16,16,32] x [64,32]

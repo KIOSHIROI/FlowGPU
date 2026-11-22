@@ -1375,18 +1375,23 @@ def infer_conv2d(args):
     require_float(x, 'conv2d')
     require_float(weight, 'conv2d')
     require_float(bias, 'conv2d')
-    if len(x.shape) != 4 or len(weight.shape) != 2:
-        raise reject(DiagnosticKind.SHAPE, 'conv2d requires x [N,H,W,C] and weight [O,C] for a 1x1 kernel')
+    if len(x.shape) != 4 or len(weight.shape) not in (2, 4):
+        raise reject(DiagnosticKind.SHAPE,
+                     'conv2d requires x [N,H,W,C] and weight [O,C] or [O,C,KH,KW]')
     if not all(str(d).isdigit() for d in x.shape + weight.shape + bias.shape):
         raise reject(DiagnosticKind.SHAPE, 'conv2d currently requires literal extents')
     out_channels, in_channels = int(weight.shape[0]), int(weight.shape[1])
+    kh, kw = (1, 1) if len(weight.shape) == 2 else (int(weight.shape[2]), int(weight.shape[3]))
     if int(x.shape[3]) != in_channels:
         raise reject(DiagnosticKind.SHAPE, 'conv2d input channels and weight in-channels must match')
+    if int(x.shape[1]) < kh or int(x.shape[2]) < kw:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d kernel is larger than the input')
     if x.dtype != weight.dtype or x.dtype != bias.dtype:
         raise reject(DiagnosticKind.TYPE, 'conv2d operands must share a floating dtype')
     if bias.shape != [str(out_channels)] and bias.shape != [out_channels]:
         raise reject(DiagnosticKind.SHAPE, 'conv2d bias must have shape [O]')
-    return TensorType(x.dtype, [x.shape[0], x.shape[1], x.shape[2], str(out_channels)])
+    return TensorType(x.dtype, [x.shape[0], str(int(x.shape[1]) - kh + 1),
+                                str(int(x.shape[2]) - kw + 1), str(out_channels)])
 
 
 register_operator('conv2d', 3, infer_conv2d, pointwise=False, acc='fp32')

@@ -391,6 +391,45 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "conv2d_1x1"
+    },
+    {
+      "name": "conv2d_3x3",
+      "source": "examples/quickstart/conv2d_3x3.fgpu",
+      "pipeline": "quickstart_conv2d_3x3",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            2,
+            6,
+            6,
+            8
+          ],
+          "fp16"
+        ],
+        [
+          "weight",
+          [
+            16,
+            8,
+            3,
+            3
+          ],
+          "fp16"
+        ],
+        [
+          "bias",
+          [
+            16
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "conv2d_3x3"
     }
   ]
 }

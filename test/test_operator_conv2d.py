@@ -39,3 +39,34 @@ def test_conv2d_native_lowering_matches_1x1():
                     expected.append(total)
     assert len(actual) == len(expected)
     assert max(abs(a - b) for a, b in zip(actual, expected)) < 2e-2
+
+
+THREE_BY_THREE = """
+pipeline p {
+  input x:fp16[2, 6, 6, 8]
+  input weight:fp16[16, 8, 3, 3]
+  input bias:fp16[16]
+  out = conv2d(x, weight, bias)
+  output out
+}
+"""
+
+
+def test_conv2d_3x3_native_lowering_matches_reference():
+    compiled = compile_source(THREE_BY_THREE)
+    pipeline = compiled.pipelines[0]
+    values = reference.run(pipeline.reference)
+    inputs = reference.inputs_for(pipeline.reference, {})
+    x, weight, bias = (item[3] for item in inputs)
+    out = values["out"]
+    assert len(out) == 2 * 4 * 4 * 16
+    # spot-check one output element against an explicit sum
+    n, oh, ow, o = 1, 2, 1, 3
+    total = 0.0
+    for c in range(8):
+        for kh in range(3):
+            for kw in range(3):
+                total += x[((n * 6 + oh + kh) * 6 + ow + kw) * 8 + c] * weight[o * 8 * 9 + c * 9 + kh * 3 + kw]
+    total += bias[o]
+    index = ((n * 4 + oh) * 4 + ow) * 16 + o
+    assert abs(out[index] - total) < 2e-2

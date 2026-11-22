@@ -137,6 +137,25 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## General KxK conv2d
+
+`conv2d` now accepts a 4-D `[O,C,KH,KW]` weight and lowers a small KxK
+convolution to an implicit-GEMM kernel: for each kernel offset, one `tl.dot`
+accumulates into the same output tile. 1x1 keeps the same kernel with `KH=KW=1`.
+
+| case | flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---|---:|---:|---:|---:|---:|---:|
+| conv2d_1x1 | 25.43* | 2.34 | 5.06 | 2.43 | 36.31 | 51.17 |
+| conv2d_3x3 | 4.03 | 3.99 | 6.64 | 4.04 | 50.25 | 61.18 |
+
+*The 1x1 default-path sample is a shared-GPU outlier; the prepared/graph
+numbers and the 3x3 row are the useful comparison. The 3x3 result is exact
+(`max_abs = 0.0`) against `F.conv2d` in float64.
+
+The matrix is now 14 cases.
+Raw data: [`m2-h100-gpu1-conv3-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-conv3-20261122.json).
+
 ## 13-case matrix: batch_norm and 1x1 conv2d
 
 Two more representative cases:
