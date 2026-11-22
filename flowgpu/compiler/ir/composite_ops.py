@@ -118,17 +118,18 @@ def expand(graph):
             continue
         if node.op == "layer_norm":
             x, weight, bias, eps = (resolve(value) for value in node.inputs)
-            def mean_of(value):
+            def mean_of(value, count):
                 total = stage("sum_last", [value])
-                ones = stage("ones_like", [value])
-                count = stage("sum_last", [ones])
                 return stage("div", [total, count])
             xf = stage("to_fp32", [x])
-            mean = mean_of(xf)
+            # Both moments share the same row count; computing it once removes
+            # one reduction of an all-ones tensor from the layer_norm graph.
+            count = stage("sum_last", [stage("ones_like", [xf])])
+            mean = mean_of(xf, count)
             mean_b = stage("broadcast_like", [mean, xf])
             diff = stage("sub", [xf, mean_b])
             sq = stage("mul", [diff, diff])
-            var = mean_of(sq)
+            var = mean_of(sq, count)
             var_eps = stage("add", [var, eps])
             den = stage("sqrt", [var_eps])
             den_b = stage("broadcast_like", [den, xf])

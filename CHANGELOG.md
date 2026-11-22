@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.30.1
+
+- Share the row-count reduction between layer_norm's mean and variance;
+  kernels drop 4 -> 3 and H100 GPU1 full-call is 60.9 us.
+
 ## 0.30.0
 
 - Add rank-2 inference `batch_norm` with provided mean/var, affine weight/bias
