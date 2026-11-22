@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.41.0
+
+- Extend the M2 matrix to 13 cases with batch_norm and 1x1 conv2d.
+- batch_norm is fused and fast; conv2d_1x1 exposes a 136 us four-kernel gap.
+
 ## 0.40.1
 
 - Keep a portable layer_norm expansion for symbolic or wider-than-4096 rows;

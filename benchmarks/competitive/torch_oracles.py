@@ -23,6 +23,16 @@ def eager(case_name: str, args):
         return {"out": torch.pow(args[0], args[1])}
     if case_name == "mean_last":
         return {"out": torch.mean(args[0], dim=-1, keepdim=True)}
+    if case_name == "batch_norm":
+        x, mean, var, weight, bias, eps = args
+        xf = x.float()
+        return {"out": ((xf - mean.float()) / torch.sqrt(var.float() + eps) * weight.float()
+                        + bias.float()).to(x.dtype)}
+    if case_name == "conv2d_1x1":
+        x, weight, bias = args
+        n, h, w, c = x.shape
+        out = x.reshape(n * h * w, c).float() @ weight.float().t() + bias.float()
+        return {"out": out.reshape(n, h, w, weight.shape[0]).to(x.dtype)}
     if case_name == "layer_norm":
         x, weight, bias, eps = args
         xf = x.float()
@@ -57,6 +67,16 @@ def oracle(case_name: str, args):
         return {"out": torch.pow(args[0].double(), args[1].double())}
     if case_name == "mean_last":
         return {"out": torch.mean(args[0].double(), dim=-1, keepdim=True)}
+    if case_name == "batch_norm":
+        x, mean, var, weight, bias, eps = args
+        xf = x.double()
+        return {"out": ((xf - mean.double()) / torch.sqrt(var.double() + eps)
+                        * weight.double() + bias.double())}
+    if case_name == "conv2d_1x1":
+        x, weight, bias = args
+        n, h, w, c = x.shape
+        out = x.double().reshape(n * h * w, c) @ weight.double().t() + bias.double()
+        return {"out": out.reshape(n, h, w, weight.shape[0])}
     if case_name == "layer_norm":
         x, weight, bias, eps = args
         xf = x.double()

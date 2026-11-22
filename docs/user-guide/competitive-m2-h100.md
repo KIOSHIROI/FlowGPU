@@ -136,6 +136,24 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## 13-case matrix: batch_norm and 1x1 conv2d
+
+Two more representative cases:
+
+| case | flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---|---:|---:|---:|---:|---:|---:|
+| batch_norm | 2.34 | 2.33 | 5.01 | 2.42 | 29.67 | 29.68 |
+| conv2d_1x1 | 135.96 | unsupported | unsupported | unsupported | 15.69 | 15.62 |
+
+`batch_norm` is a single fused pointwise kernel and is already far below eager.
+`conv2d_1x1` is the clear next codegen target: the current expansion is
+`reshape + transpose + matmul + bias`, four kernels, 136 µs vs eager 15.7 µs.
+The prepared paths also reject its host layout call, so this is both a kernel
+and an execution-plan gap.
+
+Raw data: [`m2-h100-gpu1-13case-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-13case-20261122.json).
+
 ## Native layer_norm
 
 `layer_norm` now lowers to one row kernel (fp32 mean/variance, rsqrt(var+eps),
