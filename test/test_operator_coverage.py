@@ -17,5 +17,6 @@ def test_coverage_report_shape():
     assert data["summary"]["present"] + data["summary"]["missing"] == data["summary"]["checklist"]
     entries = {entry["flowgpu"]: entry for entry in data["entries"]}
     assert entries["matmul"]["status"] == "present"
+    assert entries["neg"]["status"] == "present"
     assert entries["mean_last"]["status"] == "missing"
     assert entries["layer_norm"]["status"] == "missing"

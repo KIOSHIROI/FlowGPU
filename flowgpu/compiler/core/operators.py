@@ -1417,6 +1417,7 @@ for name in ('lt', 'le', 'gt', 'ge', 'eq', 'ne'):
     register_operator(name, 2, infer_comparison, pointwise=False, acc=None)
 
 register_operator('abs', 1, infer_ordering, pointwise=False, acc=None)
+register_operator('neg', 1, infer_ordering, pointwise=False, acc=None)
 for name in ('maximum', 'minimum'):
     register_operator(name, 2, infer_ordering, pointwise=False, acc=None)
 

@@ -1,0 +1,6 @@
+# FlowGPU quickstart: unary negation is a value-layer operator.
+pipeline quickstart_neg {
+  input x:fp16[1024]
+  out = neg(x)
+  output out
+}

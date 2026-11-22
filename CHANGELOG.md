@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.26.0
+
+- Add `neg` as a value-layer unary operator with reference and Triton lowerings;
+  H100 GPU1 correctness is exact.
+- Update the coverage audit to 39/46 present.
+
 ## 0.25.2
 
 - Add and publish the operator-coverage audit (38/46 present, 8 gaps).

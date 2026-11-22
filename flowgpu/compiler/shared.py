@@ -40,7 +40,7 @@ REDUCTIONS = frozenset({'sum_last', 'max_last'})
 #: registration, the backend tables and the optimization classifier cannot
 #: drift about what the layer contains.
 COMPARISONS = ("lt", "le", "gt", "ge", "eq", "ne")
-ORDERING = ("abs", "maximum", "minimum")
+ORDERING = ("abs", "neg", "maximum", "minimum")
 ELEMENTARY = ("sqrt", "rsqrt", "tanh", "sigmoid", "softplus", "erf",
               "gelu", "gelu_tanh")
 BITWISE = ("bitand", "bitor", "bitxor", "shl", "shr")
