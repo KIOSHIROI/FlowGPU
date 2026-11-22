@@ -154,7 +154,7 @@ SCALAR_BROADCAST_OPERATORS = frozenset(
 # "a scalar can only broadcast over elementwise arithmetic" gate must not fire
 # first. `segmented_lora_matmul`'s `heads` is the head count that flattens
 # (token, head) rows, i.e. an integer the kernel needs as a number.
-SCALAR_ARGUMENT_OPERATORS = frozenset({"segmented_lora_matmul", "layer_norm"})
+SCALAR_ARGUMENT_OPERATORS = frozenset({"segmented_lora_matmul", "layer_norm", "batch_norm"})
 
 
 def broadcast_elementwise(x, y, verb):
@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm")
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm")
 
 
 # v0.4: static patch geometry.
@@ -1350,6 +1350,24 @@ def infer_layer_norm(args):
 
 
 register_operator('layer_norm', 4, infer_layer_norm, pointwise=False, acc='fp32')
+
+
+def infer_batch_norm(args):
+    x, mean, var, weight, bias, eps = args
+    for value in (x, mean, var, weight, bias, eps):
+        require_float(value, 'batch_norm')
+    if len(x.shape) != 2:
+        raise reject(DiagnosticKind.SHAPE, 'batch_norm currently supports rank-2 [N, C] tensors')
+    channel = x.shape[1]
+    for name, value in (('mean', mean), ('var', var), ('weight', weight), ('bias', bias)):
+        if len(value.shape) != 1 or value.shape != [channel]:
+            raise reject(DiagnosticKind.SHAPE, f'batch_norm {name} must have shape [C]')
+    if eps.shape:
+        raise reject(DiagnosticKind.SHAPE, 'batch_norm eps must be a rank-0 scalar')
+    return TensorType(x.dtype, x.shape.copy())
+
+
+register_operator('batch_norm', 6, infer_batch_norm, pointwise=False, acc='fp32')
 
 
 AXIS_OPERATORS = {'sum_axis': 'sum_last', 'max_axis': 'max_last',

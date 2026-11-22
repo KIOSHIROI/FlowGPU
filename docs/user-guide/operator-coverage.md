@@ -12,12 +12,11 @@ python tools/operator_coverage.py --markdown
 python tools/operator_coverage.py --json
 ```
 
-The current checklist has **42 present / 4 missing** of 46 representative
-operations; the frontend registers 89 operators across 18 kernel kinds.
+The current checklist has **43 present / 3 missing** of 46 representative
+operations; the frontend registers 90 operators across 18 kernel kinds.
 
 ## Missing in the current checklist
 
-- `batch_norm`
 - `conv2d`
 - `sort`
 - symbolic dynamic-shape dispatch (per-shape specialization exists)
@@ -53,7 +52,7 @@ batch norm, sort and symbolic dispatch are larger design items.
 | reduction | softmax | `softmax` | present | rowwise |
 | norm | rmsnorm | `rms_norm` | present | rowwise |
 | norm | layernorm | `layer_norm` | present | - |
-| norm | batch_norm | `batch_norm` | missing | - |
+| norm | batch_norm | `batch_norm` | present | - |
 | linear algebra | matmul | `matmul` | present | matmul |
 | linear algebra | conv2d | `conv2d` | missing | - |
 | linear algebra | embedding lookup | `gather_rows` | present | primitive |

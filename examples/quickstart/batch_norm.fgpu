@@ -1,0 +1,11 @@
+# FlowGPU quickstart: batch-norm inference with provided running statistics.
+pipeline quickstart_batch_norm {
+  input x:fp16[16, 32]
+  input mean:fp16[32]
+  input var:fp16[32]
+  input weight:fp16[32]
+  input bias:fp16[32]
+  input eps:fp32
+  out = batch_norm(x, mean, var, weight, bias, eps)
+  output out
+}

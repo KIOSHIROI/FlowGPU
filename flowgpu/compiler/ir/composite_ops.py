@@ -84,6 +84,38 @@ def expand(graph):
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
             continue
+        if node.op == "batch_norm":
+            x, mean, var, weight, bias, eps = (resolve(value) for value in node.inputs)
+            xf = stage("to_fp32", [x])
+            mean_f = stage("to_fp32", [mean])
+            var_f = stage("to_fp32", [var])
+            mean_b = stage("broadcast_like", [mean_f, xf])
+            var_b = stage("broadcast_like", [var_f, xf])
+            var_eps = stage("add", [var_b, eps])
+            den = stage("sqrt", [var_eps])
+            diff = stage("sub", [xf, mean_b])
+            norm = stage("div", [diff, den])
+            wf = stage("to_fp32", [weight])
+            wb = stage("broadcast_like", [wf, xf])
+            scaled = stage("mul", [norm, wb])
+            bf = stage("to_fp32", [bias])
+            bb = stage("broadcast_like", [bf, xf])
+            biased = stage("add", [scaled, bb])
+            expected = type_of("cast_like", [biased, x])
+            if values[node.output] != expected:
+                raise CompileError(
+                    DiagnosticKind.INTERNAL,
+                    "batch_norm expansion changed the declared result type: "
+                    f"{values[node.output]} and {expected}",
+                    pipeline=graph.pipeline,
+                )
+            emit("cast_like", [biased, x], node.output)
+            decisions.append(NormalizationDecision(
+                node.output, "expand_composition",
+                "batch_norm (inference, rank 2) -> affine normalization from provided "
+                "mean/var plus weight/bias and scalar eps",
+            ))
+            continue
         if node.op == "layer_norm":
             x, weight, bias, eps = (resolve(value) for value in node.inputs)
             def mean_of(value):

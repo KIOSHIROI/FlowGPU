@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.30.0
+
+- Add rank-2 inference `batch_norm` with provided mean/var, affine weight/bias
+  and scalar eps; H100 GPU1 matches torch exactly.
+- Coverage moves to 43/46 with 90 registered operators.
+
 ## 0.29.2
 
 - Extend the M2 matrix to nine cases with `neg`, `pow` and `mean_last`; all
