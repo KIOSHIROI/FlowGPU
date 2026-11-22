@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.29.1
+
+- Add `GraphRunner(copy_inputs=False)` zero-copy capture for caller-owned static
+  buffers; in-place updates need no per-call copy.
+
 ## 0.29.0
 
 - Add `layer_norm` as a composed fp32-mean/variance operator with affine

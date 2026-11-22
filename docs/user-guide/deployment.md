@@ -101,7 +101,10 @@ out = runner.replay()           # no guards, allocation or Triton dispatch
 
 `GraphRunner(plan, args)` allocates static inputs and captures the prepared plan.
 `replay()` is the hot path; `runner(*args)` is a convenience that copies caller
-tensors into the static inputs first and is therefore slower.
+tensors into the static inputs first and is therefore slower. For a caller that
+already owns stable buffers, `GraphRunner(plan, args, copy_inputs=False)` captures
+those buffers directly; update `runner.inputs` in place and call `replay()`, with
+no per-call copy.
 
 The captured outputs alias the plan buffers: copy them before the next replay.
 Capture is fixed to shape, stride, dtype, device and pointer identity; a new

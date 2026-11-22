@@ -23,6 +23,7 @@ class GraphRunner:
 
     plan: object
     source_args: tuple
+    copy_inputs: bool = True
 
     def __post_init__(self) -> None:
         import torch
@@ -37,9 +38,13 @@ class GraphRunner:
             raise ValueError("capture GraphRunner outside an existing capture")
         self._torch = torch
         self._device = device
-        self._inputs = tuple(torch.empty_like(a) for a in self.source_args)
-        for target, source in zip(self._inputs, self.source_args):
-            target.copy_(source)
+        if self.copy_inputs:
+            self._inputs = tuple(torch.empty_like(a) for a in self.source_args)
+            for target, source in zip(self._inputs, self.source_args):
+                target.copy_(source)
+        else:
+            # Caller-owned static buffers: update them in place between replays.
+            self._inputs = tuple(self.source_args)
         self._buffers = self.plan.allocate_buffers()
         for _ in range(3):
             self.plan.run_into(*self._inputs, buffers=self._buffers)
@@ -62,6 +67,9 @@ class GraphRunner:
                 raise ValueError("GraphRunner input metadata/device changed")
 
     def copy_in(self, *tensors) -> None:
+        if not self.copy_inputs:
+            raise ValueError("GraphRunner was created with copy_inputs=False; "
+                             "update runner.inputs in place and call replay()")
         self._check(tensors)
         pairs = [(target, value) for target, value in zip(self._inputs, tensors)
                  if value is not target]
@@ -84,6 +92,9 @@ class GraphRunner:
         return self._outputs
 
     def __call__(self, *tensors):
+        if not self.copy_inputs:
+            raise ValueError("GraphRunner was created with copy_inputs=False; "
+                             "call replay() instead")
         self.copy_in(*tensors)
         return self.replay()
 
