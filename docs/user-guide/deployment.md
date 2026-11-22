@@ -126,7 +126,9 @@ runner(x_64, y_64)     # [64, 64]; same compiled module
 ```
 
 Verified on H100 GPU1 for vectoradd (128x128, 64x64, 17x19), matmul
-(64x128x64, 32x64x32) and softmax (8x1024, 4x512). Programs containing
+(64x128x64, 32x64x32) and softmax (8x1024, 4x512). One module is not always
+cheaper to compile and its full-call path is slightly slower; see the
+[M2 H100 report](competitive-m2-h100.md#symbolic-compile-cost). Programs containing
 literal-only operators still use `DynamicShapeRunner` or explicit
 specialization; `SymbolicShapeRunner` does not silently fall back.
 

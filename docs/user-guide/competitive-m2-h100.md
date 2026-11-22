@@ -82,6 +82,26 @@ next optimization.
 Raw data: [`m2-h100-gpu1-20261122-extended.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-20261122-extended.json).
 
 
+
+## Symbolic compile cost
+
+The symbolic path compiles one module for several extents. On H100 GPU1:
+
+| program | symbolic compile | per-shape compile | symbolic full | per-shape full |
+|---|---:|---:|---:|---:|
+| vectoradd (3 shapes) | 69.9 ms | 7.8 / 6.9 / 7.0 ms | 18.3–18.6 µs | 17.6–17.8 µs |
+| matmul (2 shapes) | 7.0 ms | 48.9 / 11.0 ms | 18.3–18.4 µs | 17.7–17.8 µs |
+| softmax (2 shapes) | 22.3 ms | 15.8 / 15.0 ms | 17.1–17.4 µs | 15.3 µs |
+
+One module is not automatically cheaper: vectoradd's cold symbolic compile was
+slower than compiling three small per-shape modules, while matmul's symbolic
+compile was much cheaper than both specializations. Full-call latency is slightly
+higher for symbolic (dynamic launch arguments and guards). Choose symbolic when
+the shape set is open-ended or compile-cache reuse is high; choose per-shape for
+a hot, single shape.
+
+Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/symbolic-h100-gpu1-20261122.json).
+
 ## Multi-seed medians
 
 Three seeds (0, 1, 2), 30 iterations each; values are medians of the per-seed

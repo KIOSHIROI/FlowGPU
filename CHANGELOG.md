@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.33.1
+
+- Measure symbolic vs per-shape compile cost and full-call latency on H100 GPU1;
+  one module is not automatically cheaper for a small shape set.
+
 ## 0.33.0
 
 - Add `SymbolicShapeRunner` and document one-module runtime-extent dispatch;
