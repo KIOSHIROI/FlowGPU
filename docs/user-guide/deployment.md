@@ -111,6 +111,26 @@ Capture is fixed to shape, stride, dtype, device and pointer identity; a new
 metadata context needs a new capture. Capture outside an existing CUDA Graph
 capture.
 
+
+## Symbolic shape dispatch
+
+When every operator in the program supports runtime extents, compile once with
+no `shape_bindings` and call the same module with different shapes:
+
+```python
+from flowgpu.compiler.runtime.symbolic_shape import SymbolicShapeRunner
+
+runner = SymbolicShapeRunner(source, "vectoradd", ".flowgpu-cache")
+runner(x_128, y_128)   # [128, 128]
+runner(x_64, y_64)     # [64, 64]; same compiled module
+```
+
+Verified on H100 GPU1 for vectoradd (128x128, 64x64, 17x19), matmul
+(64x128x64, 32x64x32) and softmax (8x1024, 4x512). Programs containing
+literal-only operators still use `DynamicShapeRunner` or explicit
+specialization; `SymbolicShapeRunner` does not silently fall back.
+
+
 ## Per-shape specialization
 
 FlowGPU does not dispatch symbolic shapes at runtime. A deployment with several

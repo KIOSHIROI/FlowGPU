@@ -14,7 +14,8 @@ def test_coverage_report_shape():
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["schema"] == "flowgpu.operator_coverage/1"
-    assert data["summary"]["present"] + data["summary"]["missing"] == data["summary"]["checklist"]
+    assert (data["summary"]["present"] + data["summary"]["partial"]
+            + data["summary"]["missing"]) == data["summary"]["checklist"]
     entries = {entry["flowgpu"]: entry for entry in data["entries"]}
     assert entries["matmul"]["status"] == "present"
     assert entries["neg"]["status"] == "present"
@@ -24,4 +25,4 @@ def test_coverage_report_shape():
     assert entries["batch_norm"]["status"] == "present"
     assert entries["conv2d"]["status"] == "present"
     assert entries["sort_last"]["status"] == "present"
-    assert entries["dynamic_shape"]["status"] == "missing"
+    assert entries["dynamic_shape"]["status"] == "partial"

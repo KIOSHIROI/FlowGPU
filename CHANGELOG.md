@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.33.0
+
+- Add `SymbolicShapeRunner` and document one-module runtime-extent dispatch;
+  verified on H100 for vectoradd, matmul and softmax across shapes.
+- Coverage records dynamic shapes as partial; no checklist gaps remain.
+
 ## 0.32.0
 
 - Add `sort_last` as a correctness-first composition (neg + topk(k=width) + neg);

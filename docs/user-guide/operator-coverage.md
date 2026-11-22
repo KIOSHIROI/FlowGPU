@@ -12,16 +12,19 @@ python tools/operator_coverage.py --markdown
 python tools/operator_coverage.py --json
 ```
 
-The current checklist has **45 present / 1 missing** of 46 representative
+The current checklist has **45 present / 0 missing / 1 partial** of 46 representative
 operations; the frontend registers 92 operators across 18 kernel kinds.
 
-## Missing in the current checklist
+## Partial / missing in the current checklist
 
-- symbolic dynamic-shape dispatch (per-shape specialization exists)
+- **dynamic symbolic shapes — partial.** `SymbolicShapeRunner` compiles one
+  module for runtime extents when the lowering supports them (verified here on
+  vectoradd, matmul and softmax). Literal-only operators still need
+  per-shape specialization via `DynamicShapeRunner`.
 
-These are **gaps, not regressions**: the audit records what a model trace would
-need next. `sort_last` is a correctness-first composition: `neg` + `topk_last(k=width)` + `neg`, so it is quadratic in the literal row width and is not a general sort. The remaining item is symbolic dynamic-shape dispatch.; convolution,
-batch norm, sort and symbolic dispatch are larger design items.
+Everything else on the checklist is present. `sort_last` is correctness-first
+(`neg + topk(k=width) + neg`) and is quadratic in the literal row width; it is
+not a high-performance sort.
 
 ## Checklist
 
@@ -72,4 +75,4 @@ batch norm, sort and symbolic dispatch are larger design items.
 | state | cache store | `store_cache_4d` | present | cache_store |
 | state | linear decode | `linear_decode_forward` | present | linear_decode |
 | state | recurrence | `gated_delta_recurrence` | present | recurrence |
-| shape | dynamic symbolic shapes | `dynamic_shape` | missing | - |
+| shape | dynamic symbolic shapes | `dynamic_shape` | partial | - |

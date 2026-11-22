@@ -68,25 +68,34 @@ CHECKLIST = [
 ]
 
 KIND = {op: kind for kind, ops in KERNELS.items() for op in ops}
+MANUAL = {
+    "dynamic_shape": (
+        "partial",
+        "symbolic runtime-extent lowering exists (SymbolicShapeRunner); literal-only operators still need per-shape specialization",
+    ),
+}
 
 
 def report() -> dict:
     entries = []
     for category, canonical, flowgpu, note in CHECKLIST:
+        manual = MANUAL.get(flowgpu)
         present = flowgpu in OPERATORS
         entries.append({
             "category": category,
             "canonical": canonical,
             "flowgpu": flowgpu,
-            "status": "present" if present else "missing",
+            "status": manual[0] if manual else ("present" if present else "missing"),
             "kernel_kind": KIND.get(flowgpu) if present else None,
-            "note": note,
+            "note": manual[1] if manual else note,
         })
     present = sum(entry["status"] == "present" for entry in entries)
+    partial = sum(entry["status"] == "partial" for entry in entries)
     return {
         "schema": "flowgpu.operator_coverage/1",
         "summary": {"checklist": len(entries), "present": present,
-                    "missing": len(entries) - present,
+                    "partial": partial,
+                    "missing": len(entries) - present - partial,
                     "registered_operators": len(OPERATORS),
                     "registered_kernel_kinds": len(KERNELS)},
         "entries": entries,
@@ -103,6 +112,8 @@ def main(argv=None) -> int:
     if args.check:
         assert data["schema"] == "flowgpu.operator_coverage/1"
         assert len(data["entries"]) == data["summary"]["checklist"]
+        assert (data["summary"]["present"] + data["summary"]["partial"]
+                + data["summary"]["missing"]) == data["summary"]["checklist"]
         return 0
     if args.json:
         print(json.dumps(data, indent=2, ensure_ascii=False))
