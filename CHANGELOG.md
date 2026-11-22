@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.34.0
+
+- Add the `flowgpu_graph` M2 backend and publish zero-copy CUDA Graph replay
+  across all 9 cases: 2.62–4.30 µs, below eager and explicit Triton.
+
 ## 0.33.1
 
 - Measure symbolic vs per-shape compile cost and full-call latency on H100 GPU1;

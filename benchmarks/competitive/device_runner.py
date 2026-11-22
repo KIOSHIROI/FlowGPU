@@ -7,6 +7,7 @@ the case matrix without importing torch; CI therefore runs that form.
 Backends:
 * ``flowgpu``  -- FlowGPU-generated Triton host;
 * ``flowgpu_prepared`` -- offline prepared plan with caller-owned buffers;
+* ``flowgpu_graph`` -- prepared plan + zero-copy CUDA Graph replay;
 * ``eager``    -- dtype-faithful PyTorch expression;
 * ``inductor`` -- ``torch.compile`` (TorchInductor, Triton backend);
 * ``triton``   -- explicitly hand-written Triton kernels in triton_baselines.py.
@@ -169,6 +170,25 @@ def _flowgpu_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     return call, compile_ms
 
 
+def _flowgpu_graph_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
+    """Prepared plan + zero-copy CUDA Graph; caller owns the captured inputs."""
+    from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+    from flowgpu.compiler.runtime.graph import GraphRunner
+    import torch
+    source = (ROOT / case.source).read_text()
+    started = time.perf_counter()
+    plan = prepare_execution_plan(
+        source, pipeline=case.pipeline, args=args, cache_dir=str(cache_dir),
+        validator=lambda result: all(
+            bool(torch.isfinite(value).all()) for value in result.values()
+            if hasattr(value, "isfinite")),
+        shape_bindings=case.bindings,
+    )
+    runner = GraphRunner(plan, args, copy_inputs=False)
+    prep_ms = (time.perf_counter() - started) * 1000.0
+    return (lambda: runner.replay()), prep_ms
+
+
 def _eager_runner(case: DeviceCase, args):
     from benchmarks.competitive.torch_oracles import eager
     return lambda: eager(case.name, args)
@@ -199,7 +219,7 @@ def main(argv=None) -> int:
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--backends", default="flowgpu,flowgpu_prepared,eager,inductor,triton")
+    parser.add_argument("--backends", default="flowgpu,flowgpu_prepared,flowgpu_graph,eager,inductor,triton")
     parser.add_argument("--warmup", type=int, default=10)
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--seed", type=int, default=0)
@@ -254,6 +274,12 @@ def main(argv=None) -> int:
                     case, tensors, cache_dir=cache_dir / "prepared")
             except Exception as error:
                 entry["flowgpu_prepared_error"] = type(error).__name__ + ": " + str(error)
+        if "flowgpu_graph" in backends:
+            try:
+                runners["flowgpu_graph"] = _flowgpu_graph_runner(
+                    case, tensors, cache_dir=cache_dir / "graph")
+            except Exception as error:
+                entry["flowgpu_graph_error"] = type(error).__name__ + ": " + str(error)
         if "eager" in backends:
             runners["eager"] = (_eager_runner(case, tensors), 0.0)
         if "inductor" in backends:

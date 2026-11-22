@@ -125,6 +125,31 @@ carries the extra count reduction.
 
 Raw data: [`m2-h100-gpu1-multiseed-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-multiseed-20261122.json).
 
+
+## Static zero-copy graph path
+
+`flowgpu_graph` prepares the plan, captures a CUDA Graph over caller-owned static
+inputs, and times `replay()` only. It is the fixed-shape deployment path, not a
+general dispatch result.
+
+| case | flowgpu | prepared | graph replay | eager | inductor | triton |
+|---|---:|---:|---:|---:|---:|---:|
+| add | 17.52 | 14.09 | 2.87 | 5.17 | 23.35 | 13.33 |
+| vectoradd | 18.96 | 13.87 | 3.03 | 5.02 | 27.03 | 13.58 |
+| matmul | 18.98 | 13.79 | 4.30 | 8.91 | 41.17 | 16.36 |
+| softmax | 16.13 | 12.11 | 2.95 | 5.55 | 27.23 | 11.64 |
+| residual_norm | 21.00 | 16.54 | 2.70 | 59.54 | 26.93 | 12.17 |
+| mapping | 16.96 | 13.62 | 2.70 | 9.03 | 25.83 | 13.17 |
+| neg | 15.03 | 12.06 | 2.65 | 4.67 | 23.99 | 12.74 |
+| pow | 17.26 | 14.21 | 3.92 | 5.38 | 25.79 | 13.19 |
+| mean_last | 21.27 | 12.50 | 2.62 | 5.84 | 18.25 | 12.36 |
+
+Static graph replay is **2.62–4.30 µs**, below eager on every case and below the
+hand-written Triton baseline. The cost is fixed metadata/pointers: a changed
+shape or tensor requires a new capture or a copy into the captured inputs.
+
+Raw data: [`m2-h100-gpu1-graph9-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-graph9-20261122.json).
+
 ## Static-input graph replay
 
 `GraphRunner` (prepared plan + CUDA Graph) was measured on the same H100 GPU1:

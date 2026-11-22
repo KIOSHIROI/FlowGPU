@@ -27,8 +27,9 @@ python benchmarks/competitive/repeat.py --seeds 0,1,2 --json  # medians
 It uses the same generated tensors for every backend and the same float64
 oracle/tolerance. It separates **CUDA Graph replay** (no host guards/allocation/
 dispatch) from **full-call** (guarded host call) and reports both. Backends are
-FlowGPU-generated Triton, PyTorch eager, `torch.compile` (TorchInductor) and an
-explicit hand-written Triton baseline (`triton_baselines.py`).
+FlowGPU-generated Triton, prepared FlowGPU, static zero-copy CUDA Graph replay,
+PyTorch eager, `torch.compile` (TorchInductor) and an explicit hand-written
+Triton baseline (`triton_baselines.py`).
 
 The device runner is not executed in CI because CI has no GPU. A handwritten
 Triton baseline is included; TVM/FlagOS columns can be added after their
