@@ -12,7 +12,7 @@ pipeline p {
 """
 
 
-def test_mean_last_is_composed_and_reference_is_correct():
+def test_mean_last_native_lowering_matches_reference():
     assert "mean_last" in OPERATORS
     compiled = compile_source(SOURCE)
     pipeline = compiled.pipelines[0]
@@ -24,4 +24,3 @@ def test_mean_last_is_composed_and_reference_is_correct():
     got = values["out"]
     assert len(got) == 2
     assert max(abs(a - b) for a, b in zip(got, expected)) < 1e-5
-    assert any(decision.reason.startswith("mean_last ->") for decision in pipeline.normalization)

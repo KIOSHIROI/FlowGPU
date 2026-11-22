@@ -47,7 +47,7 @@ requires a literal last axis and literal leading extents.
 | pointwise | where | `where` | present | primitive |
 | reduction | sum | `sum_last` | present | primitive |
 | reduction | max | `max_last` | present | primitive |
-| reduction | mean | `mean_last` | present | - |
+| reduction | mean | `mean_last` | present | mean |
 | reduction | argmax | `argmax_last` | present | reduce_with_index |
 | reduction | softmax | `softmax` | present | rowwise |
 | norm | rmsnorm | `rms_norm` | present | rowwise |

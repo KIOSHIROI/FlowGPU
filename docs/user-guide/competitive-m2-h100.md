@@ -134,6 +134,22 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Native mean_last
+
+`mean_last` now lowers to one row-mean kernel instead of the
+`sum_last + ones_like + sum_last + div` composition. On the shared H100 GPU1
+(exploratory run, not an exclusive-GPU claim):
+
+| flowgpu | prepared | zero-copy graph | eager | triton |
+|---:|---:|---:|---:|---:|
+| 2.21 | 2.26 | 2.23 | 3.33 | 2.27 |
+
+The structural result is the one to rely on: the graph has one kernel, not
+four composed operators. The wall-clock numbers move with the shared GPU load.
+
+Raw data: [`m2-h100-gpu1-native-norms-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-native-norms-20261122.json).
+
 ## Native sort
 
 `sort_last` now lowers to one `tl.sort` row kernel. On H100 GPU1 for `[4, 8]`:

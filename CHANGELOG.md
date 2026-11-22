@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.38.0
+
+- Replace the mean_last composition with one native Triton row-mean kernel.
+
 ## 0.37.0
 
 - Replace the quadratic topk sort composition with a native Triton `tl.sort`

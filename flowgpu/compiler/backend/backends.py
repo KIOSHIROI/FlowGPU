@@ -121,6 +121,7 @@ KERNELS = {
     "store_at": ("store_at", "store_at_trusted"),
     "topk": ("topk_last",),
     "sort": ("sort_last",),
+    "mean": ("mean_last",),
     "axis_gather": ("gather_last",),
     "reduce_with_index": ("argmax_last", "argmin_last"),
     "index_table": ("segment_rank",),
