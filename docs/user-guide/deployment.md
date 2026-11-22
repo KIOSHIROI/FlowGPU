@@ -195,6 +195,26 @@ runner(a_32x64,  b_64x16)    # compiles with M=32, K=64, N=16
 Literal extents are validated; a symbolic name that appears twice must receive
 the same value. A mismatch raises rather than inventing a second meaning.
 
+
+### Choosing automatically
+
+`ShapeRunner` inspects the input declarations and selects the appropriate path:
+symbolic declarations use `SymbolicShapeRunner`; literal declarations use
+`LiteralShapeRunner`.
+
+```python
+from flowgpu.compiler.runtime.shape_runner import ShapeRunner
+
+runner = ShapeRunner(source, "vectoradd", ".flowgpu-cache")
+print(runner.mode)   # SymbolicShapeRunner
+runner(a, b)
+```
+
+Verified on H100 GPU1 for symbolic vectoradd (128x128, 64x64) and literal add
+(1024, 2048). The dispatcher does not fall back between the two; a program whose
+body depends on a literal extent still fails explicitly.
+
+
 ## Candidate spaces
 
 `flowgpu.compiler.runtime.tuning_space` describes measured candidate families as

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.35.1
+
+- Add `ShapeRunner`, which selects symbolic vs literal dynamic handling from
+  the program declarations; verified on H100 for both paths.
+
 ## 0.35.0
 
 - Add `LiteralShapeRunner`: rewrite named literal input declarations per shape
