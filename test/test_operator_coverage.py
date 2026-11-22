@@ -23,4 +23,5 @@ def test_coverage_report_shape():
     assert entries["layer_norm"]["status"] == "present"
     assert entries["batch_norm"]["status"] == "present"
     assert entries["conv2d"]["status"] == "present"
-    assert entries["sort"]["status"] == "missing"
+    assert entries["sort_last"]["status"] == "present"
+    assert entries["dynamic_shape"]["status"] == "missing"

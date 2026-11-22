@@ -1,0 +1,6 @@
+# FlowGPU quickstart: ascending last-axis sort of a small literal row.
+pipeline quickstart_sort {
+  input x:fp16[4, 8]
+  out = sort_last(x)
+  output out
+}

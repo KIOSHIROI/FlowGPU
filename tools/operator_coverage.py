@@ -58,7 +58,7 @@ CHECKLIST = [
     ("gather", "last-axis gather", "gather_last", "indexed gather"),
     ("gather", "scatter by index", "scatter_by_index", "indexed scatter"),
     ("sort/search", "top-k", "topk_last", "topk"),
-    ("sort/search", "sort", "sort", "sort"),
+    ("sort/search", "sort", "sort_last", "sort"),
     ("scan", "cumsum", "cumsum", "scan"),
     ("scan", "segmented cumsum", "segmented_cumsum", "scan"),
     ("state", "cache store", "store_cache_4d", "stateful"),

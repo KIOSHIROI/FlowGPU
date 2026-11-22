@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm", "conv2d")
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm", "conv2d", "sort_last")
 
 
 # v0.4: static patch geometry.
@@ -1390,6 +1390,19 @@ def infer_conv2d(args):
 
 
 register_operator('conv2d', 3, infer_conv2d, pointwise=False, acc='fp32')
+
+
+def infer_sort_last(args):
+    (x,) = args
+    require_float(x, 'sort_last')
+    if len(x.shape) < 1:
+        raise reject(DiagnosticKind.SHAPE, 'sort_last needs at least one dimension')
+    if not all(str(d).isdigit() for d in x.shape):
+        raise reject(DiagnosticKind.SHAPE, 'sort_last currently requires literal extents')
+    return TensorType(x.dtype, x.shape.copy())
+
+
+register_operator('sort_last', 1, infer_sort_last, pointwise=False, acc=None)
 
 
 AXIS_OPERATORS = {'sum_axis': 'sum_last', 'max_axis': 'max_last',

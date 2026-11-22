@@ -12,16 +12,15 @@ python tools/operator_coverage.py --markdown
 python tools/operator_coverage.py --json
 ```
 
-The current checklist has **44 present / 2 missing** of 46 representative
-operations; the frontend registers 91 operators across 18 kernel kinds.
+The current checklist has **45 present / 1 missing** of 46 representative
+operations; the frontend registers 92 operators across 18 kernel kinds.
 
 ## Missing in the current checklist
 
-- `sort`
 - symbolic dynamic-shape dispatch (per-shape specialization exists)
 
 These are **gaps, not regressions**: the audit records what a model trace would
-need next. The remaining items are larger design gaps; convolution,
+need next. `sort_last` is a correctness-first composition: `neg` + `topk_last(k=width)` + `neg`, so it is quadratic in the literal row width and is not a general sort. The remaining item is symbolic dynamic-shape dispatch.; convolution,
 batch norm, sort and symbolic dispatch are larger design items.
 
 ## Checklist
@@ -67,7 +66,7 @@ batch norm, sort and symbolic dispatch are larger design items.
 | gather | last-axis gather | `gather_last` | present | axis_gather |
 | gather | scatter by index | `scatter_by_index` | present | scatter_by_index |
 | sort/search | top-k | `topk_last` | present | topk |
-| sort/search | sort | `sort` | missing | - |
+| sort/search | sort | `sort_last` | present | - |
 | scan | cumsum | `cumsum` | present | scan |
 | scan | segmented cumsum | `segmented_cumsum` | present | - |
 | state | cache store | `store_cache_4d` | present | cache_store |

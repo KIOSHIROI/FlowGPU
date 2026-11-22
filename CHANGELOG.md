@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.32.0
+
+- Add `sort_last` as a correctness-first composition (neg + topk(k=width) + neg);
+  H100 GPU1 matches torch.sort exactly on literal rows.
+- Coverage moves to 45/46; only symbolic dynamic shapes remain.
+
 ## 0.31.0
 
 - Add a 1x1 conv2d (NHWC, flattened [O,C] weight) composed from reshape,
