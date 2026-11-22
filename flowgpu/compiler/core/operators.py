@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm")
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm", "conv2d")
 
 
 # v0.4: static patch geometry.
@@ -1368,6 +1368,28 @@ def infer_batch_norm(args):
 
 
 register_operator('batch_norm', 6, infer_batch_norm, pointwise=False, acc='fp32')
+
+
+def infer_conv2d(args):
+    x, weight, bias = args
+    require_float(x, 'conv2d')
+    require_float(weight, 'conv2d')
+    require_float(bias, 'conv2d')
+    if len(x.shape) != 4 or len(weight.shape) != 2:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d requires x [N,H,W,C] and weight [O,C] for a 1x1 kernel')
+    if not all(str(d).isdigit() for d in x.shape + weight.shape + bias.shape):
+        raise reject(DiagnosticKind.SHAPE, 'conv2d currently requires literal extents')
+    out_channels, in_channels = int(weight.shape[0]), int(weight.shape[1])
+    if int(x.shape[3]) != in_channels:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d input channels and weight in-channels must match')
+    if x.dtype != weight.dtype or x.dtype != bias.dtype:
+        raise reject(DiagnosticKind.TYPE, 'conv2d operands must share a floating dtype')
+    if bias.shape != [str(out_channels)] and bias.shape != [out_channels]:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d bias must have shape [O]')
+    return TensorType(x.dtype, [x.shape[0], x.shape[1], x.shape[2], str(out_channels)])
+
+
+register_operator('conv2d', 3, infer_conv2d, pointwise=False, acc='fp32')
 
 
 AXIS_OPERATORS = {'sum_axis': 'sum_last', 'max_axis': 'max_last',

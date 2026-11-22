@@ -35,6 +35,7 @@ the next step, written down in ``docs/OPERATOR_LOOP.md`` rather than implied.
 from flowgpu.compiler.core.diagnostic import CompileError, DiagnosticKind
 from flowgpu.compiler.core.operators import COMPOSED_OPERATORS, OPERATORS
 from flowgpu.compiler.ir.dataflow import DataflowGraph, Node, resolve_alias
+from flowgpu.compiler.core.types import TensorType
 from flowgpu.compiler.ir.semantic_ir import NormalizationDecision, OperationAttributes
 
 
@@ -69,20 +70,51 @@ def expand(graph):
     def type_of(op, inputs):
         return OPERATORS[op].infer([values[value] for value in inputs])
 
-    def emit(op, inputs, output, part=None):
+    def emit(op, inputs, output, part=None, attributes=None):
         nodes.append(Node(op, [resolve(value) for value in inputs], output, part,
-                          OperationAttributes()))
+                          attributes or OperationAttributes()))
         return output
 
-    def stage(op, inputs):
+    def stage(op, inputs, attributes=None):
         output = fresh()
         values[output] = type_of(op, inputs)
-        return emit(op, inputs, output)
+        return emit(op, inputs, output, attributes=attributes)
 
     for node in graph.nodes:
         if node.op not in COMPOSED_OPERATORS:
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
+            continue
+        if node.op == "conv2d":
+            x, weight, bias = (resolve(value) for value in node.inputs)
+            x_type, weight_type = values[x], values[weight]
+            n, h, w, channels = (int(extent) for extent in x_type.shape)
+            out_channels = int(weight_type.shape[0])
+            x2_shape = [str(n * h * w), str(channels)]
+            x2 = fresh()
+            values[x2] = TensorType(x_type.dtype, x2_shape)
+            emit("reshape", [x], x2,
+                 attributes=OperationAttributes(target_shape=tuple(x2_shape)))
+            wt = stage("transpose", [weight],
+                       attributes=OperationAttributes(permutation=(1, 0)))
+            mm = stage("matmul", [x2, wt])
+            bb = stage("broadcast_like", [bias, mm])
+            biased = stage("add", [mm, bb])
+            out_shape = [str(n), str(h), str(w), str(out_channels)]
+            expected = TensorType(x_type.dtype, out_shape)
+            if values[node.output] != expected:
+                raise CompileError(
+                    DiagnosticKind.INTERNAL,
+                    "conv2d expansion changed the declared result type: "
+                    f"{values[node.output]} and {expected}",
+                    pipeline=graph.pipeline,
+                )
+            emit("reshape", [biased], node.output,
+                 attributes=OperationAttributes(target_shape=tuple(out_shape)))
+            decisions.append(NormalizationDecision(
+                node.output, "expand_composition",
+                "conv2d 1x1 -> reshape + transpose + matmul + bias + reshape",
+            ))
             continue
         if node.op == "batch_norm":
             x, mean, var, weight, bias, eps = (resolve(value) for value in node.inputs)

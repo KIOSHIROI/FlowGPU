@@ -1,0 +1,8 @@
+# FlowGPU quickstart: 1x1 convolution in NHWC layout.
+pipeline quickstart_conv2d {
+  input x:fp16[2, 4, 4, 8]
+  input weight:fp16[16, 8]
+  input bias:fp16[16]
+  out = conv2d(x, weight, bias)
+  output out
+}

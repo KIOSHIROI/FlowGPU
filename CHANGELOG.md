@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.31.0
+
+- Add a 1x1 conv2d (NHWC, flattened [O,C] weight) composed from reshape,
+  transpose, matmul and bias; H100 GPU1 matches torch exactly.
+- Coverage moves to 44/46 with 91 registered operators.
+
 ## 0.30.2
 
 - Add a multi-seed M2 wrapper and publish 3-seed medians for all 9 cases;
