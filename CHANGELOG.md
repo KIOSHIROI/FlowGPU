@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.35.0
+
+- Add `LiteralShapeRunner`: rewrite named literal input declarations per shape
+  and compile a static specialization; verified on H100 for 1024/2048/17.
+
 ## 0.34.2
 
 - Add peak-allocated-memory reporting to the M2 device runner and publish the

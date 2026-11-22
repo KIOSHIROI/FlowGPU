@@ -133,6 +133,27 @@ literal-only operators still use `DynamicShapeRunner` or explicit
 specialization; `SymbolicShapeRunner` does not silently fall back.
 
 
+
+## Literal declarations
+
+Programs that declare literal input extents (for example `input x:fp16[1024]`)
+cannot be recompiled with `shape_bindings`. `LiteralShapeRunner` rewrites only
+the named input declarations for each observed shape and compiles that static
+source:
+
+```python
+from flowgpu.compiler.runtime.literal_shape import LiteralShapeRunner
+
+runner = LiteralShapeRunner(source, "quickstart_add", ".flowgpu-cache")
+runner(x_1024, y_1024)
+runner(x_2048, y_2048)   # declarations rewritten to [2048]; new compiled module
+```
+
+Verified on H100 GPU1 for 1024, 2048 and 17 elements. A literal in the body that
+depends on the input extent can make the rewrite fail; that failure is explicit.
+This is a per-shape fallback, not a symbolic compiler.
+
+
 ## Per-shape specialization
 
 FlowGPU does not dispatch symbolic shapes at runtime. A deployment with several
