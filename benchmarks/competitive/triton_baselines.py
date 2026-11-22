@@ -30,6 +30,30 @@ def _kernels():
         tl.store(out + offsets, x + y, mask=mask)
 
     @triton.jit
+    def neg_kernel(a, out, n: tl.constexpr, BLOCK: tl.constexpr):
+        pid = tl.program_id(0)
+        offsets = pid * BLOCK + tl.arange(0, BLOCK)
+        mask = offsets < n
+        tl.store(out + offsets, -tl.load(a + offsets, mask=mask), mask=mask)
+
+    @triton.jit
+    def pow_kernel(a, b, out, n: tl.constexpr, BLOCK: tl.constexpr):
+        pid = tl.program_id(0)
+        offsets = pid * BLOCK + tl.arange(0, BLOCK)
+        mask = offsets < n
+        x = tl.load(a + offsets, mask=mask).to(tl.float32)
+        y = tl.load(b + offsets, mask=mask).to(tl.float32)
+        tl.store(out + offsets, tl.extra.cuda.libdevice.pow(x, y), mask=mask)
+
+    @triton.jit
+    def mean_kernel(x, out, V: tl.constexpr, BLOCK: tl.constexpr):
+        row = tl.program_id(0)
+        offsets = tl.arange(0, BLOCK)
+        mask = offsets < V
+        values = tl.load(x + row * V + offsets, mask=mask, other=0.0).to(tl.float32)
+        tl.store(out + row, tl.sum(values) / V)
+
+    @triton.jit
     def int_pointwise_kernel(x, y, out, n: tl.constexpr, BLOCK: tl.constexpr):
         pid = tl.program_id(0)
         offsets = pid * BLOCK + tl.arange(0, BLOCK)
@@ -85,6 +109,9 @@ def _kernels():
 
     _KERNELS = {
         "add": add_kernel,
+        "neg": neg_kernel,
+        "pow": pow_kernel,
+        "mean": mean_kernel,
         "int_pointwise": int_pointwise_kernel,
         "softmax": softmax_kernel,
         "matmul": matmul_kernel,
@@ -107,6 +134,27 @@ def run(case_name: str, args):
         n = a.numel()
         block = 256
         kernels["add"][(triton.cdiv(n, block),)](a, b, out, n, block)
+        return {"out": out}
+    if case_name == "neg_literal":
+        (a,) = args
+        out = torch.empty_like(a)
+        n = a.numel()
+        block = 256
+        kernels["neg"][(triton.cdiv(n, block),)](a, out, n, block)
+        return {"out": out}
+    if case_name == "pow_literal":
+        a, b = args
+        out = torch.empty_like(a)
+        n = a.numel()
+        block = 256
+        kernels["pow"][(triton.cdiv(n, block),)](a, b, out, n, block)
+        return {"out": out}
+    if case_name == "mean_last":
+        (x,) = args
+        rows, width = x.shape
+        out = torch.empty((rows, 1), dtype=torch.float32, device=x.device)
+        block = _next_power_of_two(width)
+        kernels["mean"][(rows,)](x, out, width, block)
         return {"out": out}
     if case_name == "mapping_pointwise":
         x, y = args

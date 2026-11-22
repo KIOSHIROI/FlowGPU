@@ -17,6 +17,12 @@ def eager(case_name: str, args):
         return {"q": torch.softmax(args[0], dim=-1)}
     if case_name == "mapping_pointwise":
         return {"z": (args[0] + args[1]) * args[1]}
+    if case_name == "neg_literal":
+        return {"out": -args[0]}
+    if case_name == "pow_literal":
+        return {"out": torch.pow(args[0], args[1])}
+    if case_name == "mean_last":
+        return {"out": torch.mean(args[0], dim=-1, keepdim=True)}
     if case_name == "residual_norm":
         x, residual, weight = args
         y = x + residual
@@ -36,6 +42,12 @@ def oracle(case_name: str, args):
         return {"q": torch.softmax(args[0].double(), dim=-1)}
     if case_name == "mapping_pointwise":
         return {"z": (args[0] + args[1]) * args[1]}
+    if case_name == "neg_literal":
+        return {"out": -args[0].double()}
+    if case_name == "pow_literal":
+        return {"out": torch.pow(args[0].double(), args[1].double())}
+    if case_name == "mean_last":
+        return {"out": torch.mean(args[0].double(), dim=-1, keepdim=True)}
     if case_name == "residual_norm":
         x, residual, weight = args
         y = x.double() + residual.double()

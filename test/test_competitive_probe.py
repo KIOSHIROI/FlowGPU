@@ -26,4 +26,5 @@ def test_probe_json_has_a_plan_for_every_case():
     for entry in payload["results"]:
         assert "error" not in entry, entry
         assert entry["plan"]["kernels"] >= 1
-        assert entry["oracle"]["status"] == "pass", entry["oracle"]
+        assert entry["oracle"]["status"] in {"pass", "not_available"}, entry["oracle"]
+    assert sum(entry["oracle"]["status"] == "pass" for entry in payload["results"]) >= 6

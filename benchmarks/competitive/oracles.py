@@ -19,6 +19,24 @@ def _int32(value: int) -> int:
     return value - 0x100000000 if value & 0x80000000 else value
 
 
+def _neg(values, sizes):
+    (x,) = values
+    return {"out": [-value for value in x]}
+
+
+def _pow(values, sizes):
+    x, exponent = values
+    out = []
+    for a, b in zip(x, exponent):
+        try:
+            out.append(math.pow(a, b))
+        except ValueError:
+            out.append(math.nan)
+        except OverflowError:
+            out.append(math.inf)
+    return {"out": out}
+
+
 def _int_pointwise(values, sizes):
     x, y = values
     return {"z": [_int32(_int32(a + b) * c) for a, b, c in zip(x, y, y)]}
@@ -66,6 +84,8 @@ def _residual_norm(values, sizes):
 
 ORACLES = {
     "add": _add,
+    "neg": _neg,
+    "pow": _pow,
     "int_pointwise": _int_pointwise,
     "matmul": _matmul,
     "softmax": _softmax,

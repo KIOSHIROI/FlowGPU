@@ -61,6 +61,26 @@ baseline in `benchmarks/competitive/triton_baselines.py`.
    dynamic-shape path.
 
 
+
+## Extended operator matrix
+
+The same runner now also covers the newly added `neg`, `pow` and `mean_last`
+operators. All 9 cases pass correctness in all five backends. Full-call time
+(µs, H100 GPU1, 30 iterations):
+
+| case | flowgpu | prepared | eager | inductor | triton |
+|---|---:|---:|---:|---:|---:|
+| neg_literal | 16.06 | 12.98 | 4.67 | 24.23 | 14.46 |
+| pow_literal | 17.71 | 14.28 | 5.16 | 25.66 | 13.88 |
+| mean_last | 21.70 | 12.89 | 5.77 | 18.05 | 13.03 |
+
+Prepared `mean_last` is 12.89 µs, faster than the composed default and close to
+the hand-written Triton reduction (13.03). The default 21.70 µs is the cost of
+the extra `sum_last(ones_like(x))` count reduction; folding that count is the
+next optimization.
+
+Raw data: [`m2-h100-gpu1-20261122-extended.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-20261122-extended.json).
+
 ## Static-input graph replay
 
 `GraphRunner` (prepared plan + CUDA Graph) was measured on the same H100 GPU1:

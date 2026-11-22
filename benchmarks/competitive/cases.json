@@ -179,6 +179,70 @@
       "output": "z",
       "atol": 0,
       "rtol": 0
+    },
+    {
+      "name": "neg_literal",
+      "source": "examples/quickstart/neg.fgpu",
+      "pipeline": "quickstart_neg",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            1024
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.002,
+      "rtol": 0.002,
+      "oracle": "neg"
+    },
+    {
+      "name": "pow_literal",
+      "source": "examples/quickstart/pow.fgpu",
+      "pipeline": "quickstart_pow",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            1024
+          ],
+          "fp16"
+        ],
+        [
+          "exponent",
+          [
+            1024
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02
+    },
+    {
+      "name": "mean_last",
+      "source": "examples/quickstart/mean_last.fgpu",
+      "pipeline": "quickstart_mean",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            16,
+            32
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "mean_last"
     }
   ]
 }

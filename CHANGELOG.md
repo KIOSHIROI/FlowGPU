@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.29.2
+
+- Extend the M2 matrix to nine cases with `neg`, `pow` and `mean_last`; all
+  correctness checks pass and prepared `mean_last` is 12.89 µs on H100 GPU1.
+
 ## 0.29.1
 
 - Add `GraphRunner(copy_inputs=False)` zero-copy capture for caller-owned static
