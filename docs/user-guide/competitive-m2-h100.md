@@ -67,17 +67,19 @@ baseline in `benchmarks/competitive/triton_baselines.py`.
 
 | case | replay (µs) | copy + replay (µs) |
 |---|---:|---:|
-| add | 3.37 | 13.80 |
-| vectoradd | 3.26 | 13.84 |
-| matmul | 4.00 | 13.88 |
-| softmax | 3.36 | 9.30 |
-| residual_norm | 3.31 | 18.31 |
-| mapping | 3.35 | 13.51 |
+| add | 2.60 | 11.19 |
+| vectoradd | 2.69 | 10.60 |
+| matmul | 3.97 | 10.63 |
+| softmax | 2.70 | 8.10 |
+| residual_norm | 2.63 | 10.99 |
+| mapping | 2.65 | 10.30 |
 
-Replay is below eager full-call on every simple case. The copy + replay path is
-not faster because each PyTorch `copy_` adds a dispatch; it only helps when the
-caller already owns static buffers and updates them in place. This is a
-fixed-shape deployment option, not a general dispatch replacement.
+
+Replay is below eager full-call on every simple case. The copy + replay path
+uses one `_foreach_copy_` dispatch for multiple inputs, which brought 9.3–18.3 µs
+down to 8.1–11.2 µs; it still helps most when the caller owns static buffers and
+updates them in place. This is a fixed-shape deployment option, not a general
+dispatch replacement.
 
 ## Optimization order
 

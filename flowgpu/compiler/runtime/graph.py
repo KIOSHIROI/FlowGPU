@@ -63,9 +63,21 @@ class GraphRunner:
 
     def copy_in(self, *tensors) -> None:
         self._check(tensors)
-        for target, value in zip(self._inputs, tensors):
-            if value is not target:
+        pairs = [(target, value) for target, value in zip(self._inputs, tensors)
+                 if value is not target]
+        if not pairs:
+            return
+        if len(pairs) == 1:
+            pairs[0][0].copy_(pairs[0][1])
+            return
+        # One foreach dispatch instead of one Python dispatch per input. The
+        # fallback keeps older torch versions working.
+        foreach = getattr(self._torch, "_foreach_copy_", None)
+        if foreach is None:
+            for target, value in pairs:
                 target.copy_(value)
+            return
+        foreach([target for target, _ in pairs], [value for _, value in pairs])
 
     def replay(self):
         self._graph.replay()

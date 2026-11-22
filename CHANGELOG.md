@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.25.1
+
+- Batch GraphRunner input copies with `_foreach_copy_`, reducing copy + replay
+  from 9.3–18.3 µs to 8.1–11.2 µs on H100 GPU1.
+
 ## 0.25.0
 
 - Add `GraphRunner`: capture a prepared execution plan and replay fixed-shape

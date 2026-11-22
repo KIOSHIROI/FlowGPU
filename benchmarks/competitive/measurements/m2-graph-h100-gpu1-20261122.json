@@ -1,38 +1,38 @@
 {
   "add_literal": {
-    "prep_ms": 586.6,
-    "replay_us": 3.37,
-    "copy_replay_us": 13.8,
+    "prep_ms": 532.9,
+    "replay_us": 2.6,
+    "copy_replay_us": 11.19,
     "max_abs": 0.001953125
   },
   "vectoradd_symbolic": {
-    "prep_ms": 49.3,
-    "replay_us": 3.26,
-    "copy_replay_us": 13.84,
+    "prep_ms": 45.6,
+    "replay_us": 2.69,
+    "copy_replay_us": 10.6,
     "max_abs": 0.001953125
   },
   "matmul_symbolic": {
-    "prep_ms": 47.9,
-    "replay_us": 4.0,
-    "copy_replay_us": 13.88,
+    "prep_ms": 44.0,
+    "replay_us": 3.97,
+    "copy_replay_us": 10.63,
     "max_abs": 0.014992881566286087
   },
   "softmax_wide": {
-    "prep_ms": 44.9,
-    "replay_us": 3.36,
-    "copy_replay_us": 9.3,
+    "prep_ms": 41.4,
+    "replay_us": 2.7,
+    "copy_replay_us": 8.1,
     "max_abs": 2.013129815625625e-09
   },
   "residual_norm": {
-    "prep_ms": 52.5,
-    "replay_us": 3.31,
-    "copy_replay_us": 18.31,
+    "prep_ms": 48.2,
+    "replay_us": 2.63,
+    "copy_replay_us": 10.99,
     "max_abs": 0.026259143008084962
   },
   "mapping_pointwise": {
-    "prep_ms": 46.0,
-    "replay_us": 3.35,
-    "copy_replay_us": 13.51,
+    "prep_ms": 41.9,
+    "replay_us": 2.65,
+    "copy_replay_us": 10.3,
     "max_abs": 0.0
   }
 }
