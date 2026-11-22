@@ -139,6 +139,7 @@ Start here:
 - [Limitations](docs/user-guide/limitations.md)
 - [Optimization pipeline](docs/user-guide/optimization.md)
 - [Competitive roadmap](docs/user-guide/competitive-roadmap.md)
+- [Competitive summary](docs/user-guide/competitive-summary.md)
 - [Competitive M2 H100 result](docs/user-guide/competitive-m2-h100.md)
 - [Operator coverage](docs/user-guide/operator-coverage.md)
 - [Prepared deployment](docs/user-guide/deployment.md)

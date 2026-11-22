@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.36.2
+
+- Publish a one-page competitive capability/latency summary with honest limits.
+
 ## 0.36.1
 
 - Add the prepared+graph M2 backend and publish the 9-case comparison;

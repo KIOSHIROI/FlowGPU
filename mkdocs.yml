@@ -49,6 +49,7 @@ nav:
   - Contributing: contributing.md
   - Roadmap: roadmap.md
   - Competitive roadmap: competitive-roadmap.md
+  - Competitive summary: competitive-summary.md
   - Competitive M2 H100 result: competitive-m2-h100.md
   - Operator coverage: operator-coverage.md
   - Stability and versioning: stability.md
