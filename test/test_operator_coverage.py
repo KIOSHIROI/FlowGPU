@@ -20,4 +20,5 @@ def test_coverage_report_shape():
     assert entries["neg"]["status"] == "present"
     assert entries["pow"]["status"] == "present"
     assert entries["mean_last"]["status"] == "present"
-    assert entries["layer_norm"]["status"] == "missing"
+    assert entries["layer_norm"]["status"] == "present"
+    assert entries["batch_norm"]["status"] == "missing"

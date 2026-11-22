@@ -1,0 +1,9 @@
+# FlowGPU quickstart: layer normalization with affine weight/bias and scalar eps.
+pipeline quickstart_layer_norm {
+  input x:fp16[16, 32]
+  input weight:fp16[32]
+  input bias:fp16[32]
+  input eps:fp32
+  out = layer_norm(x, weight, bias, eps)
+  output out
+}

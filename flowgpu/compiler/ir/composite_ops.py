@@ -84,6 +84,44 @@ def expand(graph):
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
             continue
+        if node.op == "layer_norm":
+            x, weight, bias, eps = (resolve(value) for value in node.inputs)
+            def mean_of(value):
+                total = stage("sum_last", [value])
+                ones = stage("ones_like", [value])
+                count = stage("sum_last", [ones])
+                return stage("div", [total, count])
+            xf = stage("to_fp32", [x])
+            mean = mean_of(xf)
+            mean_b = stage("broadcast_like", [mean, xf])
+            diff = stage("sub", [xf, mean_b])
+            sq = stage("mul", [diff, diff])
+            var = mean_of(sq)
+            var_eps = stage("add", [var, eps])
+            den = stage("sqrt", [var_eps])
+            den_b = stage("broadcast_like", [den, xf])
+            norm = stage("div", [diff, den_b])
+            wf = stage("to_fp32", [weight])
+            wb = stage("broadcast_like", [wf, xf])
+            scaled = stage("mul", [norm, wb])
+            bf = stage("to_fp32", [bias])
+            bb = stage("broadcast_like", [bf, xf])
+            biased = stage("add", [scaled, bb])
+            expected = type_of("cast_like", [biased, x])
+            if values[node.output] != expected:
+                raise CompileError(
+                    DiagnosticKind.INTERNAL,
+                    "layer_norm expansion changed the declared result type: "
+                    f"{values[node.output]} and {expected}",
+                    pipeline=graph.pipeline,
+                )
+            emit("cast_like", [biased, x], node.output)
+            decisions.append(NormalizationDecision(
+                node.output, "expand_composition",
+                "layer_norm -> fp32 mean/variance, rsqrt, affine weight/bias, cast back; "
+                "reuses existing reductions and pointwise lowerings",
+            ))
+            continue
         if node.op == "mean_last":
             (x,) = (resolve(value) for value in node.inputs)
             total = stage("sum_last", [x])

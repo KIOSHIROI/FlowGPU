@@ -12,19 +12,18 @@ python tools/operator_coverage.py --markdown
 python tools/operator_coverage.py --json
 ```
 
-The current checklist has **41 present / 5 missing** of 46 representative
-operations; the frontend registers 88 operators across 18 kernel kinds.
+The current checklist has **42 present / 4 missing** of 46 representative
+operations; the frontend registers 89 operators across 18 kernel kinds.
 
 ## Missing in the current checklist
 
-- `layer_norm` — row normalization (RMSNorm exists)
 - `batch_norm`
 - `conv2d`
 - `sort`
 - symbolic dynamic-shape dispatch (per-shape specialization exists)
 
 These are **gaps, not regressions**: the audit records what a model trace would
-need next. The next items are norm additions; convolution,
+need next. The remaining items are larger design gaps; convolution,
 batch norm, sort and symbolic dispatch are larger design items.
 
 ## Checklist
@@ -53,7 +52,7 @@ batch norm, sort and symbolic dispatch are larger design items.
 | reduction | argmax | `argmax_last` | present | reduce_with_index |
 | reduction | softmax | `softmax` | present | rowwise |
 | norm | rmsnorm | `rms_norm` | present | rowwise |
-| norm | layernorm | `layer_norm` | missing | - |
+| norm | layernorm | `layer_norm` | present | - |
 | norm | batch_norm | `batch_norm` | missing | - |
 | linear algebra | matmul | `matmul` | present | matmul |
 | linear algebra | conv2d | `conv2d` | missing | - |

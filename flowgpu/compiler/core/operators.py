@@ -154,7 +154,7 @@ SCALAR_BROADCAST_OPERATORS = frozenset(
 # "a scalar can only broadcast over elementwise arithmetic" gate must not fire
 # first. `segmented_lora_matmul`'s `heads` is the head count that flattens
 # (token, head) rows, i.e. an integer the kernel needs as a number.
-SCALAR_ARGUMENT_OPERATORS = frozenset({"segmented_lora_matmul"})
+SCALAR_ARGUMENT_OPERATORS = frozenset({"segmented_lora_matmul", "layer_norm"})
 
 
 def broadcast_elementwise(x, y, verb):
@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last")
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm")
 
 
 # v0.4: static patch geometry.
@@ -1330,6 +1330,26 @@ def infer_mean_last(args):
 
 
 register_operator('mean_last', 1, infer_mean_last, pointwise=False, acc='fp32')
+
+
+def infer_layer_norm(args):
+    x, weight, bias, eps = args
+    require_float(x, 'layer_norm')
+    require_float(weight, 'layer_norm')
+    require_float(bias, 'layer_norm')
+    require_float(eps, 'layer_norm')
+    if not x.shape:
+        raise reject(DiagnosticKind.SHAPE, 'layer_norm needs rank >= 1')
+    if len(weight.shape) != 1 or weight.shape != x.shape[-1:]:
+        raise reject(DiagnosticKind.SHAPE, 'layer_norm weight must have shape [D]')
+    if bias.shape != weight.shape:
+        raise reject(DiagnosticKind.SHAPE, 'layer_norm bias must match weight shape')
+    if eps.shape:
+        raise reject(DiagnosticKind.SHAPE, 'layer_norm eps must be a rank-0 scalar')
+    return TensorType(x.dtype, x.shape.copy())
+
+
+register_operator('layer_norm', 4, infer_layer_norm, pointwise=False, acc='fp32')
 
 
 AXIS_OPERATORS = {'sum_axis': 'sum_last', 'max_axis': 'max_last',

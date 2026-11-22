@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.29.0
+
+- Add `layer_norm` as a composed fp32-mean/variance operator with affine
+  weight/bias and scalar eps; H100 GPU1 matches torch layer_norm exactly.
+- Coverage moves to 42/46, with 89 registered operators.
+
 ## 0.28.0
 
 - Add `mean_last` as a composed operator (sum_last / count of ones), with an
