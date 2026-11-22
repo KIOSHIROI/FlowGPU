@@ -23,39 +23,39 @@ an exclusive run.
 
 | case | metric | flowgpu | flowgpu_prepared | eager | inductor | triton |
 |---|---|---:|---:|---:|---:|---:|
-| add_literal | graph (µs) | 2.71 | 2.74 | 2.72 | 2.70 | 2.71 |
-| add_literal | full (µs) | 17.34 | 14.13 | 5.01 | 22.69 | 14.22 |
-| vectoradd_symbolic | graph (µs) | 2.74 | 2.80 | 2.60 | 2.63 | 2.64 |
-| vectoradd_symbolic | full (µs) | 19.02 | 14.26 | 5.03 | 25.75 | 13.08 |
-| matmul_symbolic | graph (µs) | 4.10 | 4.07 | 3.66 | 3.63 | 3.02 |
-| matmul_symbolic | full (µs) | 18.29 | 13.75 | 8.98 | 43.26 | 15.75 |
-| softmax_wide | graph (µs) | 2.80 | n/a | 5.42 | 3.76 | 2.73 |
-| softmax_wide | full (µs) | 16.30 | n/a | 5.39 | 26.34 | 11.37 |
-| residual_norm | graph (µs) | 2.71 | 2.73 | 22.56 | 2.81 | 2.69 |
-| residual_norm | full (µs) | 21.24 | 16.44 | 60.91 | 26.13 | 12.51 |
-| mapping_pointwise | graph (µs) | 2.78 | 2.68 | 3.60 | 3.61 | 3.08 |
-| mapping_pointwise | full (µs) | 17.13 | 13.70 | 9.06 | 24.49 | 13.44 |
+| add_literal | graph (µs) | 2.79 | 2.70 | 2.76 | 2.72 | 2.66 |
+| add_literal | full (µs) | 17.63 | 14.06 | 5.18 | 22.14 | 13.25 |
+| vectoradd_symbolic | graph (µs) | 2.69 | 2.71 | 2.64 | 2.60 | 2.58 |
+| vectoradd_symbolic | full (µs) | 18.16 | 14.12 | 5.42 | 26.34 | 13.43 |
+| matmul_symbolic | graph (µs) | 4.08 | 4.07 | 3.63 | 3.66 | 3.03 |
+| matmul_symbolic | full (µs) | 18.40 | 14.18 | 9.17 | 40.10 | 16.00 |
+| softmax_wide | graph (µs) | 2.74 | 2.79 | 5.39 | 3.78 | 2.73 |
+| softmax_wide | full (µs) | 16.25 | 12.29 | 5.40 | 25.43 | 11.57 |
+| residual_norm | graph (µs) | 2.74 | 2.72 | 22.42 | 2.65 | 2.64 |
+| residual_norm | full (µs) | 21.34 | 16.64 | 61.30 | 25.49 | 12.65 |
+| mapping_pointwise | graph (µs) | 2.80 | 2.69 | 3.64 | 2.65 | 2.65 |
+| mapping_pointwise | full (µs) | 17.08 | 13.82 | 9.12 | 23.88 | 13.58 |
 
-`flowgpu_prepared` is the existing offline `prepare_execution_plan` path with
-caller-owned buffers. It is unavailable for `softmax_wide` because that public
-example contains two pipelines and preparation currently requires exactly one.
-`triton` is the hand-written baseline in `benchmarks/competitive/triton_baselines.py`.
+`flowgpu_prepared` is the offline `prepare_execution_plan` path with
+caller-owned buffers. It now selects the named pipeline from a multi-pipeline
+source before preparing (`softmax_wide` included). `triton` is the hand-written
+baseline in `benchmarks/competitive/triton_baselines.py`.
 
 ## What the numbers say
 
 1. **The kernel path is competitive.** FlowGPU and explicit Triton have nearly
    the same Graph latency on pointwise, softmax and residual cases; FlowGPU is
-   slightly slower on matmul (4.10 vs 3.02 µs). Kernel fusion is already doing
-   real work: residual RMSNorm Graph is 2.71 µs vs eager 22.56 µs.
+   slightly slower on matmul (4.08 vs 3.03 µs). Kernel fusion is already doing
+   real work: residual RMSNorm Graph is 2.74 µs vs eager 22.42 µs.
 2. **The gap is host-side.** FlowGPU full-call is 13–16 µs above its Graph time.
    Eager full-call is 5–9 µs on simple cases. The measured loss is guards,
    allocation and launch dispatch, not kernel math.
 3. **Prepared execution closes most of the public-flow gap.** Prepared FlowGPU
-   matches or beats explicit Triton on add (14.13 vs 14.22), vectoradd (14.26 vs
-   13.08), matmul (13.75 vs 15.75) and mapping (13.70 vs 13.44), and is close on
-   residual (16.44 vs 12.51).
-4. **FlowGPU beats TorchInductor full-call on every measured case** (17–21 µs vs
-   23–43 µs), but loses to eager on the simple pointwise/softmax cases.
+   is close to explicit Triton on add (14.06 vs 13.25), vectoradd (14.12 vs
+   13.43), softmax (12.29 vs 11.57) and mapping (13.82 vs 13.58), beats it on
+   matmul (14.18 vs 16.00), and remains slower on residual (16.64 vs 12.65).
+4. **FlowGPU beats TorchInductor full-call on every measured case** (16–21 µs vs
+   22–40 µs), but loses to eager on the simple pointwise/softmax cases.
 5. **CUDA Graph is not a universal answer.** It removes host overhead but fixes
    input/output pointers; it is a deployment option, not a replacement for the
    dynamic-shape path.
@@ -83,5 +83,4 @@ python benchmarks/competitive/device_runner.py \
 ```
 
 `flowgpu_prepared` performs offline preparation; its `compile_ms` includes that
-cost. `n/a` means the prepared path refused the multi-pipeline source, not that
-the kernel is wrong.
+cost.

@@ -46,6 +46,39 @@ outside CUDA Graph capture; an unchanged cache hit performs no tuning.
 `prepare_pipeline` is intentionally explicit rather than a CLI flag: it needs
 CUDA tensors and an independent validator.
 
+
+## Prepared execution plan
+
+For fixed-shape, allocation-sensitive deployment, `prepare_execution_plan` builds
+a plan with caller-owned buffers:
+
+```python
+from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+
+plan = prepare_execution_plan(
+    source,
+    pipeline="p",
+    args=(x, y),
+    cache_dir=".flowgpu-cache",
+    validator=lambda result: check(result),
+)
+buffers = plan.allocate_buffers()       # allocate before CUDA Graph capture
+for batch in batches:
+    plan.run_into(batch.x, batch.y, buffers=buffers)
+```
+
+It prepares the same frozen host as `prepare_pipeline`, then rewrites the host
+into `run_into_<pipeline>(..., buffers)` with:
+
+- the same exact input guards;
+- explicit buffer metadata/alignment and overlap checks;
+- no per-call output allocation.
+
+The caller owns buffer lifetime; use a distinct buffer set for overlapping
+streams. A multi-pipeline source is accepted: the named pipeline is selected
+before preparation. Preparation itself still requires CUDA tensors and an
+independent validator, and must happen outside CUDA Graph capture.
+
 ## Per-shape specialization
 
 FlowGPU does not dispatch symbolic shapes at runtime. A deployment with several

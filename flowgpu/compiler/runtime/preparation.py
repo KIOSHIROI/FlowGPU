@@ -147,6 +147,45 @@ def _select_arm(source, *, pipeline, args, modules_dir, deployments, iters, cont
                            extents=(values[row_dimension], values[wide_dimension])), entry
 
 
+
+def select_pipeline_source(source: str, pipeline: str) -> str:
+    """Return only the named pipeline block from a multi-pipeline source.
+
+    ``prepare_pipeline`` intentionally accepts one tensor-only pipeline.  A
+    source file may declare several (the public softmax example does), so the
+    execution-plan front end selects one before preparing.  The scan is
+    brace-based and skips comments; it does not rewrite the block.
+    """
+    import re
+    pattern = re.compile(r'(?m)^\s*pipeline\s+([A-Za-z_]\w*)\s*\{')
+    for match in pattern.finditer(source):
+        if match.group(1) != pipeline:
+            continue
+        start = match.start() + match.group(0).index('{')
+        depth = 0
+        index = start
+        quote = None
+        while index < len(source):
+            char = source[index]
+            if quote:
+                if char == quote and source[index - 1] != '\\':
+                    quote = None
+            elif char in {'"', "'"}:
+                quote = char
+            elif char == '#':
+                newline = source.find('\n', index)
+                index = len(source) if newline < 0 else newline
+                continue
+            elif char == '{':
+                depth += 1
+            elif char == '}':
+                depth -= 1
+                if depth == 0:
+                    return source[match.start():index + 1]
+            index += 1
+    raise ValueError(f"pipeline {pipeline!r} not found")
+
+
 def prepare_pipeline(source, *, pipeline, args, cache_dir, validator,
                      select_tiles=False, selection_iters=10, **options):
     """Return (guarded generated function, provenance/preparation record).

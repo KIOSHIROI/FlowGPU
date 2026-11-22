@@ -1,23 +1,22 @@
 # Changelog
 
-## Unreleased
+## 0.24.1
 
-- Add the prepared FlowGPU backend to the M2 device runner and publish the first
+- Make the prepared execution-plan path first-class: select one named pipeline
+  from a multi-pipeline source, document caller-owned buffers, and publish the
   H100 GPU1 comparative result and optimization order.
+- Add the prepared FlowGPU backend to the M2 device runner.
+- Add the CPU competitive probe, six-case matrix, independent CPU oracles and
+  competitive roadmap; wire compile/oracle checks into CI.
+- Add the M2 device runner with shared inputs/tolerance and separate CUDA-Graph
+  and full-call metrics for FlowGPU vs eager vs TorchInductor vs hand-written
+  Triton baselines.
 
 ## 0.24.0
 
 - Add `DynamicShapeRunner`: derive symbolic bindings per call and cache static
   per-shape specializations with explicit rebuilds.
 - Document the practical dynamic-shape boundary and M3 status.
-
-## Unreleased
-
-- Add the CPU competitive probe, six-case matrix, independent CPU oracles and
-  competitive roadmap; wire compile/oracle checks into CI.
-- Add the M2 device runner with shared inputs/tolerance and separate CUDA-Graph
-  and full-call metrics for FlowGPU vs eager vs TorchInductor vs hand-written
-  Triton baselines.
 
 ## 0.23.0
 

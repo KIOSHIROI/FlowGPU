@@ -247,8 +247,9 @@ class PreparedExecutionPlan:
 def prepare_execution_plan(source, *, pipeline, args, cache_dir, validator, **options):
     import torch
     from pathlib import Path
-    from flowgpu.compiler.runtime.preparation import prepare_pipeline
+    from flowgpu.compiler.runtime.preparation import prepare_pipeline, select_pipeline_source
     from flowgpu.compiler.runtime.runtime import _load_generated_module
+    source=select_pipeline_source(source,pipeline)
     _,record=prepare_pipeline(source,pipeline=pipeline,args=args,cache_dir=cache_dir,validator=validator,**options)
     code=Path(record['source_path']).read_text()
     if hashlib.sha256(code.encode()).hexdigest()!=record['source_sha256']:
