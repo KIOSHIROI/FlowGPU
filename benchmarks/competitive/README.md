@@ -21,6 +21,7 @@ The M2 device runner is `device_runner.py`:
 ```sh
 python benchmarks/competitive/device_runner.py --check   # CPU/CI matrix validation
 python benchmarks/competitive/device_runner.py --json    # CUDA measurements
+python benchmarks/competitive/repeat.py --seeds 0,1,2 --json  # medians
 ```
 
 It uses the same generated tensors for every backend and the same float64

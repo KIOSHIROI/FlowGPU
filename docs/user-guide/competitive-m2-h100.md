@@ -81,6 +81,30 @@ next optimization.
 
 Raw data: [`m2-h100-gpu1-20261122-extended.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-20261122-extended.json).
 
+
+## Multi-seed medians
+
+Three seeds (0, 1, 2), 30 iterations each; values are medians of the per-seed
+full-call times. All correctness checks pass for every seed.
+
+| case | flowgpu | prepared | eager | inductor | triton |
+|---|---:|---:|---:|---:|---:|
+| add_literal | 17.81 | 14.49 | 4.99 | 23.08 | 13.72 |
+| vectoradd_symbolic | 19.21 | 14.44 | 5.23 | 26.30 | 14.00 |
+| matmul_symbolic | 18.54 | 13.91 | 9.16 | 41.92 | 16.11 |
+| softmax_wide | 16.38 | 12.12 | 5.36 | 26.42 | 11.72 |
+| residual_norm | 21.53 | 16.54 | 60.37 | 25.98 | 12.42 |
+| mapping_pointwise | 17.08 | 13.97 | 9.44 | 25.13 | 13.29 |
+| neg_literal | 15.24 | 12.44 | 4.77 | 23.99 | 13.60 |
+| pow_literal | 17.30 | 14.19 | 5.07 | 25.00 | 13.55 |
+| mean_last | 21.94 | 12.80 | 5.74 | 17.71 | 12.12 |
+
+The single-seed conclusions hold: prepared is close to explicit Triton, eager
+still wins the simple pointwise/reduction cases, and the default `mean_last`
+carries the extra count reduction.
+
+Raw data: [`m2-h100-gpu1-multiseed-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-multiseed-20261122.json).
+
 ## Static-input graph replay
 
 `GraphRunner` (prepared plan + CUDA Graph) was measured on the same H100 GPU1:

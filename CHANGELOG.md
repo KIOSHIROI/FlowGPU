@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.30.2
+
+- Add a multi-seed M2 wrapper and publish 3-seed medians for all 9 cases;
+  all seeds pass correctness.
+
 ## 0.30.1
 
 - Share the row-count reduction between layer_norm's mean and variance;

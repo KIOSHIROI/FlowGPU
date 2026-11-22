@@ -1,0 +1,379 @@
+{
+  "schema": "flowgpu.competitive.multiseed/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 30,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol",
+    "seeds": 3,
+    "aggregation": "median across seeds"
+  },
+  "cases": [
+    {
+      "name": "add_literal",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 17.810134092966717,
+          "graph_us_median": 2.727466573317846,
+          "compile_ms_median": 103.27780432999134,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 14.486400286356607,
+          "graph_us_median": 2.681600054105123,
+          "compile_ms_median": 454.83606215566397,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 4.98879998922348,
+          "graph_us_median": 2.7200000981489816,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 23.08373252550761,
+          "graph_us_median": 2.6858667532602944,
+          "compile_ms_median": 1689.1717314720154,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 13.715199629465738,
+          "graph_us_median": 2.7466667195161185,
+          "compile_ms_median": 4.062485881149769,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "vectoradd_symbolic",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 19.2138671875,
+          "graph_us_median": 2.7253332237402597,
+          "compile_ms_median": 10.333199054002762,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 14.43839967250824,
+          "graph_us_median": 2.761599918206533,
+          "compile_ms_median": 37.91480418294668,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 5.2266667286554975,
+          "graph_us_median": 2.644266684850057,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 26.296534140904743,
+          "graph_us_median": 2.6197334130605063,
+          "compile_ms_median": 101.537617854774,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 14.00213340918223,
+          "graph_us_median": 2.6485333840052285,
+          "compile_ms_median": 1.086333766579628,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "matmul_symbolic",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 18.536533912022907,
+          "graph_us_median": 4.091733445723851,
+          "compile_ms_median": 10.860360227525234,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 13.914666573206583,
+          "graph_us_median": 4.074666649103165,
+          "compile_ms_median": 40.22508300840855,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 9.15839970111847,
+          "graph_us_median": 3.645866612593333,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 41.92320108413696,
+          "graph_us_median": 3.6490666369597116,
+          "compile_ms_median": 122.51768726855516,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 16.11306667327881,
+          "graph_us_median": 3.05173322558403,
+          "compile_ms_median": 1.9752271473407745,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "softmax_wide",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 16.379732886950176,
+          "graph_us_median": 2.7498667438824973,
+          "compile_ms_median": 15.217578038573265,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 12.120532989501953,
+          "graph_us_median": 2.7232001225153604,
+          "compile_ms_median": 36.40471771359444,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 5.362133185068767,
+          "graph_us_median": 5.385600030422211,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 26.420267422993977,
+          "graph_us_median": 3.7429332733154297,
+          "compile_ms_median": 54.71315886825323,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 11.724799871444702,
+          "graph_us_median": 2.761599918206533,
+          "compile_ms_median": 1.491345465183258,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "residual_norm",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 21.525333325068157,
+          "graph_us_median": 2.6869334280490875,
+          "compile_ms_median": 11.904524639248848,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 16.544000307718914,
+          "graph_us_median": 2.677333354949951,
+          "compile_ms_median": 42.3607612028718,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 60.36800146102905,
+          "graph_us_median": 22.413865725199383,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 25.97973346710205,
+          "graph_us_median": 2.677333354949951,
+          "compile_ms_median": 90.56147467345,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 12.423466642697653,
+          "graph_us_median": 2.713600049416224,
+          "compile_ms_median": 1.6210759058594704,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "mapping_pointwise",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 17.079466581344604,
+          "graph_us_median": 2.7210667729377747,
+          "compile_ms_median": 9.965077973902225,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 13.973333438237509,
+          "graph_us_median": 2.6901334524154663,
+          "compile_ms_median": 41.97175893932581,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 9.43893293539683,
+          "graph_us_median": 3.6373332142829895,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 25.131734212239582,
+          "graph_us_median": 2.6933332284291587,
+          "compile_ms_median": 45.309143140912056,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 13.288533687591553,
+          "graph_us_median": 2.667733281850815,
+          "compile_ms_median": 1.4525046572089195,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "neg_literal",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 15.237333377202352,
+          "graph_us_median": 2.6623999079068503,
+          "compile_ms_median": 9.346416220068932,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 12.439466516176859,
+          "graph_us_median": 2.660266558329264,
+          "compile_ms_median": 34.28506013005972,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 4.766933123270671,
+          "graph_us_median": 2.700799951950709,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 23.989333709081013,
+          "graph_us_median": 2.698666602373123,
+          "compile_ms_median": 42.4396013841033,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 13.601066668828329,
+          "graph_us_median": 2.6826667288939157,
+          "compile_ms_median": 1.4004353433847427,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "pow_literal",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 17.30453372001648,
+          "graph_us_median": 3.6992001036802926,
+          "compile_ms_median": 10.11750753968954,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 14.194132884343466,
+          "graph_us_median": 3.6746665835380554,
+          "compile_ms_median": 37.61108312755823,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 5.065600077311198,
+          "graph_us_median": 3.6703998843828836,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 25.001599391301472,
+          "graph_us_median": 2.7039999763170877,
+          "compile_ms_median": 53.030031733214855,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 13.545599579811096,
+          "graph_us_median": 2.6752000053723655,
+          "compile_ms_median": 1.514866016805172,
+          "seeds": 3
+        }
+      }
+    },
+    {
+      "name": "mean_last",
+      "backend": {
+        "flowgpu": {
+          "passed": true,
+          "full_us_median": 21.939200162887573,
+          "graph_us_median": 2.6410666604836783,
+          "compile_ms_median": 11.99247594922781,
+          "seeds": 3
+        },
+        "flowgpu_prepared": {
+          "passed": true,
+          "full_us_median": 12.796800335248312,
+          "graph_us_median": 2.628266563018163,
+          "compile_ms_median": 39.29344844073057,
+          "seeds": 3
+        },
+        "eager": {
+          "passed": true,
+          "full_us_median": 5.7365333040555315,
+          "graph_us_median": 3.2501332461833954,
+          "compile_ms_median": 0.0,
+          "seeds": 3
+        },
+        "inductor": {
+          "passed": true,
+          "full_us_median": 17.709867159525555,
+          "graph_us_median": 3.230933348337809,
+          "compile_ms_median": 4.224685952067375,
+          "seeds": 3
+        },
+        "triton": {
+          "passed": true,
+          "full_us_median": 12.11946705977122,
+          "graph_us_median": 2.6325332621733346,
+          "compile_ms_median": 1.0554445907473564,
+          "seeds": 3
+        }
+      }
+    }
+  ]
+}
