@@ -77,6 +77,10 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
     tensors = []
     for _, shape, dtype in case.inputs:
         torch_dtype = getattr(torch, DTYPES[dtype])
+        if not shape:
+            # Rank-0 program scalars are Python numbers, not tensors.
+            tensors.append(float(torch.rand((), generator=generator) * 0.001 + 1e-5))
+            continue
         if dtype == "int32":
             tensor = torch.randint(-8, 9, shape, generator=generator, dtype=torch.int32)
         elif case.name == "pow_literal":

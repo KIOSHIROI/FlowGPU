@@ -1246,6 +1246,7 @@ from flowgpu.compiler.backend.segment_rank_backend import reference_kernel as _s
 from flowgpu.compiler.backend.recurrence_backend import reference_kernel as _recurrence_reference_kernel
 from flowgpu.compiler.backend.sort_backend import sort_reference_kernel as _sort_reference_kernel
 from flowgpu.compiler.backend.mean_backend import mean_reference_kernel as _mean_reference_kernel
+from flowgpu.compiler.backend.layer_norm_backend import layer_norm_reference_kernel as _layer_norm_reference_kernel
 from flowgpu.compiler.backend.topk_backend import (
     topk_reference_kernel as _topk_reference_kernel,
     gather_reference_kernel as _gather_last_reference_kernel)
@@ -1292,6 +1293,7 @@ EMITTERS = {
     "topk": _topk_reference_kernel,
     "sort": _sort_reference_kernel,
     "mean": _mean_reference_kernel,
+    "layer_norm": _layer_norm_reference_kernel,
     "axis_gather": _gather_last_reference_kernel,
     "reduce_with_index": _reduce_with_index_reference_kernel,
     "index_table": _segment_rank_reference_kernel,
@@ -1379,7 +1381,7 @@ def lower(pipeline, graph, fusion, memory, *, numeric_mode="fp64") -> ReferenceP
             kind = "primitive"
         scalar_leaves = scalar_operands(graph, group_operands(graph, group))
         if scalar_leaves and kind not in {"pointwise", "primitive",
-                                          "segmented_matmul"}:
+                                          "segmented_matmul", "layer_norm"}:
             refusals.append(Refusal(
                 group.anchor.op if group.anchor else 'pointwise',
                 tuple(group_results(graph, group)),

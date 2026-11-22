@@ -262,6 +262,45 @@
       "output": "out",
       "atol": 0.02,
       "rtol": 0.02
+    },
+    {
+      "name": "layer_norm",
+      "source": "examples/quickstart/layer_norm.fgpu",
+      "pipeline": "quickstart_layer_norm",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            16,
+            32
+          ],
+          "fp16"
+        ],
+        [
+          "weight",
+          [
+            32
+          ],
+          "fp16"
+        ],
+        [
+          "bias",
+          [
+            32
+          ],
+          "fp16"
+        ],
+        [
+          "eps",
+          [],
+          "fp32"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "layer_norm"
     }
   ]
 }

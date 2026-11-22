@@ -2370,6 +2370,7 @@ from flowgpu.compiler.backend.topk_backend import (
     topk_triton_kernel as _topk_kernel, gather_triton_kernel as _gather_last_kernel)
 from flowgpu.compiler.backend.sort_backend import sort_triton_kernel as _sort_kernel
 from flowgpu.compiler.backend.mean_backend import mean_triton_kernel as _mean_kernel
+from flowgpu.compiler.backend.layer_norm_backend import layer_norm_triton_kernel as _layer_norm_kernel
 from flowgpu.compiler.backend.reduce_with_index_backend import (
     triton_kernel as _reduce_with_index_kernel)
 
@@ -2392,6 +2393,7 @@ EMITTERS = {
     "topk": _topk_kernel,
     "sort": _sort_kernel,
     "mean": _mean_kernel,
+    "layer_norm": _layer_norm_kernel,
     "axis_gather": _gather_last_kernel,
     "reduce_with_index": _reduce_with_index_kernel,
     "index_table": _segment_rank_kernel,
@@ -2658,7 +2660,7 @@ def lower(pipeline, graph, fusion, memory, *, gpu_backend="triton", library_matm
             kernels.append(emitter(graph, group, memory, name, config, autotune_fold=True))
         elif emitter is _layout_kernel and config.layout_on_device:
             kernels.append(_layout_device_kernel(graph, group, memory, name, config))
-        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _gather_last_kernel,
+        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _gather_last_kernel,
                                         _segment_rank_kernel, _recurrence_kernel,
                                         _reduce_with_index_kernel):
             emitted = emitter(graph, group, memory, name, config)

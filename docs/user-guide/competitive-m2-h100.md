@@ -135,6 +135,23 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Native layer_norm
+
+`layer_norm` now lowers to one row kernel (fp32 mean/variance, rsqrt(var+eps),
+weight/bias) instead of the composed reduction/pointwise graph. On the shared
+H100 GPU1:
+
+| flowgpu | eager | inductor | prepared/graph |
+|---:|---:|---:|---|
+| 2.42 | 36.75 | 36.68 | unsupported for scalar eps |
+
+The prepared and graph paths currently reject the rank-0 `eps` argument
+(`preparation requires CUDA tensor inputs`), so those columns are not measured.
+The default path is exact against the torch formula for eps 1e-5 and 1e-3.
+
+Raw data: [`m2-h100-gpu1-layernorm-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-layernorm-20261122.json).
+
 ## Native mean_last
 
 `mean_last` now lowers to one row-mean kernel instead of the

@@ -23,6 +23,13 @@ def eager(case_name: str, args):
         return {"out": torch.pow(args[0], args[1])}
     if case_name == "mean_last":
         return {"out": torch.mean(args[0], dim=-1, keepdim=True)}
+    if case_name == "layer_norm":
+        x, weight, bias, eps = args
+        xf = x.float()
+        mean = xf.mean(dim=-1, keepdim=True)
+        var = ((xf - mean) ** 2).mean(dim=-1, keepdim=True)
+        return {"out": ((xf - mean) / torch.sqrt(var + eps) * weight.float()
+                        + bias.float()).to(x.dtype)}
     if case_name == "sort_last":
         return {"out": torch.sort(args[0], dim=-1).values}
     if case_name == "residual_norm":
@@ -50,6 +57,13 @@ def oracle(case_name: str, args):
         return {"out": torch.pow(args[0].double(), args[1].double())}
     if case_name == "mean_last":
         return {"out": torch.mean(args[0].double(), dim=-1, keepdim=True)}
+    if case_name == "layer_norm":
+        x, weight, bias, eps = args
+        xf = x.double()
+        mean = xf.mean(dim=-1, keepdim=True)
+        var = ((xf - mean) ** 2).mean(dim=-1, keepdim=True)
+        return {"out": ((xf - mean) / torch.sqrt(var + eps) * weight.double()
+                        + bias.double())}
     if case_name == "sort_last":
         return {"out": torch.sort(args[0].double(), dim=-1).values}
     if case_name == "residual_norm":

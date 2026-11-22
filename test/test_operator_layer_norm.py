@@ -1,4 +1,4 @@
-"""layer_norm is a composed operator over existing reductions/pointwise rules."""
+"""layer_norm lowers to one native Triton row-normalization kernel."""
 import math
 
 from flowgpu.compiler.backend import reference
@@ -17,7 +17,7 @@ pipeline p {
 """
 
 
-def test_layer_norm_is_composed_and_reference_is_close():
+def test_layer_norm_native_lowering_matches_reference():
     assert "layer_norm" in OPERATORS
     compiled = compile_source(SOURCE)
     pipeline = compiled.pipelines[0]
@@ -38,4 +38,3 @@ def test_layer_norm_is_composed_and_reference_is_close():
                         for i in range(width))
     got = values["out"]
     assert max(abs(a - b) for a, b in zip(got, expected)) < 2e-2
-    assert any(decision.reason.startswith("layer_norm ->") for decision in pipeline.normalization)

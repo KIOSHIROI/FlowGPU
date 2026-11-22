@@ -51,7 +51,7 @@ requires a literal last axis and literal leading extents.
 | reduction | argmax | `argmax_last` | present | reduce_with_index |
 | reduction | softmax | `softmax` | present | rowwise |
 | norm | rmsnorm | `rms_norm` | present | rowwise |
-| norm | layernorm | `layer_norm` | present | - |
+| norm | layernorm | `layer_norm` | present | layer_norm |
 | norm | batch_norm | `batch_norm` | present | - |
 | linear algebra | matmul | `matmul` | present | matmul |
 | linear algebra | conv2d | `conv2d` | present | - |

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.39.0
+
+- Replace the layer_norm composition with one native Triton row kernel;
+  exact for eps 1e-5/1e-3 on H100 and 2.42 us vs eager 36.75 us (shared GPU).
+
 ## 0.38.0
 
 - Replace the mean_last composition with one native Triton row-mean kernel.
