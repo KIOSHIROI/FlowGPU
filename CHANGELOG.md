@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.42.0
+
+- Lower conv2d 1x1 to one tiled tl.dot kernel (2.37 us vs 136 us for the
+  four-kernel composition); prepared and graph paths now work.
+
 ## 0.41.0
 
 - Extend the M2 matrix to 13 cases with batch_norm and 1x1 conv2d.

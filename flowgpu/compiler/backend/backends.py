@@ -123,6 +123,7 @@ KERNELS = {
     "sort": ("sort_last",),
     "mean": ("mean_last",),
     "layer_norm": ("layer_norm",),
+    "conv2d": ("conv2d",),
     "axis_gather": ("gather_last",),
     "reduce_with_index": ("argmax_last", "argmin_last"),
     "index_table": ("segment_rank",),

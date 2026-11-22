@@ -1247,6 +1247,7 @@ from flowgpu.compiler.backend.recurrence_backend import reference_kernel as _rec
 from flowgpu.compiler.backend.sort_backend import sort_reference_kernel as _sort_reference_kernel
 from flowgpu.compiler.backend.mean_backend import mean_reference_kernel as _mean_reference_kernel
 from flowgpu.compiler.backend.layer_norm_backend import layer_norm_reference_kernel as _layer_norm_reference_kernel
+from flowgpu.compiler.backend.conv2d_backend import conv2d_reference_kernel as _conv2d_reference_kernel
 from flowgpu.compiler.backend.topk_backend import (
     topk_reference_kernel as _topk_reference_kernel,
     gather_reference_kernel as _gather_last_reference_kernel)
@@ -1294,6 +1295,7 @@ EMITTERS = {
     "sort": _sort_reference_kernel,
     "mean": _mean_reference_kernel,
     "layer_norm": _layer_norm_reference_kernel,
+    "conv2d": _conv2d_reference_kernel,
     "axis_gather": _gather_last_reference_kernel,
     "reduce_with_index": _reduce_with_index_reference_kernel,
     "index_table": _segment_rank_reference_kernel,

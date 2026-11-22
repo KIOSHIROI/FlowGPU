@@ -16,7 +16,7 @@ pipeline p {
 """
 
 
-def test_conv2d_is_composed_and_reference_matches_1x1():
+def test_conv2d_native_lowering_matches_1x1():
     assert "conv2d" in OPERATORS
     compiled = compile_source(SOURCE)
     pipeline = compiled.pipelines[0]
@@ -39,4 +39,3 @@ def test_conv2d_is_composed_and_reference_matches_1x1():
                     expected.append(total)
     assert len(actual) == len(expected)
     assert max(abs(a - b) for a, b in zip(actual, expected)) < 2e-2
-    assert any(decision.reason.startswith("conv2d") for decision in pipeline.normalization)

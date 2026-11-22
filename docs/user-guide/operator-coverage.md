@@ -54,7 +54,7 @@ requires a literal last axis and literal leading extents.
 | norm | layernorm | `layer_norm` | present | layer_norm |
 | norm | batch_norm | `batch_norm` | present | - |
 | linear algebra | matmul | `matmul` | present | matmul |
-| linear algebra | conv2d | `conv2d` | present | - |
+| linear algebra | conv2d | `conv2d` | present | conv2d |
 | linear algebra | embedding lookup | `gather_rows` | present | primitive |
 | attention | scaled dot-product attention | `attention` | present | attention |
 | attention | causal attention | `causal_attention` | present | attention |

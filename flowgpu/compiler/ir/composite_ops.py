@@ -95,37 +95,6 @@ def expand(graph):
                 nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                                   node.output, node.part, node.attributes))
                 continue
-        if node.op == "conv2d":
-            x, weight, bias = (resolve(value) for value in node.inputs)
-            x_type, weight_type = values[x], values[weight]
-            n, h, w, channels = (int(extent) for extent in x_type.shape)
-            out_channels = int(weight_type.shape[0])
-            x2_shape = [str(n * h * w), str(channels)]
-            x2 = fresh()
-            values[x2] = TensorType(x_type.dtype, x2_shape)
-            emit("reshape", [x], x2,
-                 attributes=OperationAttributes(target_shape=tuple(x2_shape)))
-            wt = stage("transpose", [weight],
-                       attributes=OperationAttributes(permutation=(1, 0)))
-            mm = stage("matmul", [x2, wt])
-            bb = stage("broadcast_like", [bias, mm])
-            biased = stage("add", [mm, bb])
-            out_shape = [str(n), str(h), str(w), str(out_channels)]
-            expected = TensorType(x_type.dtype, out_shape)
-            if values[node.output] != expected:
-                raise CompileError(
-                    DiagnosticKind.INTERNAL,
-                    "conv2d expansion changed the declared result type: "
-                    f"{values[node.output]} and {expected}",
-                    pipeline=graph.pipeline,
-                )
-            emit("reshape", [biased], node.output,
-                 attributes=OperationAttributes(target_shape=tuple(out_shape)))
-            decisions.append(NormalizationDecision(
-                node.output, "expand_composition",
-                "conv2d 1x1 -> reshape + transpose + matmul + bias + reshape",
-            ))
-            continue
         if node.op == "layer_norm":
             x, weight, bias, eps = (resolve(value) for value in node.inputs)
             def mean_of(value, count):
