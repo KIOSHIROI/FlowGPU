@@ -33,7 +33,7 @@ public probes; no private fixture is used.
 ## Honest limitations
 
 - default/prepared calls still lose to eager on simple pointwise/softmax;
-- `sort_last` is a quadratic topk composition, not a fast sort;
+- `sort_last` requires literal extents and currently exposes values only;
 - `conv2d` is 1x1, NHWC, flattened `[O,C]` weight only;
 - dynamic shapes are partial: literal-only bodies may need per-shape rewrite;
 - PyPI publication is blocked by an external trusted-publisher setting.

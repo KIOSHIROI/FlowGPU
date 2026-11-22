@@ -22,9 +22,8 @@ operations; the frontend registers 92 operators across 18 kernel kinds.
   vectoradd, matmul and softmax). Literal-only operators still need
   per-shape specialization via `DynamicShapeRunner`.
 
-Everything else on the checklist is present. `sort_last` is correctness-first
-(`neg + topk(k=width) + neg`) and is quadratic in the literal row width; it is
-not a high-performance sort.
+Everything else on the checklist is present. `sort_last` now uses Triton's native bitonic `tl.sort` in one row kernel; it
+requires a literal last axis and literal leading extents.
 
 ## Checklist
 
@@ -69,7 +68,7 @@ not a high-performance sort.
 | gather | last-axis gather | `gather_last` | present | axis_gather |
 | gather | scatter by index | `scatter_by_index` | present | scatter_by_index |
 | sort/search | top-k | `topk_last` | present | topk |
-| sort/search | sort | `sort_last` | present | - |
+| sort/search | sort | `sort_last` | present | sort |
 | scan | cumsum | `cumsum` | present | scan |
 | scan | segmented cumsum | `segmented_cumsum` | present | - |
 | state | cache store | `store_cache_4d` | present | cache_store |

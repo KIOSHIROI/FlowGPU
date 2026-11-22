@@ -1,10 +1,10 @@
-"""sort_last is a topk(k=width) composition over literal rows."""
+"""sort_last lowers to one native Triton bitonic sort per row."""
 from flowgpu.compiler.backend import reference
 from flowgpu.compiler.compile import compile_source
 from flowgpu.compiler.core.operators import OPERATORS
 
 
-def test_sort_last_is_composed_and_roundtrip_sorts_ascending():
+def test_sort_last_native_lowering_sorts_ascending():
     assert "sort_last" in OPERATORS
     source = """
     pipeline p {
@@ -20,4 +20,3 @@ def test_sort_last_is_composed_and_roundtrip_sorts_ascending():
     for row in range(4):
         expected.extend(sorted(inputs[row * 8:(row + 1) * 8]))
     assert max(abs(a - b) for a, b in zip(values, expected)) < 2e-2
-    assert any(decision.reason.startswith("sort_last") for decision in pipeline.normalization)

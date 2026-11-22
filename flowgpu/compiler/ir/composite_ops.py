@@ -85,32 +85,6 @@ def expand(graph):
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
             continue
-        if node.op == "sort_last":
-            (x,) = (resolve(value) for value in node.inputs)
-            negated = stage("neg", [x])
-            values_name = fresh()
-            indices_name = fresh()
-            values[values_name] = TensorType(values[x].dtype, list(values[x].shape))
-            values[indices_name] = TensorType("int32", list(values[x].shape))
-            nodes.append(Node("topk_last", [resolve(negated)], values_name, 0,
-                              OperationAttributes()))
-            nodes.append(Node("topk_last", [resolve(negated)], indices_name, 1,
-                              OperationAttributes()))
-            expected = TensorType(values[x].dtype, list(values[x].shape))
-            if values[node.output] != expected:
-                raise CompileError(
-                    DiagnosticKind.INTERNAL,
-                    "sort_last expansion changed the declared result type",
-                    pipeline=graph.pipeline,
-                )
-            stage("neg", [values_name])
-            emit("neg", [values_name], node.output)
-            decisions.append(NormalizationDecision(
-                node.output, "expand_composition",
-                "sort_last -> neg + topk_last(k=width) + neg; a correctness-first "
-                "composition whose cost is quadratic in the literal row width",
-            ))
-            continue
         if node.op == "conv2d":
             x, weight, bias = (resolve(value) for value in node.inputs)
             x_type, weight_type = values[x], values[weight]

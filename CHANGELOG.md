@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.37.0
+
+- Replace the quadratic topk sort composition with a native Triton `tl.sort`
+  row kernel; sort_last is 2.23 us vs eager 13.87 us on H100.
+
 ## 0.36.2
 
 - Publish a one-page competitive capability/latency summary with honest limits.

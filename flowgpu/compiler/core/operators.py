@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm", "conv2d", "sort_last")
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last", "layer_norm", "batch_norm", "conv2d")
 
 
 # v0.4: static patch geometry.

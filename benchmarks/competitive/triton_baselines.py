@@ -46,6 +46,15 @@ def _kernels():
         tl.store(out + offsets, tl.extra.cuda.libdevice.pow(x, y), mask=mask)
 
     @triton.jit
+    def sort_kernel(x, out, WIDTH: tl.constexpr, LANES: tl.constexpr):
+        row = tl.program_id(0)
+        cols = tl.arange(0, LANES)
+        mask = cols < WIDTH
+        values = tl.load(x + row * WIDTH + cols, mask=mask, other=float("inf")).to(tl.float32)
+        values = tl.sort(values)
+        tl.store(out + row * WIDTH + cols, values, mask=mask)
+
+    @triton.jit
     def mean_kernel(x, out, V: tl.constexpr, BLOCK: tl.constexpr):
         row = tl.program_id(0)
         offsets = tl.arange(0, BLOCK)
@@ -112,6 +121,7 @@ def _kernels():
         "neg": neg_kernel,
         "pow": pow_kernel,
         "mean": mean_kernel,
+        "sort": sort_kernel,
         "int_pointwise": int_pointwise_kernel,
         "softmax": softmax_kernel,
         "matmul": matmul_kernel,
@@ -148,6 +158,12 @@ def run(case_name: str, args):
         n = a.numel()
         block = 256
         kernels["pow"][(triton.cdiv(n, block),)](a, b, out, n, block)
+        return {"out": out}
+    if case_name == "sort_last":
+        (x,) = args
+        rows, width = x.shape
+        out = torch.empty_like(x)
+        kernels["sort"][(rows,)](x, out, width, _next_power_of_two(width))
         return {"out": out}
     if case_name == "mean_last":
         (x,) = args

@@ -133,6 +133,21 @@ per-shape for a hot, single shape.
 Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/symbolic-h100-gpu1-20261122.json).
 
 
+
+## Native sort
+
+`sort_last` now lowers to one `tl.sort` row kernel. On H100 GPU1 for `[4, 8]`:
+
+| flowgpu | prepared | prepared+graph | zero-copy graph | eager | inductor | triton |
+|---:|---:|---:|---:|---:|---:|---:|
+| 2.23 | 2.23 | 4.54 | 2.42 | 13.87 | 13.86 | 2.19 |
+
+FlowGPU is within measurement noise of the explicit Triton `tl.sort` baseline
+and far below eager/Inductor. The old correctness-first topk composition is
+gone; literal extents are still required.
+
+Raw data: [`m2-h100-gpu1-sort-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-sort-20261122.json).
+
 ## Prepared graph path
 
 `flowgpu_prepared_graph` prepares the plan, captures a graph over static inputs,

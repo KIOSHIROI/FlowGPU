@@ -243,6 +243,25 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "mean_last"
+    },
+    {
+      "name": "sort_last",
+      "source": "examples/quickstart/sort_last.fgpu",
+      "pipeline": "quickstart_sort",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            4,
+            8
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02
     }
   ]
 }
