@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.42.1
+
+- Cap conv2d 1x1 tile extents (BM/BN 128, BK 64); a [4,16,16,32] x [64,32]
+  case is within fp16 tolerance on H100.
+
 ## 0.42.0
 
 - Lower conv2d 1x1 to one tiled tl.dot kernel (2.37 us vs 136 us for the
