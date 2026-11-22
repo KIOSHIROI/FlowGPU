@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.43.1
+
+- Add a CPU Docker image, a CI build job, and container documentation.
+
 ## 0.43.0
 
 - Support 4-D [O,C,KH,KW] weights and lower small KxK conv2d to an

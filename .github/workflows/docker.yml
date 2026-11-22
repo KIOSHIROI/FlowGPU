@@ -1,0 +1,22 @@
+name: docker
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build-cpu-image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: build image
+        run: docker build -t flowgpu:ci .
+      - name: run CLI from image
+        run: docker run --rm flowgpu:ci --version

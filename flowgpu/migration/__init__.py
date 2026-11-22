@@ -8,4 +8,4 @@ Nothing here claims a device result.  Coverage is derived from the compiler's
 platform tables; correctness/performance records are accepted only when they
 carry a reference, an artifact hash and a reproduction command.
 """
-__version__ = "0.43.0"
+__version__ = "0.43.1"

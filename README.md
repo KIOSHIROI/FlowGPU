@@ -34,6 +34,8 @@ requires a CUDA machine with PyTorch and Triton.
 
 ## Install
 
+A CPU image is available for CLI/compiler use: see [Container image](docs/user-guide/container.md).
+
 FlowGPU is not on PyPI yet. Install from source or directly from Git:
 
 ```sh
