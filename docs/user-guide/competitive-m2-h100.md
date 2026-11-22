@@ -138,6 +138,21 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Same-padded convolution
+
+`conv2d_same` is the odd-K, `(K-1)//2` zero-padding variant. It reuses the
+implicit-GEMM lowering with per-offset bounds masks and keeps the output spatial
+shape.
+
+| case | flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---|---:|---:|---:|---:|---:|---:|
+| conv2d_same (3x3, pad 1) | 3.90 | 3.89 | 6.65 | 4.02 | 62.04 | 141.34 |
+
+Exact against `F.conv2d(..., padding=1)` in float64. This adds a 15th M2 case.
+
+Raw data: [`m2-h100-gpu1-same-case-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-same-case-20261122.json).
+
 ## General KxK conv2d
 
 `conv2d` now accepts a 4-D `[O,C,KH,KW]` weight and lowers a small KxK

@@ -28,6 +28,11 @@ def eager(case_name: str, args):
         xf = x.float()
         return {"out": ((xf - mean.float()) / torch.sqrt(var.float() + eps) * weight.float()
                         + bias.float()).to(x.dtype)}
+    if case_name == "conv2d_same":
+        import torch.nn.functional as F
+        x, weight, bias = args
+        return {"out": F.conv2d(x.permute(0, 3, 1, 2).float(), weight.float(),
+                                bias.float(), padding=1).permute(0, 2, 3, 1).to(x.dtype)}
     if case_name == "conv2d_3x3":
         import torch.nn.functional as F
         x, weight, bias = args
@@ -77,6 +82,11 @@ def oracle(case_name: str, args):
         xf = x.double()
         return {"out": ((xf - mean.double()) / torch.sqrt(var.double() + eps)
                         * weight.double() + bias.double())}
+    if case_name == "conv2d_same":
+        import torch.nn.functional as F
+        x, weight, bias = args
+        return {"out": F.conv2d(x.double().permute(0, 3, 1, 2), weight.double(),
+                                bias.double(), padding=1).permute(0, 2, 3, 1)}
     if case_name == "conv2d_3x3":
         import torch.nn.functional as F
         x, weight, bias = args

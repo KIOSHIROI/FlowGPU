@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.44.0
+
+- Add conv2d_same: odd-K same-padded convolution on the implicit-GEMM
+  lowering; 3.90 us vs eager 62.04 us on H100.
+
 ## 0.43.1
 
 - Add a CPU Docker image, a CI build job, and container documentation.

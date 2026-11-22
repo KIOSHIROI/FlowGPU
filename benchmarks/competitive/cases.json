@@ -430,6 +430,45 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "conv2d_3x3"
+    },
+    {
+      "name": "conv2d_same",
+      "source": "examples/quickstart/conv2d_same.fgpu",
+      "pipeline": "quickstart_conv2d_same",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            2,
+            6,
+            6,
+            8
+          ],
+          "fp16"
+        ],
+        [
+          "weight",
+          [
+            16,
+            8,
+            3,
+            3
+          ],
+          "fp16"
+        ],
+        [
+          "bias",
+          [
+            16
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "conv2d_same"
     }
   ]
 }

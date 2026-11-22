@@ -1397,6 +1397,32 @@ def infer_conv2d(args):
 register_operator('conv2d', 3, infer_conv2d, pointwise=False, acc='fp32')
 
 
+def infer_conv2d_same(args):
+    x, weight, bias = args
+    require_float(x, 'conv2d_same')
+    require_float(weight, 'conv2d_same')
+    require_float(bias, 'conv2d_same')
+    if len(x.shape) != 4 or len(weight.shape) != 4:
+        raise reject(DiagnosticKind.SHAPE,
+                     'conv2d_same requires x [N,H,W,C] and weight [O,C,KH,KW]')
+    if not all(str(d).isdigit() for d in x.shape + weight.shape + bias.shape):
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_same currently requires literal extents')
+    out_channels, in_channels = int(weight.shape[0]), int(weight.shape[1])
+    kh, kw = int(weight.shape[2]), int(weight.shape[3])
+    if kh != kw or kh % 2 == 0:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_same requires an odd square kernel')
+    if int(x.shape[3]) != in_channels:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_same input channels must match weight in-channels')
+    if x.dtype != weight.dtype or x.dtype != bias.dtype:
+        raise reject(DiagnosticKind.TYPE, 'conv2d_same operands must share a floating dtype')
+    if bias.shape != [str(out_channels)] and bias.shape != [out_channels]:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_same bias must have shape [O]')
+    return TensorType(x.dtype, [x.shape[0], x.shape[1], x.shape[2], str(out_channels)])
+
+
+register_operator('conv2d_same', 3, infer_conv2d_same, pointwise=False, acc='fp32')
+
+
 def infer_sort_last(args):
     (x,) = args
     require_float(x, 'sort_last')

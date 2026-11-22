@@ -70,3 +70,35 @@ def test_conv2d_3x3_native_lowering_matches_reference():
     total += bias[o]
     index = ((n * 4 + oh) * 4 + ow) * 16 + o
     assert abs(out[index] - total) < 2e-2
+
+
+SAME = """
+pipeline p {
+  input x:fp16[2, 6, 6, 8]
+  input weight:fp16[16, 8, 3, 3]
+  input bias:fp16[16]
+  out = conv2d_same(x, weight, bias)
+  output out
+}
+"""
+
+
+def test_conv2d_same_reference_shape_and_spot_check():
+    compiled = compile_source(SAME)
+    pipeline = compiled.pipelines[0]
+    values = reference.run(pipeline.reference)
+    inputs = reference.inputs_for(pipeline.reference, {})
+    x, weight, bias = (item[3] for item in inputs)
+    out = values["out"]
+    assert len(out) == 2 * 6 * 6 * 16
+    n, oh, ow, o = 0, 0, 0, 2
+    total = 0.0
+    for c in range(8):
+        for kh in range(3):
+            for kw in range(3):
+                ih, iw = oh + kh - 1, ow + kw - 1
+                if 0 <= ih < 6 and 0 <= iw < 6:
+                    total += x[((n * 6 + ih) * 6 + iw) * 8 + c] * weight[o * 8 * 9 + c * 9 + kh * 3 + kw]
+    total += bias[o]
+    index = ((n * 6 + oh) * 6 + ow) * 16 + o
+    assert abs(out[index] - total) < 2e-2
