@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.34.1
+
+- Publish 3-seed medians including the zero-copy graph path: 2.99–4.31 µs
+  across all 9 cases.
+
 ## 0.34.0
 
 - Add the `flowgpu_graph` M2 backend and publish zero-copy CUDA Graph replay

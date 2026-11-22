@@ -67,7 +67,7 @@ def merge(reports: list[dict]) -> dict:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", default="0,1,2")
-    parser.add_argument("--backends", default="flowgpu,flowgpu_prepared,eager,inductor,triton")
+    parser.add_argument("--backends", default="flowgpu,flowgpu_prepared,flowgpu_graph,eager,inductor,triton")
     parser.add_argument("--warmup", type=int, default=8)
     parser.add_argument("--iterations", type=int, default=30)
     parser.add_argument("--json", action="store_true")
