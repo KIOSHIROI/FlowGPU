@@ -215,13 +215,17 @@ def freeze_autotune(code, selections, *, pipeline, context, device_key, speciali
     guards = []
     for arg, item in zip(host.args.args, context):
         name = arg.arg
+        if item.get('kind') == 'scalar':
+            guards.append(f"if type({name}) not in (int, float):\n"
+                          "    raise ValueError('prepared scalar input changed; prepare again')")
+            continue
         guards.append(f"if ({name}.layout != torch.strided or tuple({name}.shape) != {tuple(item['shape'])!r} or "
                       f"tuple({name}.stride()) != {tuple(item['stride'])!r} or "
                       f"str({name}.dtype) != {item['dtype']!r} or "
                       f"str({name}.device) != {item['device']!r} or "
                       f"{name}.data_ptr() % 128 != {item['alignment_mod128']!r}):\n"
                       "    raise ValueError('prepared input context changed; prepare again')")
-    first = host.args.args[0].arg
+    first = next(arg.arg for arg, item in zip(host.args.args, context) if item.get('kind') != 'scalar')
     guards.append(f"if _flowgpu_device_key({first}.device.index) != {device_key!r}:\n"
                   "    raise ValueError('prepared device/software context changed; prepare again')")
     # Preserve the docstring, and run guards before any allocation or launch.

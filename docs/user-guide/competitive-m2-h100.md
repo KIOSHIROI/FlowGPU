@@ -142,13 +142,13 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 weight/bias) instead of the composed reduction/pointwise graph. On the shared
 H100 GPU1:
 
-| flowgpu | eager | inductor | prepared/graph |
-|---:|---:|---:|---|
-| 2.42 | 36.75 | 36.68 | unsupported for scalar eps |
+| flowgpu | prepared | prepared+graph | zero-copy graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 2.39 | 2.38 | 5.21 | 2.42 | 36.52 | 36.46 |
 
-The prepared and graph paths currently reject the rank-0 `eps` argument
-(`preparation requires CUDA tensor inputs`), so those columns are not measured.
-The default path is exact against the torch formula for eps 1e-5 and 1e-3.
+Rank-0 scalar arguments (`eps`) now prepare and capture too: the prepared and
+graph runners accept a Python int/float alongside the tensors. All four FlowGPU
+paths pass correctness against the torch formula for eps 1e-5 and 1e-3.
 
 Raw data: [`m2-h100-gpu1-layernorm-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-layernorm-20261122.json).
 

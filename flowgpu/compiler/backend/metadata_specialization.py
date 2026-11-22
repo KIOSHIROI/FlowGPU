@@ -17,7 +17,8 @@ def _contiguous(item):
 
 
 def specialize_host(host, context):
-    inputs=dict(zip((a.arg for a in host.args.args),context))
+    inputs={a.arg: item for a, item in zip(host.args.args, context)
+            if item.get('kind') != 'scalar'}
     constants={}
     # This is partial evaluation, not general Python control-flow analysis.
     # Values written again (including inside a branch/loop) cannot keep an

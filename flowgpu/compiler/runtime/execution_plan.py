@@ -81,7 +81,14 @@ def _guarded_input_spans(host, inputs, fresh):
                  and isinstance(host.body[0].value,ast.Constant)
                  and isinstance(host.body[0].value.value,str)))
     intervals=[]
+    tensor_inputs=[]
     for name,guard in zip(inputs,host.body[pos:pos+len(inputs)]):
+        if (isinstance(guard,ast.If) and isinstance(guard.test,ast.Compare)
+                and isinstance(guard.test.left,ast.Call)
+                and ast.unparse(guard.test.left.func)=='type'
+                and isinstance(guard.test.comparators[0],ast.Tuple)):
+            # Prepared scalar arguments are typed, not span-checked.
+            continue
         try:
             terms=guard.test.values
             shape,stride,dtype,device,alignment=(ast.literal_eval(terms[i].comparators[0]) for i in range(1,6))
@@ -104,9 +111,10 @@ def _guarded_input_spans(host, inputs, fresh):
         terms[-1].left.left=ast.NamedExpr(ast.Name(pointer,ast.Store()),call)
         span=(1+sum((n-1)*s for n,s in zip(shape,stride)))*WIDTHS[dtype]
         intervals.append((pointer,span))
-    if len(intervals)!=len(inputs) or not inputs:
+        tensor_inputs.append(name)
+    if len(intervals)!=len(tensor_inputs) or not tensor_inputs:
         raise ValueError('execution plan requires guarded tensor inputs')
-    return intervals
+    return intervals, tensor_inputs
 
 
 def _buffer_checks(parameter, allocations, inputs, intervals, fresh):
@@ -198,7 +206,7 @@ def build_execution_plan(code, *, pipeline):
         else:
             name=ast.unparse(n.func)
             # `abs` is the 32-bit address-range guard's runtime stride term.
-            if name in {'torch.empty','tuple','str','ValueError','_flowgpu_device_key','abs'}:continue
+            if name in {'torch.empty','tuple','str','float','type','isinstance','ValueError','_flowgpu_device_key','abs'}:continue
             if isinstance(n.func,ast.Attribute) and isinstance(n.func.value,ast.Name) and n.func.attr in metadata_methods:continue
             raise ValueError('unsupported host operation in execution plan: '+name)
     if sum(isinstance(n,ast.Call) and ast.unparse(n.func)=='torch.empty' for n in ast.walk(host))!=len(allocations):
@@ -210,10 +218,10 @@ def build_execution_plan(code, *, pipeline):
         all_names.add(stem)
         return stem
     parameter=fresh('_flowgpu_buffers')
-    intervals=_guarded_input_spans(host,inputs,fresh)
+    intervals, tensor_inputs = _guarded_input_spans(host,inputs,fresh)
     host.name='run_into_'+pipeline
     host.args.args.append(ast.arg(arg=parameter))
-    checks=_buffer_checks(parameter,allocations,inputs,intervals,fresh)
+    checks=_buffer_checks(parameter,allocations,tensor_inputs,intervals,fresh)
     # Every semantic/input guard remains before the first buffer binding/launch.
     position=next((i for i,n in enumerate(host.body) if any(n is a for a,_ in allocations)
                    or isinstance(n,ast.Expr) and isinstance(n.value,ast.Call)
@@ -257,7 +265,7 @@ def prepare_execution_plan(source, *, pipeline, args, cache_dir, validator, **op
     descriptor=build_execution_plan(code,pipeline=pipeline)
     loaded=_load_generated_module(descriptor.code,cache_dir=Path(cache_dir)/'execution-plans',key=descriptor.source_sha256)
     plan=PreparedExecutionPlan(descriptor,dict(preparation=record,execution_plan=descriptor.as_dict()),
-        getattr(loaded,'run_into_'+pipeline),str(args[0].device))
+        getattr(loaded,'run_into_'+pipeline),str(next(a for a in args if hasattr(a, 'device')).device))
     buffers=plan.allocate_buffers()
     result=plan.run_into(*args,buffers=buffers)
     torch.cuda.synchronize(args[0].device)

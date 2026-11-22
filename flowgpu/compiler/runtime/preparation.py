@@ -215,15 +215,23 @@ def prepare_pipeline(source, *, pipeline, args, cache_dir, validator,
         raise ValueError('an independent validator is required')
     if torch.cuda.is_current_stream_capturing():
         raise ValueError('prepare outside CUDA Graph capture')
-    if not args or any(not isinstance(a, torch.Tensor) or a.device.type != 'cuda' for a in args):
+    if not args:
+        raise ValueError('preparation requires at least one input')
+    tensors = [a for a in args if isinstance(a, torch.Tensor)]
+    scalars = [a for a in args if not isinstance(a, torch.Tensor)]
+    if not tensors or any(a.device.type != 'cuda' for a in tensors):
         raise ValueError('preparation requires CUDA tensor inputs')
-    if any(a.layout != torch.strided or any(size<=0 for size in a.shape) for a in args):
+    if any(type(a) not in {int, float} for a in scalars):
+        raise ValueError('preparation requires tensor or Python scalar inputs')
+    if any(a.layout != torch.strided or any(size<=0 for size in a.shape) for a in tensors):
         raise ValueError('preparation requires positive strided inputs')
-    device = args[0].device
-    if any(a.device != device for a in args) or device.index != torch.cuda.current_device():
+    device = tensors[0].device
+    if any(a.device != device for a in tensors) or device.index != torch.cuda.current_device():
         raise ValueError('prepare inside the single input CUDA device context')
     context = [dict(shape=list(a.shape), stride=list(a.stride()), dtype=str(a.dtype),
-                    device=str(a.device), alignment_mod128=a.data_ptr() % 128) for a in args]
+                    device=str(a.device), alignment_mod128=a.data_ptr() % 128)
+               if isinstance(a, torch.Tensor) else dict(kind='scalar') for a in args]
+    first_tensor = next(index for index, a in enumerate(args) if isinstance(a, torch.Tensor))
     root = Path(cache_dir)
     deployments = root / 'prepared'
     deployments.mkdir(parents=True, exist_ok=True)

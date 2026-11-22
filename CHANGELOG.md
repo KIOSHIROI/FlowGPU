@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.40.0
+
+- Support rank-0 scalar arguments in prepared execution plans and GraphRunner;
+  layer_norm prepares and captures, all four FlowGPU paths pass on H100.
+
 ## 0.39.0
 
 - Replace the layer_norm composition with one native Triton row kernel;

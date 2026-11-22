@@ -29,19 +29,25 @@ class GraphRunner:
         import torch
         if not self.source_args:
             raise ValueError("GraphRunner requires at least one input")
-        if any(not isinstance(a, torch.Tensor) or a.device.type != "cuda" for a in self.source_args):
+        tensors = [a for a in self.source_args if isinstance(a, torch.Tensor)]
+        scalars = [a for a in self.source_args if not isinstance(a, torch.Tensor)]
+        if not tensors or any(a.device.type != "cuda" for a in tensors):
             raise ValueError("GraphRunner requires CUDA tensors")
-        device = self.source_args[0].device
-        if any(a.device != device for a in self.source_args):
+        if any(type(a) not in {int, float} for a in scalars):
+            raise ValueError("GraphRunner requires tensor or Python scalar inputs")
+        device = tensors[0].device
+        if any(a.device != device for a in tensors):
             raise ValueError("GraphRunner requires one CUDA device")
         if torch.cuda.is_current_stream_capturing():
             raise ValueError("capture GraphRunner outside an existing capture")
         self._torch = torch
         self._device = device
         if self.copy_inputs:
-            self._inputs = tuple(torch.empty_like(a) for a in self.source_args)
+            self._inputs = tuple(torch.empty_like(a) if isinstance(a, torch.Tensor) else a
+                                 for a in self.source_args)
             for target, source in zip(self._inputs, self.source_args):
-                target.copy_(source)
+                if isinstance(target, torch.Tensor):
+                    target.copy_(source)
         else:
             # Caller-owned static buffers: update them in place between replays.
             self._inputs = tuple(self.source_args)
@@ -60,11 +66,14 @@ class GraphRunner:
         if len(tensors) != len(self._inputs):
             raise ValueError(f"GraphRunner expects {len(self._inputs)} inputs")
         for target, value in zip(self._inputs, tensors):
-            if (not isinstance(value, self._torch.Tensor)
-                    or value.device != self._device
-                    or tuple(value.shape) != tuple(target.shape)
-                    or value.dtype != target.dtype):
-                raise ValueError("GraphRunner input metadata/device changed")
+            if isinstance(target, self._torch.Tensor):
+                if (not isinstance(value, self._torch.Tensor)
+                        or value.device != self._device
+                        or tuple(value.shape) != tuple(target.shape)
+                        or value.dtype != target.dtype):
+                    raise ValueError("GraphRunner input metadata/device changed")
+            elif type(value) not in {int, float} or value != target:
+                raise ValueError("GraphRunner scalar input changed; capture a new graph")
 
     def copy_in(self, *tensors) -> None:
         if not self.copy_inputs:
@@ -72,7 +81,7 @@ class GraphRunner:
                              "update runner.inputs in place and call replay()")
         self._check(tensors)
         pairs = [(target, value) for target, value in zip(self._inputs, tensors)
-                 if value is not target]
+                 if isinstance(target, self._torch.Tensor) and value is not target]
         if not pairs:
             return
         if len(pairs) == 1:
