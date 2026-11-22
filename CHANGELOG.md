@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.28.0
+
+- Add `mean_last` as a composed operator (sum_last / count of ones), with an
+  H100 GPU1 correctness check and coverage at 41/46.
+
 ## 0.27.0
 
 - Add `pow` as a value-layer binary operator with torch-compatible NaN

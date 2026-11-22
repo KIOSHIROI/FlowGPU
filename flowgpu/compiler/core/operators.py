@@ -881,7 +881,7 @@ register_operator("segmented_cumsum", 2, infer_segmented_cumsum,
 # operators before fusion; `classification_gaps` reads this tuple so the
 # "every operator has a backend decision" invariant stays honest (the decision
 # is "composed away", not "silently missing").
-COMPOSED_OPERATORS = ("segmented_cumsum",)
+COMPOSED_OPERATORS = ("segmented_cumsum", "mean_last")
 
 
 # v0.4: static patch geometry.
@@ -1322,6 +1322,14 @@ def infer_div(args):
 register_operator('div', 2, infer_div, pointwise=False, acc=None)
 for name in ('sum_last', 'max_last'):
     register_operator(name, 1, infer_reduce_last, pointwise=False, acc='fp32')
+
+def infer_mean_last(args):
+    (x,) = args
+    require_float(x, 'mean_last')
+    return TensorType('fp32', x.shape[:-1] + ['1'])
+
+
+register_operator('mean_last', 1, infer_mean_last, pointwise=False, acc='fp32')
 
 
 AXIS_OPERATORS = {'sum_axis': 'sum_last', 'max_axis': 'max_last',

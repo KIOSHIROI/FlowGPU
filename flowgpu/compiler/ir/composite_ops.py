@@ -84,6 +84,26 @@ def expand(graph):
             nodes.append(Node(node.op, [resolve(value) for value in node.inputs],
                               node.output, node.part, node.attributes))
             continue
+        if node.op == "mean_last":
+            (x,) = (resolve(value) for value in node.inputs)
+            total = stage("sum_last", [x])
+            ones = stage("ones_like", [x])
+            count = stage("sum_last", [ones])
+            expected = type_of("div", [total, count])
+            if values[node.output] != expected:
+                raise CompileError(
+                    DiagnosticKind.INTERNAL,
+                    "mean_last expansion changed the declared result type: "
+                    f"{values[node.output]} and {expected}",
+                    pipeline=graph.pipeline,
+                )
+            emit("div", [total, count], node.output)
+            decisions.append(NormalizationDecision(
+                node.output, "expand_composition",
+                "mean_last -> sum_last(x) / sum_last(ones_like(x)); two existing "
+                "reductions and one pointwise divide",
+            ))
+            continue
         if node.op != "segmented_cumsum":
             raise CompileError(
                 DiagnosticKind.INTERNAL,

@@ -1,0 +1,6 @@
+# FlowGPU quickstart: last-axis mean, composed from sum_last and div.
+pipeline quickstart_mean {
+  input x:fp16[16, 32]
+  out = mean_last(x)
+  output out
+}
