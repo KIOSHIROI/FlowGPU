@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.54.2
+
+- Refresh the summary for 20 cases and record the MoE router as an open
+  eager/Inductor gap; PyPI remains externally blocked.
+
 ## 0.54.1
 
 - Validate the full 20-case matrix: all backends correct, median compile

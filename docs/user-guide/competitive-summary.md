@@ -11,8 +11,8 @@ public probes; no private fixture is used.
 | dynamic shapes | symbolic one-module, literal rewrite, automatic fallback | [Prepared deployment](deployment.md) |
 | fixed-shape deployment | prepared → copy+graph → zero-copy graph | [M2 H100 report](competitive-m2-h100.md) |
 | tuning | measured conv tile selection with a cache | [M2 H100 report](competitive-m2-h100.md#conv-tile-tuning) |
-| correctness | **19 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#19-case-validation-run) |
-| compile time | 19-case distribution, median 15.0 ms | [M2 H100 report](competitive-m2-h100.md#compile-time-19-case-matrix) |
+| correctness | **20 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#19-case-validation-run) |
+| compile time | 20-case distribution, median 15.6 ms | [M2 H100 report](competitive-m2-h100.md#compile-time-19-case-matrix) |
 | memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
 | packaging | wheel/sdist, Python 3.11–3.14 CI, clean-venv installs, CPU Docker image | CI |
 | PyPI | **blocked**: trusted publisher not configured; both indexes 404 | external action |
@@ -27,7 +27,7 @@ public probes; no private fixture is used.
 | FlowGPU copy+graph | 4.4–7.6 |
 | FlowGPU zero-copy graph | **2.2–4.3** |
 | FlowGPU tuned | stride-2 conv **3.7** vs 18–22 default |
-| MoE router (multi-anchor) | 48.6 (graph) vs 151.6 eager |
+| MoE router (multi-anchor) | 48.6–53.1; **slower than eager 29.7 in the latest run** |
 
 - The kernel path is competitive with explicit Triton.
 - After the allocated path, host overhead is removed by prepared/copy+graph;
@@ -43,6 +43,7 @@ public probes; no private fixture is used.
 - conv supports NHWC and static stride/padding (via `conv2d_ex`), not arbitrary
   layouts/dilation;
 - dynamic shapes are partial: literal-only bodies may need per-shape rewrite;
+- the MoE router is still slower than eager/Inductor in the latest run;
 - PyPI publication is blocked by an external trusted-publisher setting;
 - no TVM/FlagOS/TensorRT baseline is measured yet; the matrix is Triton,
   eager, TorchInductor and FlowGPU.
