@@ -163,6 +163,23 @@ shared-GPU outlier can still change the winner. It clearly helps the stride-2
 variants, where the default geometry sat on a bad tile. Compile cost is one-off
 and cached by the call site.
 
+
+## Parameterized convolution
+
+`conv2d_ex(x, weight, bias, stride, padding)` folds the stride/padding variants
+into one lowering: both values are static ABI literals, the output is
+`[(H + 2p - KH)//s + 1, (W + 2p - KW)//s + 1]`, and the kernel masks the padded
+border when `padding > 0`.
+
+```flowgpu
+out = conv2d_ex(x, weight, bias, 2, 1)   # 3x3 stride-2 same
+```
+
+H100 exact against `F.conv2d(stride=2, padding=1)`; this covers the same
+geometry as `conv2d_stride2_same` while keeping the older names as
+compatibility wrappers.
+
+
 ## Conv tile tuning
 
 `flowgpu.compiler.runtime.conv_tuning.tune_conv2d` compiles a small candidate

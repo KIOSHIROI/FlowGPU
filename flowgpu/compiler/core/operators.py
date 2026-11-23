@@ -1479,6 +1479,39 @@ def infer_conv2d_stride2_same(args):
 register_operator('conv2d_stride2_same', 3, infer_conv2d_stride2_same, pointwise=False, acc='fp32')
 
 
+def infer_conv2d_ex(args):
+    from flowgpu.compiler.core.literals import IntLiteral
+    x, weight, bias, stride, padding = args
+    require_float(x, 'conv2d_ex')
+    require_float(weight, 'conv2d_ex')
+    require_float(bias, 'conv2d_ex')
+    if not isinstance(stride, IntLiteral) or not isinstance(padding, IntLiteral):
+        raise reject(DiagnosticKind.TYPE, 'conv2d_ex stride and padding must be integer literals')
+    if stride.value <= 0 or padding.value < 0:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_ex needs stride > 0 and padding >= 0')
+    if len(x.shape) != 4 or len(weight.shape) != 4:
+        raise reject(DiagnosticKind.SHAPE,
+                     'conv2d_ex requires x [N,H,W,C] and weight [O,C,KH,KW]')
+    if not all(str(d).isdigit() for d in x.shape + weight.shape + bias.shape):
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_ex currently requires literal extents')
+    out_channels, in_channels = int(weight.shape[0]), int(weight.shape[1])
+    kh, kw = int(weight.shape[2]), int(weight.shape[3])
+    if int(x.shape[3]) != in_channels:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_ex channels must match')
+    if int(x.shape[1]) + 2 * padding.value < kh or int(x.shape[2]) + 2 * padding.value < kw:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_ex kernel is larger than the padded input')
+    if x.dtype != weight.dtype or x.dtype != bias.dtype:
+        raise reject(DiagnosticKind.TYPE, 'conv2d_ex operands must share a dtype')
+    if bias.shape != [str(out_channels)] and bias.shape != [out_channels]:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_ex bias must have shape [O]')
+    out_h = (int(x.shape[1]) + 2 * padding.value - kh) // stride.value + 1
+    out_w = (int(x.shape[2]) + 2 * padding.value - kw) // stride.value + 1
+    return TensorType(x.dtype, [x.shape[0], str(out_h), str(out_w), str(out_channels)])
+
+
+register_operator('conv2d_ex', 5, infer_conv2d_ex, pointwise=False, acc='fp32')
+
+
 def infer_sort_last(args):
     (x,) = args
     require_float(x, 'sort_last')

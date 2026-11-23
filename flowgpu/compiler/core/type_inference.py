@@ -24,7 +24,7 @@ AXIS_LITERAL_OPERATORS = {'sum_axis', 'max_axis', 'softmax_axis', 'rms_norm_axis
 # The pads decide the output extents (T + t_front + t_back etc.), so they are
 # part of the operation rather than operands -- the same reason `reshape`
 # carries a shape literal.
-STATIC_INT_TAIL = {'pad_cat': 6, 'patchify': 2, 'topk_last': 1,
+STATIC_INT_TAIL = {'pad_cat': 6, 'patchify': 2, 'topk_last': 1, 'conv2d_ex': 2,
                    'segment_rank': 2,
                    # the multi-result cache operators end in a static
                    # ABI literal too (page_size / BLOCK_SIZE)

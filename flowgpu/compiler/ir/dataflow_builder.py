@@ -233,6 +233,9 @@ class DataflowBuilder:
             attributes = OperationAttributes(pads=tuple(a.value for a in call.args[2:]))
         elif call.name == 'patchify':
             attributes = OperationAttributes(pads=tuple(a.value for a in call.args[1:]))
+        elif call.name == 'conv2d_ex':
+            attributes = OperationAttributes(stride=int(call.args[3].value),
+                                              padding=int(call.args[4].value))
         elif call.name == 'segment_rank':
             attributes = OperationAttributes(segment=tuple(a.value for a in call.args[1:]))
         # Operands first, so a node is always created after the nodes that

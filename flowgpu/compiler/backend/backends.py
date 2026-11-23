@@ -127,6 +127,7 @@ KERNELS = {
     "conv2d_same": ("conv2d_same",),
     "conv2d_stride2": ("conv2d_stride2",),
     "conv2d_stride2_same": ("conv2d_stride2_same",),
+    "conv2d_ex": ("conv2d_ex",),
     "axis_gather": ("gather_last",),
     "reduce_with_index": ("argmax_last", "argmin_last"),
     "index_table": ("segment_rank",),

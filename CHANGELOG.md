@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.49.0
+
+- Add conv2d_ex(x, weight, bias, stride, padding), one parameterized
+  implicit-GEMM convolution for arbitrary static stride/padding.
+
 ## 0.48.0
 
 - Cache tune_conv2d choices by source/shape/platform; a warm call compiles only

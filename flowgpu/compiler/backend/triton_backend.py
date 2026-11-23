@@ -2375,6 +2375,7 @@ from flowgpu.compiler.backend.conv2d_backend import conv2d_triton_kernel as _con
 from flowgpu.compiler.backend.conv2d_same_backend import conv2d_same_triton_kernel as _conv2d_same_kernel
 from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_triton_kernel as _conv2d_stride2_kernel
 from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_same_triton_kernel as _conv2d_stride2_same_kernel
+from flowgpu.compiler.backend.conv2d_ex_backend import conv2d_ex_triton_kernel as _conv2d_ex_kernel
 from flowgpu.compiler.backend.reduce_with_index_backend import (
     triton_kernel as _reduce_with_index_kernel)
 
@@ -2402,6 +2403,7 @@ EMITTERS = {
     "conv2d_same": _conv2d_same_kernel,
     "conv2d_stride2": _conv2d_stride2_kernel,
     "conv2d_stride2_same": _conv2d_stride2_same_kernel,
+    "conv2d_ex": _conv2d_ex_kernel,
     "axis_gather": _gather_last_kernel,
     "reduce_with_index": _reduce_with_index_kernel,
     "index_table": _segment_rank_kernel,
@@ -2668,7 +2670,7 @@ def lower(pipeline, graph, fusion, memory, *, gpu_backend="triton", library_matm
             kernels.append(emitter(graph, group, memory, name, config, autotune_fold=True))
         elif emitter is _layout_kernel and config.layout_on_device:
             kernels.append(_layout_device_kernel(graph, group, memory, name, config))
-        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _gather_last_kernel,
+        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _conv2d_ex_kernel, _gather_last_kernel,
                                         _segment_rank_kernel, _recurrence_kernel,
                                         _reduce_with_index_kernel):
             emitted = emitter(graph, group, memory, name, config)

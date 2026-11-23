@@ -41,6 +41,9 @@ class OperationAttributes:
     # one load and folds the value into a base, and `analysis/write_address`
     # checks the emitted store addresses.
     program_scalar: object = None
+    # conv2d_ex lowering ABI: positive stride and non-negative padding literals.
+    stride: int = 1
+    padding: int = 0
 
 
 @dataclass(frozen=True)
