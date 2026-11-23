@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.54.1
+
+- Validate the full 20-case matrix: all backends correct, median compile
+  15.6 ms. Document the MoE router as a remaining eager/Inductor gap.
+
 ## 0.54.0
 
 - Add the QK RMSNorm+RoPE case to M2; graph 6.62 us vs eager 184.5 us.

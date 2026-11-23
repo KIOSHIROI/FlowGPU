@@ -196,6 +196,21 @@ The operator is a multi-result backend (`values`, `ids`); this case checks the
 Raw data: [`m2-h100-gpu1-topk-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-topk-20261123.json).
 
 
+
+## 20-case validation run
+
+All 20 cases pass correctness in every backend. Median `compile_ms` is **15.6 ms**.
+
+- `qk_transform` (RMSNorm + RoPE): graph 6.83 µs vs eager 188.17 µs;
+- `topk_last`: 4.64 µs vs eager 18.34 µs;
+- `moe_router_topk`: 48.65–53.10 µs vs eager 29.71 µs in this run.
+
+The MoE result is a real remaining gap: its multi-anchor pipeline is slower than
+eager on this run even though earlier shared-GPU runs had eager at 151 µs. It
+needs fusion/dispatch work before it can claim a win.
+
+Raw data: [`m2-h100-gpu1-20case-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-20case-20261124.json).
+
 ## 19-case validation run
 
 All 19 cases pass correctness in every backend. Median `compile_ms` is **15.0 ms**.
