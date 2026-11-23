@@ -9,6 +9,20 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "qk_transform":
+        q, k, qw, kw, cos, sin = args
+        def rms(x, w):
+            xf = x.float()
+            return (xf * torch.rsqrt((xf * xf).mean(dim=-1, keepdim=True) + 1e-6) * w.float())
+        def rope(x, c, s):
+            d = x.shape[-1]
+            first = torch.arange(d, device=x.device) < d // 2
+            partner = torch.where(first, torch.arange(d, device=x.device) + d // 2,
+                                  torch.arange(d, device=x.device) - d // 2)
+            xp = x.index_select(-1, partner)
+            sign = torch.where(first, -1.0, 1.0)
+            return (x * c.float() + sign * xp * s.float()).to(x.dtype)
+        return {"qr": rope(rms(q, qw), cos, sin)}
     if case_name == "topk_last":
         return {"values": torch.topk(args[0], 8, dim=-1).values}
     if case_name == "moe_router_topk":
@@ -82,6 +96,20 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "qk_transform":
+        q, k, qw, kw, cos, sin = args
+        def rms(x, w):
+            xf = x.double()
+            return xf * torch.rsqrt((xf * xf).mean(dim=-1, keepdim=True) + 1e-6) * w.double()
+        def rope(x, c, s):
+            d = x.shape[-1]
+            first = torch.arange(d, device=x.device) < d // 2
+            partner = torch.where(first, torch.arange(d, device=x.device) + d // 2,
+                                  torch.arange(d, device=x.device) - d // 2)
+            xp = x.index_select(-1, partner)
+            sign = torch.where(first, -1.0, 1.0)
+            return x * c.double() + sign * xp * s.double()
+        return {"qr": rope(rms(q, qw), cos, sin)}
     if case_name == "topk_last":
         return {"values": torch.topk(args[0].double(), 8, dim=-1).values}
     if case_name == "moe_router_topk":

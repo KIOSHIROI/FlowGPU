@@ -166,6 +166,22 @@ and cached by the call site.
 
 
 
+
+## QK RMSNorm + RoPE
+
+`qk_transform` is the QKV path: RMSNorm then split-half RoPE on 4-D `[B,H,S,D]`
+q/k tensors with full-shape cosine/sine tables.
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 9.01 | 130.74* | 9.28 | 6.62 | 184.50 | 124.25 |
+
+*The prepared sample is a shared-GPU outlier; graph is the stable 6.62 µs path.
+The routing values match a float64 RMSNorm+RoPE oracle. The matrix is now 20
+cases.
+
+Raw data: [`m2-h100-gpu1-qk-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-qk-20261123.json).
+
 ## Top-k sampling case
 
 `topk_last` on `[16, 1024]` with k=8, checked against torch's descending top-k:

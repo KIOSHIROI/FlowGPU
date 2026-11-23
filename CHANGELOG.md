@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.54.0
+
+- Add the QK RMSNorm+RoPE case to M2; graph 6.62 us vs eager 184.5 us.
+
 ## 0.53.1
 
 - Refresh the one-page competitive summary for the 19-case matrix, tuning,

@@ -603,6 +603,77 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "topk_last"
+    },
+    {
+      "name": "qk_transform",
+      "source": "examples/qk_transform.fgpu",
+      "pipeline": "qk_transform",
+      "bindings": {
+        "B": 2,
+        "H": 2,
+        "S": 8,
+        "D": 32
+      },
+      "inputs": [
+        [
+          "q",
+          [
+            2,
+            2,
+            8,
+            32
+          ],
+          "bf16"
+        ],
+        [
+          "k",
+          [
+            2,
+            2,
+            8,
+            32
+          ],
+          "bf16"
+        ],
+        [
+          "qw",
+          [
+            32
+          ],
+          "bf16"
+        ],
+        [
+          "kw",
+          [
+            32
+          ],
+          "bf16"
+        ],
+        [
+          "rope_cos",
+          [
+            2,
+            2,
+            8,
+            32
+          ],
+          "bf16"
+        ],
+        [
+          "rope_sin",
+          [
+            2,
+            2,
+            8,
+            32
+          ],
+          "bf16"
+        ]
+      ],
+      "output": "qr",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "qk_transform"
     }
   ]
 }

@@ -1,0 +1,89 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "qk_transform",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 6.651200354099274,
+          "full_us": 9.008000046014786,
+          "compile_ms": 132.9766558483243,
+          "peak_bytes": 74240
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 6.630399823188782,
+          "full_us": 130.74239492416382,
+          "compile_ms": 1189.613725990057,
+          "peak_bytes": 70144
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": null,
+          "full_us": 9.275200217962265,
+          "compile_ms": 143.51447857916355,
+          "peak_bytes": 70144
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": null,
+          "full_us": 6.619200110435486,
+          "compile_ms": 72.3012750968337,
+          "peak_bytes": 70144
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 7.611380956618063e-07,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 37.72960007190704,
+          "full_us": 184.5039963722229,
+          "compile_ms": 0.0,
+          "peak_bytes": 75264
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 1.0359771787094019e-06,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 2.510399930179119,
+          "full_us": 124.24960136413574,
+          "compile_ms": 2618.9111387357116,
+          "peak_bytes": 74240
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for qk_transform"
+    }
+  ]
+}
