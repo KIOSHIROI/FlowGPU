@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.45.1
+
+- Publish the full 16-case matrix and compile-time distribution: 11.7-27.5 ms
+  after a cold first compile, median 15.2 ms.
+
 ## 0.45.0
 
 - Add conv2d_stride2 (stride-2, no padding) on the implicit-GEMM lowering;

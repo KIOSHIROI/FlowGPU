@@ -140,6 +140,24 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Compile time (16-case matrix)
+
+`compile_ms` from the same run, including Triton source generation and the
+first module load:
+
+| group | cost |
+|---|---:|
+| first case (cold Triton cache) | 129.0 ms |
+| remaining cases | 11.7–27.5 ms |
+| median of all 16 | 15.2 ms |
+
+Compile time is dominated by the first Triton compilation; normal cache hits
+are in the low tens of milliseconds. It is not the current bottleneck relative
+to the 2.3–4.6 µs launch paths.
+
+Raw data: [`m2-h100-gpu1-16case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-16case-20261123.json).
+
 ## Stride-2 convolution
 
 `conv2d_stride2` adds a stride-2 implicit-GEMM convolution (no padding).
