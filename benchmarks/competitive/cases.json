@@ -547,6 +547,42 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "conv2d_stride2_same"
+    },
+    {
+      "name": "moe_router_topk",
+      "source": "examples/batch10/moe_router_topk.fgpu",
+      "pipeline": "moe_router_topk",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            4,
+            16
+          ],
+          "fp32"
+        ],
+        [
+          "router_weight",
+          [
+            8,
+            16
+          ],
+          "fp32"
+        ],
+        [
+          "cap",
+          [
+            1,
+            1
+          ],
+          "fp32"
+        ]
+      ],
+      "output": "weights",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "moe_router_topk"
     }
   ]
 }

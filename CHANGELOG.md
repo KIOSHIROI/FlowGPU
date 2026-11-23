@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.50.0
+
+- Add the multi-operator MoE router case to M2: matmul + tanh soft-cap +
+  softmax + topk + gather; 48-53 us vs eager 151.6 us on H100.
+
 ## 0.49.0
 
 - Add conv2d_ex(x, weight, bias, stride, padding), one parameterized

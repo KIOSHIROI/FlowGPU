@@ -9,6 +9,13 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "moe_router_topk":
+        x, router_weight, cap = args
+        logits = x @ router_weight.t()
+        capped = torch.tanh(logits / cap) * cap
+        probs = torch.softmax(capped, dim=-1)
+        values, ids = torch.topk(capped, 2, dim=-1)
+        return {"weights": torch.gather(probs, -1, ids)}
     if case_name == "conv2d_stride2_same":
         import torch.nn.functional as F
         x, weight, bias = args
@@ -73,6 +80,13 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "moe_router_topk":
+        x, router_weight, cap = args
+        logits = x.double() @ router_weight.double().t()
+        capped = torch.tanh(logits / cap.double()) * cap.double()
+        probs = torch.softmax(capped, dim=-1)
+        values, ids = torch.topk(capped, 2, dim=-1)
+        return {"weights": torch.gather(probs, -1, ids)}
     if case_name == "conv2d_stride2_same":
         import torch.nn.functional as F
         x, weight, bias = args

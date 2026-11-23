@@ -84,6 +84,8 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
             continue
         if dtype == "int32":
             tensor = torch.randint(-8, 9, shape, generator=generator, dtype=torch.int32)
+        elif case.name == "moe_router_topk" and _ == "cap":
+            tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)
         elif case.name == "batch_norm" and _ == "var":
             tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)
         elif case.name == "pow_literal":
@@ -276,7 +278,7 @@ def main(argv=None) -> int:
         for case in cases:
             if not (ROOT / case.source).exists():
                 raise SystemExit("missing source: " + case.source)
-            if case.output not in {"out", "q", "z"}:
+            if case.output not in {"out", "q", "z", "weights"}:
                 raise SystemExit("unexpected output name: " + case.output)
         print(f"competitive device matrix ok: {len(cases)} cases")
         return 0

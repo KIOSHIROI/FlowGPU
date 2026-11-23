@@ -164,6 +164,22 @@ variants, where the default geometry sat on a bad tile. Compile cost is one-off
 and cached by the call site.
 
 
+
+## MoE router (multi-operator LLM case)
+
+`moe_router_topk` composes matmul, tanh soft-capping, softmax, topk and a row
+gather in one pipeline, with two outputs (`weights`, `ids`). It is the first M2
+case that exercises multiple anchors and a multi-result operator together:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 52.84 | 52.99 | 51.11 | 48.37 | 151.60 | 143.49 |
+
+Correctness checks the routing weights against a float64 torch oracle. The
+matrix is now 18 cases.
+
+Raw data: [`m2-h100-gpu1-moe-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-moe-20261123.json).
+
 ## Parameterized convolution
 
 `conv2d_ex(x, weight, bias, stride, padding)` folds the stride/padding variants
