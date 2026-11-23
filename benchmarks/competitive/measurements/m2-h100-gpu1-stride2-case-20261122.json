@@ -1,0 +1,89 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "conv2d_stride2",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.7280000746250153,
+          "full_us": 19.492800533771515,
+          "compile_ms": 125.31150132417679,
+          "peak_bytes": 27648
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.7248000502586365,
+          "full_us": 3.7408001720905304,
+          "compile_ms": 1355.7852962985635,
+          "peak_bytes": 26624
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": null,
+          "full_us": 23.043200373649597,
+          "compile_ms": 61.289397068321705,
+          "peak_bytes": 26624
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": null,
+          "full_us": 3.7248000502586365,
+          "compile_ms": 59.045324102044106,
+          "peak_bytes": 26624
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 16.784000396728516,
+          "full_us": 55.55359721183777,
+          "compile_ms": 0.0,
+          "peak_bytes": 32256
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 9.932799637317657,
+          "full_us": 60.124802589416504,
+          "compile_ms": 2665.4321355745196,
+          "peak_bytes": 27648
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_stride2"
+    }
+  ]
+}

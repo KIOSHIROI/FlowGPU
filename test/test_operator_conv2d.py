@@ -102,3 +102,33 @@ def test_conv2d_same_reference_shape_and_spot_check():
     total += bias[o]
     index = ((n * 6 + oh) * 6 + ow) * 16 + o
     assert abs(out[index] - total) < 2e-2
+
+
+STRIDE2 = """
+pipeline p {
+  input x:fp16[2, 8, 8, 8]
+  input weight:fp16[16, 8, 3, 3]
+  input bias:fp16[16]
+  out = conv2d_stride2(x, weight, bias)
+  output out
+}
+"""
+
+
+def test_conv2d_stride2_reference_shape_and_spot_check():
+    compiled = compile_source(STRIDE2)
+    pipeline = compiled.pipelines[0]
+    values = reference.run(pipeline.reference)
+    inputs = reference.inputs_for(pipeline.reference, {})
+    x, weight, bias = (item[3] for item in inputs)
+    out = values["out"]
+    assert len(out) == 2 * 3 * 3 * 16
+    n, oh, ow, o = 1, 1, 2, 0
+    total = 0.0
+    for c in range(8):
+        for kh in range(3):
+            for kw in range(3):
+                total += x[((n * 8 + oh * 2 + kh) * 8 + ow * 2 + kw) * 8 + c] * weight[o * 8 * 9 + c * 9 + kh * 3 + kw]
+    total += bias[o]
+    index = ((n * 3 + oh) * 3 + ow) * 16 + o
+    assert abs(out[index] - total) < 2e-2

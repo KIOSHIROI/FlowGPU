@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.45.0
+
+- Add conv2d_stride2 (stride-2, no padding) on the implicit-GEMM lowering;
+  prepared/graph are 3.7 us vs eager 55.55 us on H100.
+
 ## 0.44.0
 
 - Add conv2d_same: odd-K same-padded convolution on the implicit-GEMM

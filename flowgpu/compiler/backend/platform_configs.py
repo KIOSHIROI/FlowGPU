@@ -351,7 +351,7 @@ class PlatformConfig:
             raise ValueError("autotune_status must be available, experimental or unavailable")
         if (not isinstance(self.allowed_kernel_kinds, tuple)
                 or not self.allowed_kernel_kinds
-                or any(kind not in {"pointwise", "rowwise", "matmul", "transpose", "rope", "layout", "primitive", "cache_store", "linear_decode", "pad_cat", "scan", "patchify", "segmented_matmul", "scatter_by_index", "store_at", "topk", "sort", "mean", "layer_norm", "conv2d", "conv2d_same", "axis_gather", "reduce_with_index", "index_table", "recurrence"}
+                or any(kind not in {"pointwise", "rowwise", "matmul", "transpose", "rope", "layout", "primitive", "cache_store", "linear_decode", "pad_cat", "scan", "patchify", "segmented_matmul", "scatter_by_index", "store_at", "topk", "sort", "mean", "layer_norm", "conv2d", "conv2d_same", "conv2d_stride2", "axis_gather", "reduce_with_index", "index_table", "recurrence"}
                        for kind in self.allowed_kernel_kinds)):
             raise ValueError("allowed_kernel_kinds must be a nonempty tuple of known kernel kinds")
 
@@ -381,7 +381,7 @@ class PlatformConfig:
 # A longer or symbolic row is lowered as a chunked two-sweep reduction
 # instead of one oversized tile.
 _BASE_PLATFORMS = {
-    "cuda": PlatformConfig("cuda", allowed_kernel_kinds=("pointwise", "rowwise", "matmul", "transpose", "rope", "layout", "primitive", "cache_store", "linear_decode", "pad_cat", "scan", "patchify", "segmented_matmul", "scatter_by_index", "store_at", "topk", "sort", "mean", "layer_norm", "conv2d", "conv2d_same", "axis_gather", "reduce_with_index", "index_table", "recurrence"),
+    "cuda": PlatformConfig("cuda", allowed_kernel_kinds=("pointwise", "rowwise", "matmul", "transpose", "rope", "layout", "primitive", "cache_store", "linear_decode", "pad_cat", "scan", "patchify", "segmented_matmul", "scatter_by_index", "store_at", "topk", "sort", "mean", "layer_norm", "conv2d", "conv2d_same", "conv2d_stride2", "axis_gather", "reduce_with_index", "index_table", "recurrence"),
                            # Default GEMM floor, measured 2026-10-27 on GPU MODE H100:
                            # 128x128x64 / 3 stages / 8 warps runs the ranked
                            # 4096x4096x5120 shape in 286 us versus 578.8 us for the

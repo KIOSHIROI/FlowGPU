@@ -139,6 +139,22 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Stride-2 convolution
+
+`conv2d_stride2` adds a stride-2 implicit-GEMM convolution (no padding).
+Output is `[N, (H-KH)//2+1, (W-KW)//2+1, O]`.
+
+| case | flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---|---:|---:|---:|---:|---:|---:|
+| conv2d_stride2 (3x3, s=2) | 19.49* | 3.74 | 23.04* | 3.72 | 55.55 | 60.12 |
+
+*Default and prepared+graph samples are shared-GPU outliers; prepared and
+zero-copy graph are the stable 3.7 µs path. Exact against
+`F.conv2d(..., stride=2)` in float64. The matrix is now 16 cases.
+
+Raw data: [`m2-h100-gpu1-stride2-case-20261122.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-stride2-case-20261122.json).
+
 ## Same-padded convolution
 
 `conv2d_same` is the odd-K, `(K-1)//2` zero-padding variant. It reuses the
