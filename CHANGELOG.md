@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.48.0
+
+- Cache tune_conv2d choices by source/shape/platform; a warm call compiles only
+  the winning geometry and reports cached=True.
+
 ## 0.47.1
 
 - Add flowgpu_tuned to the M2 runner and publish tuned conv results: stride-2

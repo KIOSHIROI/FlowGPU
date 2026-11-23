@@ -188,8 +188,10 @@ On H100 for the 3x3 same conv case:
 | 128, 128, 64 | 19.50 µs |
 
 The default emitted geometry for that shape is the first candidate; tuning finds
-the 4.9x faster geometry at a one-off cost of four compiles (619 ms total). This
-is shape-specific measurement, not a new lowering.
+the 4.9x faster geometry at a one-off cost of the candidate compiles. The choice
+is cached by source/shape/platform key: a second call compiles only the winner
+and reports `result.cached = True`. This is shape-specific measurement, not a
+new lowering.
 
 
 ## Full 17-case snapshot
