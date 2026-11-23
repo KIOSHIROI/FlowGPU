@@ -29,9 +29,9 @@ def _conv2d_stride2_triton(graph, group, memory, name, config, padding, kind):
     out_w = _out_extent(w, kw, padding)
     plane = out_h * out_w
     rows = n * plane
-    bm = min(128, _pow2(rows))
-    bn = min(128, _pow2(out_channels))
-    bk = min(64, _pow2(channels))
+    bm = min(config.conv_block_m, _pow2(rows))
+    bn = min(config.conv_block_n, _pow2(out_channels))
+    bk = min(config.conv_block_k, _pow2(channels))
     names = Names(graph)
     pairs = [(_pointer(value), Argument("tensor", value)) for value in (x, weight, bias, out)]
     for hint, value in (("BM", bm), ("BN", bn), ("BK", bk)):

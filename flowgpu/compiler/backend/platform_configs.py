@@ -45,6 +45,11 @@ class PlatformConfig:
     min_align_bytes: int = 1  # documented local-storage hint, not a pointer guarantee
     num_warps: int = 4
     num_stages: int = 2
+    # Conv implicit-GEMM tile caps; runtime tuning can override these per
+    # shape without changing any default source.
+    conv_block_m: int = 128
+    conv_block_n: int = 128
+    conv_block_k: int = 64
     group_m: int = 1  # 1 = direct (pid_m, pid_n); >1 = L2 Cache Group Swizzling (e.g. 8)
     device_type: str = "cuda"
     device_cores: int | None = None

@@ -25,9 +25,9 @@ def conv2d_same_triton_kernel(graph, group, memory, name, config):
     n, h, w, channels, out_channels, kernel = _geometry(graph, x, weight)
     pad = (kernel - 1) // 2
     rows = n * h * w
-    bm = min(128, _pow2(rows))
-    bn = min(128, _pow2(out_channels))
-    bk = min(64, _pow2(channels))
+    bm = min(config.conv_block_m, _pow2(rows))
+    bn = min(config.conv_block_n, _pow2(out_channels))
+    bk = min(config.conv_block_k, _pow2(channels))
     names = Names(graph)
     pairs = [(_pointer(value), Argument("tensor", value)) for value in (x, weight, bias, out)]
     for hint, value in (("BM", bm), ("BN", bn), ("BK", bk)):

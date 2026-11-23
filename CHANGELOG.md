@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.47.0
+
+- Add tune_conv2d, a measured conv tile selector. On the 3x3 same case it
+  finds a 3.91 us geometry where the default candidate is 19.33 us.
+
 ## 0.46.1
 
 - Publish the full 17-case latency/correctness snapshot and mark shared-GPU

@@ -37,6 +37,13 @@ CONTRACTS = {
                             "cuda vs npu device namespace used by host emission"),
     "min_align_bytes": Contract("min_align_bytes", "plumbing", ("docs/BACKEND_CONTRACTS_20261019.md", None),
                                 "documented alignment hint; no pointer guarantee is claimed"),
+    # Conv implicit-GEMM tile caps: policy defaults, overridable by tune_conv2d.
+    "conv_block_m": Contract("conv_block_m", "policy", ("docs/COMPILER_ACCEPTANCE.md", None),
+                             "conv tile row cap; measured per shape by tune_conv2d"),
+    "conv_block_n": Contract("conv_block_n", "policy", ("docs/COMPILER_ACCEPTANCE.md", None),
+                             "conv tile column cap; measured per shape by tune_conv2d"),
+    "conv_block_k": Contract("conv_block_k", "policy", ("docs/COMPILER_ACCEPTANCE.md", None),
+                             "conv tile reduction cap; measured per shape by tune_conv2d"),
     # --- measured backend contracts ------------------------------------------
     "masked_load_other_honoured": Contract("masked_load_other_honoured", "measured",
         ("fixture", "test_masked_load_other_contract_is_audited_and_executed"), "kunlunxin: false"),

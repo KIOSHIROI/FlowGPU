@@ -143,6 +143,36 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Conv tile tuning
+
+`flowgpu.compiler.runtime.conv_tuning.tune_conv2d` compiles a small candidate
+set, measures each on the caller's tensors, validates the output and returns the
+fastest run:
+
+```python
+from flowgpu.compiler.runtime.conv_tuning import tune_conv2d
+
+run, result = tune_conv2d(source, pipeline="quickstart_conv2d_same",
+                          args=(x, w, b), cache_dir=".flowgpu-cache",
+                          validator=check, iterations=20)
+print(result.block_m, result.block_n, result.block_k, result.median_us)
+```
+
+On H100 for the 3x3 same conv case:
+
+| candidate (BM, BN, BK) | median |
+|---|---:|
+| 32, 32, 32 | 19.33 µs |
+| 64, 64, 32 | 19.65 µs |
+| **128, 64, 64** | **3.91 µs** |
+| 128, 128, 64 | 19.50 µs |
+
+The default emitted geometry for that shape is the first candidate; tuning finds
+the 4.9x faster geometry at a one-off cost of four compiles (619 ms total). This
+is shape-specific measurement, not a new lowering.
+
+
 ## Full 17-case snapshot
 
 Single shared-GPU run, 20 iterations, all correctness checks pass. Default-path
