@@ -141,6 +141,37 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Peak memory, all 16 cases
+
+`max_memory_allocated()` in KiB, including first-use compilation allocations:
+
+| case | flowgpu | prepared/graph | eager |
+|---|---:|---:|---:|
+| add | 48.5 | 46.5 | 48.5 |
+| vectoradd | 768.5 | 736.5 | 768.5 |
+| matmul | 32992.5 | 216.5 | 32992.5 |
+| softmax | 448.5 | 416.5 | 448.5 |
+| residual_norm | 194.5 | 186.5 | 194.5 |
+| mapping | 68.0 | 64.0 | 68.0 |
+| neg | 44.5 | 42.5 | 44.5 |
+| pow | 48.5 | 46.5 | 48.5 |
+| mean_last | 6.5 | 6.0 | 6.5 |
+| sort_last | 5.5 | 5.0 | 5.5 |
+| layer_norm | 24.5 | 23.5 | 24.5 |
+| batch_norm | 26.5 | 25.5 | 26.5 |
+| conv2d_1x1 | 32791.5 | 22.5 | 32791.5 |
+| conv2d_3x3 | 33.5 | 32.5 | 33.5 |
+| conv2d_same | 64.5 | 62.0 | 64.5 |
+| conv2d_stride2 | 27.0 | 26.0 | 31.5 |
+
+The 32 MiB entries are first-use compilation/allocator effects for matmul and
+1x1 conv, not kernel working sets; prepared/static paths show the actual small
+buffers. The metric is useful for spotting that class of cost, not for claiming
+a smaller working set without a cleaner protocol.
+
+Raw data: [`m2-h100-gpu1-16case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-16case-20261123.json).
+
 ## Compile time (16-case matrix)
 
 `compile_ms` from the same run, including Triton source generation and the

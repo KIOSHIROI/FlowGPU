@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.45.2
+
+- Publish peak-allocated memory for all 16 cases; first-use matmul/conv
+  allocations are separated from prepared/static buffers.
+
 ## 0.45.1
 
 - Publish the full 16-case matrix and compile-time distribution: 11.7-27.5 ms
