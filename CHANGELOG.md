@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.51.1
+
+- Validate the full 19-case matrix in one run: every backend passes, median
+  compile 15.0 ms; publish the grouped latency snapshot.
+
 ## 0.51.0
 
 - Add the topk_last sampling case to M2; 4.70 us vs eager 18.44 us on H100.

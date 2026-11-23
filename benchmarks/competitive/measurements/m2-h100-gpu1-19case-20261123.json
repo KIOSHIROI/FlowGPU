@@ -1,0 +1,1485 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "add_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.220799960196018,
+          "full_us": 2.244799956679344,
+          "compile_ms": 114.55232370644808,
+          "peak_bytes": 49664
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.2096000611782074,
+          "full_us": 2.236800082027912,
+          "compile_ms": 488.97652979940176,
+          "peak_bytes": 47616
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": null,
+          "full_us": 4.912000149488449,
+          "compile_ms": 48.188048414886,
+          "peak_bytes": 47616
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": null,
+          "full_us": 2.2096000611782074,
+          "compile_ms": 46.894000843167305,
+          "peak_bytes": 47616
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.219199948012829,
+          "full_us": 2.212800085544586,
+          "compile_ms": 0.0,
+          "peak_bytes": 49664
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.223999984562397,
+          "full_us": 2.208000048995018,
+          "compile_ms": 1698.5918479040265,
+          "peak_bytes": 49664
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.21599992364645,
+          "full_us": 2.1568000316619873,
+          "compile_ms": 8.120659738779068,
+          "peak_bytes": 49664
+        }
+      }
+    },
+    {
+      "name": "vectoradd_symbolic",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.4399999529123306,
+          "full_us": 2.2495999932289124,
+          "compile_ms": 14.494061470031738,
+          "peak_bytes": 786944
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.449600026011467,
+          "full_us": 2.1568000316619873,
+          "compile_ms": 53.798384964466095,
+          "peak_bytes": 754176
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": null,
+          "full_us": 6.620799750089645,
+          "compile_ms": 44.5982301607728,
+          "peak_bytes": 754176
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": null,
+          "full_us": 2.436799928545952,
+          "compile_ms": 49.26139209419489,
+          "peak_bytes": 754176
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.4560000747442245,
+          "full_us": 2.2223999723792076,
+          "compile_ms": 0.0,
+          "peak_bytes": 786944
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.4383999407291412,
+          "full_us": 46.97119891643524,
+          "compile_ms": 119.68003958463669,
+          "peak_bytes": 786944
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.425600029528141,
+          "full_us": 2.3135999217629433,
+          "compile_ms": 1.5292270109057426,
+          "peak_bytes": 786944
+        }
+      }
+    },
+    {
+      "name": "matmul_symbolic",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 4.283199831843376,
+          "full_us": 32.11680054664612,
+          "compile_ms": 14.999784529209137,
+          "peak_bytes": 33784320
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 4.308800026774406,
+          "full_us": 4.03360016644001,
+          "compile_ms": 63.84975463151932,
+          "peak_bytes": 221696
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": null,
+          "full_us": 7.505600154399872,
+          "compile_ms": 45.48207391053438,
+          "peak_bytes": 221696
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": null,
+          "full_us": 4.255999997258186,
+          "compile_ms": 42.38107893615961,
+          "peak_bytes": 221696
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.7808001041412354,
+          "full_us": 3.638400137424469,
+          "compile_ms": 0.0,
+          "peak_bytes": 33784320
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.8095999509096146,
+          "full_us": 3.6191999912261963,
+          "compile_ms": 137.36570719629526,
+          "peak_bytes": 33784320
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.155200183391571,
+          "full_us": 2.8384000062942505,
+          "compile_ms": 3.3864853903651237,
+          "peak_bytes": 229888
+        }
+      }
+    },
+    {
+      "name": "softmax_wide",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 2.675200067460537,
+          "full_us": 2.648000046610832,
+          "compile_ms": 22.819992154836655,
+          "peak_bytes": 459264
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 2.7087999507784843,
+          "full_us": 19.043199717998505,
+          "compile_ms": 54.50690817087889,
+          "peak_bytes": 426496
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": null,
+          "full_us": 4.822399839758873,
+          "compile_ms": 43.35487447679043,
+          "peak_bytes": 426496
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": null,
+          "full_us": 2.687999978661537,
+          "compile_ms": 44.505118392407894,
+          "peak_bytes": 426496
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.2982926811687676e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 5.443200096487999,
+          "full_us": 5.3119998425245285,
+          "compile_ms": 0.0,
+          "peak_bytes": 459264
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.2982926811687676e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 3.6768000572919846,
+          "full_us": 3.718400001525879,
+          "compile_ms": 60.14007516205311,
+          "peak_bytes": 459264
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 2.6944000273942947,
+          "full_us": 2.5407999753952026,
+          "compile_ms": 2.4453019723296165,
+          "peak_bytes": 459264
+        }
+      }
+    },
+    {
+      "name": "residual_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.3984000086784363,
+          "full_us": 2.4159999564290047,
+          "compile_ms": 21.519876085221767,
+          "peak_bytes": 199168
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.409599907696247,
+          "full_us": 2.3151999339461327,
+          "compile_ms": 57.82289430499077,
+          "peak_bytes": 190976
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": null,
+          "full_us": 5.384000018239021,
+          "compile_ms": 49.65317342430353,
+          "peak_bytes": 190976
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": null,
+          "full_us": 2.462399937212467,
+          "compile_ms": 51.58382561057806,
+          "peak_bytes": 190976
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 22.74720072746277,
+          "full_us": 34.15200114250183,
+          "compile_ms": 0.0,
+          "peak_bytes": 199168
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.01969110998260426,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.5087999179959297,
+          "full_us": 31.176000833511353,
+          "compile_ms": 96.03029303252697,
+          "peak_bytes": 199168
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.01969110998260426,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.4960000067949295,
+          "full_us": 2.4191999807953835,
+          "compile_ms": 4.626382142305374,
+          "peak_bytes": 199168
+        }
+      }
+    },
+    {
+      "name": "mapping_pointwise",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 2.3056000471115112,
+          "full_us": 2.916800044476986,
+          "compile_ms": 13.773958198726177,
+          "peak_bytes": 69632
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 2.2991999983787537,
+          "full_us": 2.260800078511238,
+          "compile_ms": 58.79671033471823,
+          "peak_bytes": 65536
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": null,
+          "full_us": 4.9136001616716385,
+          "compile_ms": 43.79549529403448,
+          "peak_bytes": 65536
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": null,
+          "full_us": 2.2255999967455864,
+          "compile_ms": 42.39672888070345,
+          "peak_bytes": 65536
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 3.779200091958046,
+          "full_us": 4.380799829959869,
+          "compile_ms": 0.0,
+          "peak_bytes": 69632
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 2.2304000332951546,
+          "full_us": 2.2495999932289124,
+          "compile_ms": 49.154872074723244,
+          "peak_bytes": 69632
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 18.967999517917633,
+          "full_us": 2.204800024628639,
+          "compile_ms": 3.902159631252289,
+          "peak_bytes": 69632
+        }
+      }
+    },
+    {
+      "name": "neg_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.2016000002622604,
+          "full_us": 2.1743999794125557,
+          "compile_ms": 12.991943396627903,
+          "peak_bytes": 45568
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.2463999688625336,
+          "full_us": 2.1328000351786613,
+          "compile_ms": 50.15025567263365,
+          "peak_bytes": 43520
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": null,
+          "full_us": 4.35199998319149,
+          "compile_ms": 42.800470255315304,
+          "peak_bytes": 43520
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": null,
+          "full_us": 2.2592000663280487,
+          "compile_ms": 44.72560994327068,
+          "peak_bytes": 43520
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.2463999688625336,
+          "full_us": 2.21599992364645,
+          "compile_ms": 0.0,
+          "peak_bytes": 45568
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.2143999114632607,
+          "full_us": 2.236800082027912,
+          "compile_ms": 46.31645791232586,
+          "peak_bytes": 45568
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.2175999358296394,
+          "full_us": 2.1695999428629875,
+          "compile_ms": 4.646803252398968,
+          "peak_bytes": 45568
+        }
+      }
+    },
+    {
+      "name": "pow_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.755199909210205,
+          "full_us": 3.7296000868082047,
+          "compile_ms": 13.91115877777338,
+          "peak_bytes": 49664
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.7296000868082047,
+          "full_us": 3.7439998239278793,
+          "compile_ms": 52.4032274261117,
+          "peak_bytes": 47616
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": null,
+          "full_us": 6.366399675607681,
+          "compile_ms": 46.56356945633888,
+          "peak_bytes": 47616
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": null,
+          "full_us": 3.686400130391121,
+          "compile_ms": 44.20105740427971,
+          "peak_bytes": 47616
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.6079999059438705,
+          "full_us": 3.6320000886917114,
+          "compile_ms": 0.0,
+          "peak_bytes": 49664
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 2.446400001645088,
+          "full_us": 2.430400066077709,
+          "compile_ms": 61.650813557207584,
+          "peak_bytes": 49664
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 2.672000043094158,
+          "full_us": 2.56159994751215,
+          "compile_ms": 4.1384100914001465,
+          "peak_bytes": 49664
+        }
+      }
+    },
+    {
+      "name": "mean_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 17.921599745750427,
+          "full_us": 2.3024000227451324,
+          "compile_ms": 11.048244312405586,
+          "peak_bytes": 6656
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 2.4224000051617622,
+          "full_us": 2.2752000018954277,
+          "compile_ms": 46.11892718821764,
+          "peak_bytes": 6144
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": null,
+          "full_us": 4.497599974274635,
+          "compile_ms": 41.92116763442755,
+          "peak_bytes": 6144
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": null,
+          "full_us": 2.21599992364645,
+          "compile_ms": 42.188686318695545,
+          "peak_bytes": 6144
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.00011157989501953125,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 3.3936001360416412,
+          "full_us": 3.3472001552581787,
+          "compile_ms": 0.0,
+          "peak_bytes": 6656
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.00011157989501953125,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 3.380800038576126,
+          "full_us": 3.3376000821590424,
+          "compile_ms": 5.1155053079128265,
+          "peak_bytes": 6656
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 2.4272000417113304,
+          "full_us": 2.3056000471115112,
+          "compile_ms": 1.6773082315921783,
+          "peak_bytes": 6656
+        }
+      }
+    },
+    {
+      "name": "sort_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 2.396799996495247,
+          "full_us": 2.2991999983787537,
+          "compile_ms": 11.988447979092598,
+          "peak_bytes": 5632
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 2.4383999407291412,
+          "full_us": 2.2832000628113747,
+          "compile_ms": 46.022386290133,
+          "peak_bytes": 5120
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": null,
+          "full_us": 4.64479997754097,
+          "compile_ms": 45.95841560512781,
+          "peak_bytes": 5120
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": null,
+          "full_us": 2.4272000417113304,
+          "compile_ms": 42.0031463727355,
+          "peak_bytes": 5120
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 10.657600313425064,
+          "full_us": 14.027200639247894,
+          "compile_ms": 0.0,
+          "peak_bytes": 5632
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 10.505600273609161,
+          "full_us": 136.76960468292236,
+          "compile_ms": 1.1405758559703827,
+          "peak_bytes": 5632
+        },
+        "triton": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 2.436799928545952,
+          "full_us": 2.3231999948620796,
+          "compile_ms": 3.609797917306423,
+          "peak_bytes": 5632
+        }
+      }
+    },
+    {
+      "name": "layer_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 2.401600033044815,
+          "full_us": 2.3887999355793,
+          "compile_ms": 12.224429287016392,
+          "peak_bytes": 25088
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 2.505600079894066,
+          "full_us": 2.430400066077709,
+          "compile_ms": 53.64673398435116,
+          "peak_bytes": 24064
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": null,
+          "full_us": 4.915200173854828,
+          "compile_ms": 47.0553208142519,
+          "peak_bytes": 24064
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": null,
+          "full_us": 2.4399999529123306,
+          "compile_ms": 47.799634747207165,
+          "peak_bytes": 24064
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 22.972799837589264,
+          "full_us": 60.97919940948486,
+          "compile_ms": 0.0,
+          "peak_bytes": 25088
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 22.974400222301483,
+          "full_us": 36.6703987121582,
+          "compile_ms": 2.5090016424655914,
+          "peak_bytes": 25088
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for layer_norm"
+    },
+    {
+      "name": "batch_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 2.473600022494793,
+          "full_us": 29.98560070991516,
+          "compile_ms": 26.860262267291546,
+          "peak_bytes": 27136
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 2.4591999128460884,
+          "full_us": 46.24960124492645,
+          "compile_ms": 77.24157068878412,
+          "peak_bytes": 26112
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": null,
+          "full_us": 4.958400130271912,
+          "compile_ms": 60.651808977127075,
+          "peak_bytes": 26112
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": null,
+          "full_us": 2.457600086927414,
+          "compile_ms": 65.56700263172388,
+          "peak_bytes": 26112
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 18.694399297237396,
+          "full_us": 30.03680109977722,
+          "compile_ms": 0.0,
+          "peak_bytes": 27136
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 18.665599822998047,
+          "full_us": 29.787200689315796,
+          "compile_ms": 2.476401627063751,
+          "peak_bytes": 27136
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for batch_norm"
+    },
+    {
+      "name": "conv2d_1x1",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.4224000051617622,
+          "full_us": 2.3631999269127846,
+          "compile_ms": 12.10462860763073,
+          "peak_bytes": 33578496
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.5599999353289604,
+          "full_us": 2.380800060927868,
+          "compile_ms": 59.675803408026695,
+          "peak_bytes": 23040
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": null,
+          "full_us": 4.9456000328063965,
+          "compile_ms": 49.56836346536875,
+          "peak_bytes": 23040
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": null,
+          "full_us": 2.4528000503778458,
+          "compile_ms": 47.98013623803854,
+          "peak_bytes": 23040
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 11.105599999427795,
+          "full_us": 37.02239990234375,
+          "compile_ms": 0.0,
+          "peak_bytes": 33578496
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 10.88000014424324,
+          "full_us": 15.635199844837189,
+          "compile_ms": 77.7127230539918,
+          "peak_bytes": 33578496
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_1x1"
+    },
+    {
+      "name": "conv2d_3x3",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.041599854826927,
+          "full_us": 4.022400081157684,
+          "compile_ms": 15.83015825599432,
+          "peak_bytes": 34304
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.038399830460548,
+          "full_us": 3.872000053524971,
+          "compile_ms": 84.10843461751938,
+          "peak_bytes": 33280
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 6.567999720573425,
+          "compile_ms": 54.98805083334446,
+          "peak_bytes": 33280
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 3.9903998374938965,
+          "compile_ms": 59.380591847002506,
+          "peak_bytes": 33280
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.795200645923615,
+          "full_us": 23.403200507164,
+          "compile_ms": 0.0,
+          "peak_bytes": 34304
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.876799404621124,
+          "full_us": 164.3664002418518,
+          "compile_ms": 49.19068329036236,
+          "peak_bytes": 34304
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_3x3"
+    },
+    {
+      "name": "conv2d_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.043199867010117,
+          "full_us": 3.750399872660637,
+          "compile_ms": 18.737412989139557,
+          "peak_bytes": 66048
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.011199995875359,
+          "full_us": 3.7439998239278793,
+          "compile_ms": 95.72423156350851,
+          "peak_bytes": 63488
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 6.536000221967697,
+          "compile_ms": 66.33266620337963,
+          "peak_bytes": 63488
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 4.00799997150898,
+          "compile_ms": 65.84385503083467,
+          "peak_bytes": 63488
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.59199947118759,
+          "full_us": 144.39200162887573,
+          "compile_ms": 0.0,
+          "peak_bytes": 66048
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.470400035381317,
+          "full_us": 23.340800404548645,
+          "compile_ms": 2.470981329679489,
+          "peak_bytes": 66048
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_same"
+    },
+    {
+      "name": "conv2d_stride2",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.84799987077713,
+          "full_us": 3.8288000971078873,
+          "compile_ms": 15.531107783317566,
+          "peak_bytes": 27648
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.7808001041412354,
+          "full_us": 3.7967998534440994,
+          "compile_ms": 286.33631858974695,
+          "peak_bytes": 26624
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": null,
+          "full_us": 6.372799724340439,
+          "compile_ms": 61.08979135751724,
+          "peak_bytes": 26624
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": null,
+          "full_us": 3.8463998585939407,
+          "compile_ms": 53.16316056996584,
+          "peak_bytes": 26624
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 17.137600481510162,
+          "full_us": 53.15520167350769,
+          "compile_ms": 0.0,
+          "peak_bytes": 32256
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 17.084799706935883,
+          "full_us": 144.70080137252808,
+          "compile_ms": 16.410221345722675,
+          "peak_bytes": 32256
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_stride2"
+    },
+    {
+      "name": "conv2d_stride2_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.7487998604774475,
+          "full_us": 3.66239994764328,
+          "compile_ms": 18.256819806993008,
+          "peak_bytes": 35328
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.7856001406908035,
+          "full_us": 3.7200000137090683,
+          "compile_ms": 92.9252365604043,
+          "peak_bytes": 34304
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": null,
+          "full_us": 6.292799860239029,
+          "compile_ms": 64.57881722599268,
+          "peak_bytes": 34304
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": null,
+          "full_us": 3.803199902176857,
+          "compile_ms": 65.60969352722168,
+          "peak_bytes": 34304
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 17.158399522304535,
+          "full_us": 22.838400304317474,
+          "compile_ms": 0.0,
+          "peak_bytes": 35328
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 17.291200160980225,
+          "full_us": 164.10399675369263,
+          "compile_ms": 2.1878303959965706,
+          "peak_bytes": 35328
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for conv2d_stride2_same"
+    },
+    {
+      "name": "moe_router_topk",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 48.417600989341736,
+          "full_us": 53.0239999294281,
+          "compile_ms": 18.78880150616169,
+          "peak_bytes": 33569280
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 48.69759976863861,
+          "full_us": 53.1328022480011,
+          "compile_ms": 90.53751453757286,
+          "peak_bytes": 13312
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": null,
+          "full_us": 51.20319724082947,
+          "compile_ms": 57.12930113077164,
+          "peak_bytes": 13312
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": null,
+          "full_us": 48.60000014305115,
+          "compile_ms": 51.62512417882681,
+          "peak_bytes": 13312
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.558936629259989e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 22.58400022983551,
+          "full_us": 30.001598596572876,
+          "compile_ms": 0.0,
+          "peak_bytes": 33569280
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.558936629259989e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 22.523200511932373,
+          "full_us": 29.947200417518616,
+          "compile_ms": 2.3339223116636276,
+          "peak_bytes": 33569280
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for moe_router_topk"
+    },
+    {
+      "name": "topk_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 4.639999940991402,
+          "full_us": 4.516800120472908,
+          "compile_ms": 9.341905824840069,
+          "peak_bytes": 74240
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 4.638399928808212,
+          "full_us": 4.609600082039833,
+          "compile_ms": 50.97000114619732,
+          "peak_bytes": 73216
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": null,
+          "full_us": 6.998399645090103,
+          "compile_ms": 46.123976819217205,
+          "peak_bytes": 73216
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": null,
+          "full_us": 4.587199911475182,
+          "compile_ms": 35.94353701919317,
+          "peak_bytes": 73216
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 17.54239946603775,
+          "full_us": 18.36320012807846,
+          "compile_ms": 0.0,
+          "peak_bytes": 73728
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 17.524799704551697,
+          "full_us": 49.27999973297119,
+          "compile_ms": 2.843913622200489,
+          "peak_bytes": 73728
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for topk_last"
+    }
+  ]
+}

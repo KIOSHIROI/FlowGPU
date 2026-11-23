@@ -179,6 +179,24 @@ The operator is a multi-result backend (`values`, `ids`); this case checks the
 
 Raw data: [`m2-h100-gpu1-topk-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-topk-20261123.json).
 
+
+## 19-case validation run
+
+All 19 cases pass correctness in every backend. Median `compile_ms` is **15.0 ms**.
+Stable full-call paths (default/prepared/graph, shared GPU):
+
+| group | range |
+|---|---|
+| pointwise / norm / mean / sort | 2.17–3.73 µs |
+| topk_last | 4.52 µs |
+| conv2d 1×1 / 3×3 / same / stride-2 | 3.66–4.02 µs |
+| MoE router (multi-anchor, multi-result) | 48.6–53.0 µs |
+
+The 29.99 µs batch_norm and 32.12 µs matmul samples are shared-GPU outliers; the
+graph column is 2.46 / 4.26 µs, which is the stable path.
+
+Raw data: [`m2-h100-gpu1-19case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-19case-20261123.json).
+
 ## MoE router (multi-operator LLM case)
 
 `moe_router_topk` composes matmul, tanh soft-capping, softmax, topk and a row
