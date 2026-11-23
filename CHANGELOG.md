@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.52.1
+
+- Lock ShapeRunner symbolic-to-literal fallback with constructor and runtime
+  tests.
+
 ## 0.52.0
 
 - ShapeRunner falls back from a symbolic module to literal per-shape rewriting

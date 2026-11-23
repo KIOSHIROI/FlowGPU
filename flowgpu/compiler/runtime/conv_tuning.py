@@ -44,6 +44,7 @@ class ConvTuningResult:
     candidates: tuple
     compile_ms: float
     cached: bool = False
+    platform_config: object = None
 
 
 def tune_conv2d(source, *, pipeline, args, cache_dir, validator,
@@ -85,7 +86,7 @@ def tune_conv2d(source, *, pipeline, args, cache_dir, validator,
             measured = tuple(ConvTuningCandidate(*(item[:3]), item[3], item[4], item[5])
                              for item in entry["candidates"])
             return run, ConvTuningResult(best[0], best[1], best[2], entry["median_us"],
-                                         measured, entry["compile_ms"], True)
+                                         measured, entry["compile_ms"], True, config)
         except (OSError, ValueError, KeyError, TypeError):
             pass
     measured = []
@@ -134,7 +135,10 @@ def tune_conv2d(source, *, pipeline, args, cache_dir, validator,
     except OSError:
         pass
     return run, ConvTuningResult(candidate.block_m, candidate.block_n, candidate.block_k,
-                                 candidate.median_us, tuple(measured), compile_ms, False)
+                                 candidate.median_us, tuple(measured), compile_ms, False,
+                                 replace(base, conv_block_m=candidate.block_m,
+                                         conv_block_n=candidate.block_n,
+                                         conv_block_k=candidate.block_k))
 
 
 __all__ = ["DEFAULT_CANDIDATES", "ConvTuningCandidate", "ConvTuningResult", "tune_conv2d"]
