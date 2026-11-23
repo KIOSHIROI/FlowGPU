@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.46.0
+
+- Add conv2d_stride2_same (3x3, stride 2, padding 1); prepared/graph are
+  3.56-3.78 us vs eager 39.92 us on H100.
+
 ## 0.45.2
 
 - Publish peak-allocated memory for all 16 cases; first-use matmul/conv

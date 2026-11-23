@@ -9,6 +9,11 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "conv2d_stride2_same":
+        import torch.nn.functional as F
+        x, weight, bias = args
+        return {"out": F.conv2d(x.permute(0, 3, 1, 2).float(), weight.float(),
+                                bias.float(), stride=2, padding=1).permute(0, 2, 3, 1).to(x.dtype)}
     if case_name in {"add_literal", "vectoradd_symbolic"}:
         return {"out": args[0] + args[1]}
     if case_name == "matmul_symbolic":
@@ -68,6 +73,11 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "conv2d_stride2_same":
+        import torch.nn.functional as F
+        x, weight, bias = args
+        return {"out": F.conv2d(x.double().permute(0, 3, 1, 2), weight.double(),
+                                bias.double(), stride=2, padding=1).permute(0, 2, 3, 1)}
     if case_name in {"add_literal", "vectoradd_symbolic"}:
         return {"out": args[0].double() + args[1].double()}
     if case_name == "matmul_symbolic":

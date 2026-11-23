@@ -11,7 +11,7 @@ def test_device_matrix_validates_without_torch_or_cuda():
         [sys.executable, "benchmarks/competitive/device_runner.py", "--check"],
         cwd=ROOT, capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "16 cases" in result.stdout
+    assert "17 cases" in result.stdout
 
 
 def test_device_cases_have_outputs_and_tolerances():

@@ -1250,6 +1250,7 @@ from flowgpu.compiler.backend.layer_norm_backend import layer_norm_reference_ker
 from flowgpu.compiler.backend.conv2d_backend import conv2d_reference_kernel as _conv2d_reference_kernel
 from flowgpu.compiler.backend.conv2d_same_backend import conv2d_same_reference_kernel as _conv2d_same_reference_kernel
 from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_reference_kernel as _conv2d_stride2_reference_kernel
+from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_same_reference_kernel as _conv2d_stride2_same_reference_kernel
 from flowgpu.compiler.backend.topk_backend import (
     topk_reference_kernel as _topk_reference_kernel,
     gather_reference_kernel as _gather_last_reference_kernel)
@@ -1300,6 +1301,7 @@ EMITTERS = {
     "conv2d": _conv2d_reference_kernel,
     "conv2d_same": _conv2d_same_reference_kernel,
     "conv2d_stride2": _conv2d_stride2_reference_kernel,
+    "conv2d_stride2_same": _conv2d_stride2_same_reference_kernel,
     "axis_gather": _gather_last_reference_kernel,
     "reduce_with_index": _reduce_with_index_reference_kernel,
     "index_table": _segment_rank_reference_kernel,

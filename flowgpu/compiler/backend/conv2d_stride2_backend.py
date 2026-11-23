@@ -15,18 +15,18 @@ def _geometry(graph, x, weight):
     return n, h, w, channels, out_channels, kh, kw
 
 
-def _out_extent(extent, kernel):
-    return (extent - kernel) // 2 + 1
+def _out_extent(extent, kernel, padding=0):
+    return (extent + 2 * padding - kernel) // 2 + 1
 
 
-def conv2d_stride2_triton_kernel(graph, group, memory, name, config):
+def _conv2d_stride2_triton(graph, group, memory, name, config, padding, kind):
     from flowgpu.compiler.backend.triton_backend import DTYPE_TO_TRITON, TritonKernel, _pointer
-    assert len(group.members) == 1 and group.anchor.op == "conv2d_stride2"
+    assert len(group.members) == 1 and group.anchor.op == kind
     operands, results = group_operands(graph, group), group_results(graph, group)
     (x, weight, bias), (out,) = operands, results
     n, h, w, channels, out_channels, kh, kw = _geometry(graph, x, weight)
-    out_h = _out_extent(h, kh)
-    out_w = _out_extent(w, kw)
+    out_h = _out_extent(h, kh, padding)
+    out_w = _out_extent(w, kw, padding)
     plane = out_h * out_w
     rows = n * plane
     bm = min(128, _pow2(rows))
@@ -54,12 +54,18 @@ def conv2d_stride2_triton_kernel(graph, group, memory, name, config):
         for j in range(kw):
             a = names.fresh("a")
             b = names.fresh("b")
-            src = (f"((({rows_off}) // {plane}) * {h} + "
-                   f"((({rows_off}) % {plane}) // {out_w}) * 2 + {i}) * {w} + "
-                   f"((({rows_off}) % {out_w}) * 2 + {j})")
+            src_h = f"((({rows_off}) % {plane}) // {out_w}) * 2 + {i - padding}"
+            src_w = f"((({rows_off}) % {out_w}) * 2 + {j - padding})"
+            src = f"((({rows_off}) // {plane}) * {h} + ({src_h})) * {w} + ({src_w})"
+            if padding:
+                valid = ((f"({rows_off}[:, None] < {rows}) & "
+                          f"(({src_h})[:, None] >= 0) & (({src_h})[:, None] < {h}) & "
+                          f"(({src_w})[:, None] >= 0) & (({src_w})[:, None] < {w})"))
+            else:
+                valid = f"({rows_off}[:, None] < {rows})"
             lines += [
                 f"    {a} = tl.load({_pointer(x)} + ({src})[:, None] * {channels} + {cols}[None, :],",
-                f"                  mask=({rows_off}[:, None] < {rows}) & ({cols}[None, :] < {channels}),",
+                f"                  mask={valid} & ({cols}[None, :] < {channels}),",
                 f"                  other=0.0).to({dtype})",
                 f"    {b} = tl.load({_pointer(weight)} + {outs}[None, :] * {kernel_weight}"
                 f" + {cols}[:, None] * {kh * kw} + {i * kw + j},",
@@ -75,23 +81,31 @@ def conv2d_stride2_triton_kernel(graph, group, memory, name, config):
         f"             {result}.to({out_dtype}),",
         f"             mask=({rows_off}[:, None] < {rows}) & ({outs}[None, :] < {out_channels}))",
     ]
-    source = f"""# conv2d_stride2 {kh}x{kw}: implicit GEMM, stride 2, NHWC
+    source = f"""# conv2d_stride2 {kh}x{kw} pad {padding}: implicit GEMM, stride 2, NHWC
 @triton.jit
 def {name}({", ".join(parameter for parameter, _ in pairs)}):
 """ + "\n".join(lines) + "\n"
     grid = f"({(rows + bm - 1) // bm}, {(out_channels + bn - 1) // bn})"
-    return TritonKernel(name, "conv2d_stride2", ("conv2d_stride2",), operands, results,
+    return TritonKernel(name, kind, (kind,), operands, results,
                         tuple(parameter for parameter, _ in pairs),
                         tuple(argument for _, argument in pairs), grid, source,
                         launch_options=(("num_warps", config.num_warps),))
 
 
-def conv2d_stride2_reference_kernel(graph, group, memory, name):
+def conv2d_stride2_triton_kernel(graph, group, memory, name, config):
+    return _conv2d_stride2_triton(graph, group, memory, name, config, 0, "conv2d_stride2")
+
+
+def conv2d_stride2_same_triton_kernel(graph, group, memory, name, config):
+    return _conv2d_stride2_triton(graph, group, memory, name, config, 1, "conv2d_stride2_same")
+
+
+def _conv2d_stride2_reference(graph, group, memory, name, padding, kind):
     from flowgpu.compiler.backend.reference import _dimension_parameters, _kernel, _rounded
     operands, results = group_operands(graph, group), group_results(graph, group)
     (x, weight, bias), (out,) = operands, results
     n, h, w, channels, out_channels, kh, kw = _geometry(graph, x, weight)
-    out_h, out_w = _out_extent(h, kh), _out_extent(w, kw)
+    out_h, out_w = _out_extent(h, kh, padding), _out_extent(w, kw, padding)
     rows = n * out_h * out_w
     names = Names(graph)
     variables = {value: names.reserve(identifier(value)) for value in operands + results}
@@ -110,15 +124,30 @@ def conv2d_stride2_reference_kernel(graph, group, memory, name):
     ]
     for kh_index in range(kh):
         for kw_index in range(kw):
-            x_index = (f"((({row}) // {out_h * out_w} * {h} + ({i}) * 2 + {kh_index}) * {w}"
-                       f" + ({j}) * 2 + {kw_index}) * {channels} + {c}")
+            x_index = (f"((({row}) // {out_h * out_w} * {h} + ({i}) * 2 + {kh_index - padding}) * {w}"
+                       f" + ({j}) * 2 + {kw_index - padding}) * {channels} + {c}")
             w_index = (f"({o}) * {channels * kh * kw} + ({c}) * {kh * kw}"
                        f" + {kh_index * kw + kw_index}")
-            lines.append(f"                {total} += ({variables[x]}[{x_index}]"
-                         f" * {variables[weight]}[{w_index}])")
+            if padding:
+                lines += [
+                    f"                if 0 <= ({i}) * 2 + {kh_index - padding} < {h} and 0 <= ({j}) * 2 + {kw_index - padding} < {w}:",
+                    f"                    {total} += ({variables[x]}[{x_index}]"
+                    f" * {variables[weight]}[{w_index}])",
+                ]
+            else:
+                lines.append(f"                {total} += ({variables[x]}[{x_index}]"
+                             f" * {variables[weight]}[{w_index}])")
     lines.append(f"            {variables[out]}[{row} * {out_channels} + {o}] = "
                  + _rounded(graph, out, f"{total} + {variables[bias]}[{o}]"))
-    return _kernel(name, "conv2d_stride2", group, operands, results, pairs, lines)
+    return _kernel(name, kind, group, operands, results, pairs, lines)
 
 
-__all__ = ["conv2d_stride2_triton_kernel", "conv2d_stride2_reference_kernel"]
+def conv2d_stride2_reference_kernel(graph, group, memory, name):
+    return _conv2d_stride2_reference(graph, group, memory, name, 0, "conv2d_stride2")
+
+
+def conv2d_stride2_same_reference_kernel(graph, group, memory, name):
+    return _conv2d_stride2_reference(graph, group, memory, name, 1, "conv2d_stride2_same")
+
+
+__all__ = ["conv2d_stride2_triton_kernel", "conv2d_stride2_reference_kernel", "conv2d_stride2_same_triton_kernel", "conv2d_stride2_same_reference_kernel"]

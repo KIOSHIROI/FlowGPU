@@ -189,6 +189,23 @@ to the 2.3–4.6 µs launch paths.
 
 Raw data: [`m2-h100-gpu1-16case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-16case-20261123.json).
 
+
+## Stride-2 same convolution
+
+`conv2d_stride2_same` is the ResNet-style 3x3, stride 2, padding 1
+downsample. It is the same implicit-GEMM lowering with both stride and bounds
+masks.
+
+| case | flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---|---:|---:|---:|---:|---:|---:|
+| conv2d_stride2_same | 24.38* | 3.56 | 6.55 | 3.78 | 39.92 | 60.21 |
+
+*Default sample is a shared-GPU outlier; prepared/graph are the stable 3.6–3.8
+µs path. Exact against `F.conv2d(stride=2, padding=1)` in float64. The matrix is
+now 17 cases.
+
+Raw data: [`m2-h100-gpu1-stride2-same-case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-stride2-same-case-20261123.json).
+
 ## Stride-2 convolution
 
 `conv2d_stride2` adds a stride-2 implicit-GEMM convolution (no padding).

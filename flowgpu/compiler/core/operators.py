@@ -1451,6 +1451,34 @@ def infer_conv2d_stride2(args):
 register_operator('conv2d_stride2', 3, infer_conv2d_stride2, pointwise=False, acc='fp32')
 
 
+def infer_conv2d_stride2_same(args):
+    x, weight, bias = args
+    require_float(x, 'conv2d_stride2_same')
+    require_float(weight, 'conv2d_stride2_same')
+    require_float(bias, 'conv2d_stride2_same')
+    if len(x.shape) != 4 or len(weight.shape) != 4:
+        raise reject(DiagnosticKind.SHAPE,
+                     'conv2d_stride2_same requires x [N,H,W,C] and weight [O,C,3,3]')
+    if not all(str(d).isdigit() for d in x.shape + weight.shape + bias.shape):
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_stride2_same currently requires literal extents')
+    out_channels, in_channels = int(weight.shape[0]), int(weight.shape[1])
+    kh, kw = int(weight.shape[2]), int(weight.shape[3])
+    if (kh, kw) != (3, 3):
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_stride2_same requires a 3x3 kernel')
+    if int(x.shape[3]) != in_channels:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_stride2_same channels must match')
+    if x.dtype != weight.dtype or x.dtype != bias.dtype:
+        raise reject(DiagnosticKind.TYPE, 'conv2d_stride2_same operands must share a dtype')
+    if bias.shape != [str(out_channels)] and bias.shape != [out_channels]:
+        raise reject(DiagnosticKind.SHAPE, 'conv2d_stride2_same bias must have shape [O]')
+    out_h = (int(x.shape[1]) + 2 - 3) // 2 + 1
+    out_w = (int(x.shape[2]) + 2 - 3) // 2 + 1
+    return TensorType(x.dtype, [x.shape[0], str(out_h), str(out_w), str(out_channels)])
+
+
+register_operator('conv2d_stride2_same', 3, infer_conv2d_stride2_same, pointwise=False, acc='fp32')
+
+
 def infer_sort_last(args):
     (x,) = args
     require_float(x, 'sort_last')
