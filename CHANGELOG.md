@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.47.1
+
+- Add flowgpu_tuned to the M2 runner and publish tuned conv results: stride-2
+  cases improve from 18-22 us to 3.68-3.74 us; small 1x1 is unchanged.
+
 ## 0.47.0
 
 - Add tune_conv2d, a measured conv tile selector. On the 3x3 same case it

@@ -6,6 +6,7 @@ the case matrix without importing torch; CI therefore runs that form.
 
 Backends:
 * ``flowgpu``  -- FlowGPU-generated Triton host;
+* ``flowgpu_tuned`` -- conv tile autotuning, default lowering elsewhere;
 * ``flowgpu_prepared`` -- offline prepared plan with caller-owned buffers;
 * ``flowgpu_prepared_graph`` -- prepared plan + copy-into-static graph replay;
 * ``flowgpu_graph`` -- prepared plan + zero-copy CUDA Graph replay;
@@ -177,6 +178,23 @@ def _flowgpu_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     return call, compile_ms
 
 
+def _flowgpu_tuned_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
+    """Measure conv tile candidates on this shape; other cases use the default."""
+    if not case.name.startswith("conv2d"):
+        return _flowgpu_runner(case, args, cache_dir=cache_dir / "default")
+    from flowgpu.compiler.runtime.conv_tuning import tune_conv2d
+    import torch
+    source = (ROOT / case.source).read_text()
+    run, result = tune_conv2d(
+        source, pipeline=case.pipeline, args=args,
+        cache_dir=str(cache_dir / "conv-tuned"),
+        validator=lambda output: all(
+            bool(torch.isfinite(value).all()) for value in output.values()
+            if hasattr(value, "isfinite")),
+        iterations=20, warmup=5)
+    return (lambda: _as_dict(run(*args), case.output)), result.compile_ms
+
+
 def _flowgpu_graph_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     """Prepared plan + zero-copy CUDA Graph; caller owns the captured inputs."""
     from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
@@ -304,6 +322,12 @@ def main(argv=None) -> int:
                     case, tensors, cache_dir=cache_dir / "prepared_graph")
             except Exception as error:
                 entry["flowgpu_prepared_graph_error"] = type(error).__name__ + ": " + str(error)
+        if "flowgpu_tuned" in backends:
+            try:
+                runners["flowgpu_tuned"] = _flowgpu_tuned_runner(
+                    case, tensors, cache_dir=cache_dir / "tuned")
+            except Exception as error:
+                entry["flowgpu_tuned_error"] = type(error).__name__ + ": " + str(error)
         if "flowgpu_graph" in backends:
             try:
                 runners["flowgpu_graph"] = _flowgpu_graph_runner(

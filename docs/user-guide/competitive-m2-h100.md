@@ -144,6 +144,25 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Conv tuning in the matrix
+
+The `flowgpu_tuned` runner measures six conv tile candidates per shape and uses
+the fastest. On the 5 conv cases (H100 GPU1, 20 iterations):
+
+| case | flowgpu | tuned | tuning compile |
+|---|---:|---:|---:|
+| conv2d_1x1 | 2.35 | 2.38 | 525 ms |
+| conv2d_3x3 | 3.88 | 4.02 | 108 ms |
+| conv2d_same | 22.36* | 18.69* | 216 ms |
+| conv2d_stride2 | 22.27* | 3.74 | 112 ms |
+| conv2d_stride2_same | 18.73* | 3.68 | 149 ms |
+
+Tuning does not help the shapes whose default geometry is already good, and a
+shared-GPU outlier can still change the winner. It clearly helps the stride-2
+variants, where the default geometry sat on a bad tile. Compile cost is one-off
+and cached by the call site.
+
 ## Conv tile tuning
 
 `flowgpu.compiler.runtime.conv_tuning.tune_conv2d` compiles a small candidate

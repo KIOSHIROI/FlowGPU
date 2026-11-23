@@ -11,7 +11,11 @@ import time
 from dataclasses import dataclass, replace
 
 DEFAULT_CANDIDATES = (
+    # Small 1x1 shapes: the default emitter resolves BN/BK to the channel /
+    # output extent (16 here), and a forced 32-wide tile is slower.
+    (32, 16, 16),
     (32, 32, 32),
+    (64, 32, 32),
     (64, 64, 32),
     (128, 64, 64),
     (128, 128, 64),

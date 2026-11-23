@@ -1,0 +1,207 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "conv2d_1x1",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.4399999529123306,
+          "full_us": 2.345599979162216,
+          "compile_ms": 116.20243731886148,
+          "peak_bytes": 33573888
+        },
+        "flowgpu_tuned": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.4272000417113304,
+          "full_us": 2.3840000852942467,
+          "compile_ms": 524.9558556824923,
+          "peak_bytes": 33573888
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 11.054400354623795,
+          "full_us": 15.723200142383575,
+          "compile_ms": 0.0,
+          "peak_bytes": 67120128
+        }
+      }
+    },
+    {
+      "name": "conv2d_3x3",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 3.999999910593033,
+          "full_us": 3.876800090074539,
+          "compile_ms": 16.436374746263027,
+          "peak_bytes": 33581056
+        },
+        "flowgpu_tuned": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.105599969625473,
+          "full_us": 4.020800068974495,
+          "compile_ms": 108.34918636828661,
+          "peak_bytes": 33581056
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.671999335289,
+          "full_us": 23.374399542808533,
+          "compile_ms": 0.0,
+          "peak_bytes": 33581056
+        }
+      }
+    },
+    {
+      "name": "conv2d_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 3.991999849677086,
+          "full_us": 22.363199293613434,
+          "compile_ms": 17.372329719364643,
+          "peak_bytes": 33608192
+        },
+        "flowgpu_tuned": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 3.7248000502586365,
+          "full_us": 18.692800402641296,
+          "compile_ms": 216.41706209629774,
+          "peak_bytes": 33608192
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.54560023546219,
+          "full_us": 23.342399299144745,
+          "compile_ms": 0.0,
+          "peak_bytes": 33608192
+        }
+      }
+    },
+    {
+      "name": "conv2d_stride2",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.7888001650571823,
+          "full_us": 22.271999716758728,
+          "compile_ms": 15.112299472093582,
+          "peak_bytes": 33573888
+        },
+        "flowgpu_tuned": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 3.787200152873993,
+          "full_us": 3.736000135540962,
+          "compile_ms": 111.76569014787674,
+          "peak_bytes": 33573888
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 16.75039976835251,
+          "full_us": 37.92960047721863,
+          "compile_ms": 0.0,
+          "peak_bytes": 33578496
+        }
+      }
+    },
+    {
+      "name": "conv2d_stride2_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.590400144457817,
+          "full_us": 18.729600310325623,
+          "compile_ms": 17.272659577429295,
+          "peak_bytes": 33581568
+        },
+        "flowgpu_tuned": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.8688000291585922,
+          "full_us": 3.678400069475174,
+          "compile_ms": 148.46633467823267,
+          "peak_bytes": 33581568
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 16.967999935150146,
+          "full_us": 37.74400055408478,
+          "compile_ms": 0.0,
+          "peak_bytes": 33581568
+        }
+      }
+    }
+  ]
+}
