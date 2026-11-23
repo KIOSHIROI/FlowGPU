@@ -9,6 +9,8 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "topk_last":
+        return {"values": torch.topk(args[0], 8, dim=-1).values}
     if case_name == "moe_router_topk":
         x, router_weight, cap = args
         logits = x @ router_weight.t()
@@ -80,6 +82,8 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "topk_last":
+        return {"values": torch.topk(args[0].double(), 8, dim=-1).values}
     if case_name == "moe_router_topk":
         x, router_weight, cap = args
         logits = x.double() @ router_weight.double().t()

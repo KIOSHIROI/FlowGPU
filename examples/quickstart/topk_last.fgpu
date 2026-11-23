@@ -1,0 +1,7 @@
+# FlowGPU quickstart: descending top-k over a literal row.
+pipeline quickstart_topk {
+  input x:fp16[16,1024]
+  values, ids = topk_last(x, 8)
+  output values
+  output ids
+}

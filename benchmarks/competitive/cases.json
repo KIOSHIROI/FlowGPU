@@ -583,6 +583,26 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "moe_router_topk"
+    },
+    {
+      "name": "topk_last",
+      "source": "examples/quickstart/topk_last.fgpu",
+      "pipeline": "quickstart_topk",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            16,
+            1024
+          ],
+          "fp16"
+        ]
+      ],
+      "output": "values",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "topk_last"
     }
   ]
 }

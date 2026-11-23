@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.51.0
+
+- Add the topk_last sampling case to M2; 4.70 us vs eager 18.44 us on H100.
+
 ## 0.50.0
 
 - Add the multi-operator MoE router case to M2: matmul + tanh soft-cap +

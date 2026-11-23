@@ -165,6 +165,20 @@ and cached by the call site.
 
 
 
+
+## Top-k sampling case
+
+`topk_last` on `[16, 1024]` with k=8, checked against torch's descending top-k:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 4.70 | 4.67 | 7.24 | 4.79 | 18.44 | 18.44 |
+
+The operator is a multi-result backend (`values`, `ids`); this case checks the
+`values` output. The matrix is now 19 cases.
+
+Raw data: [`m2-h100-gpu1-topk-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-topk-20261123.json).
+
 ## MoE router (multi-operator LLM case)
 
 `moe_router_topk` composes matmul, tanh soft-capping, softmax, topk and a row

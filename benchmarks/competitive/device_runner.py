@@ -278,7 +278,7 @@ def main(argv=None) -> int:
         for case in cases:
             if not (ROOT / case.source).exists():
                 raise SystemExit("missing source: " + case.source)
-            if case.output not in {"out", "q", "z", "weights"}:
+            if case.output not in {"out", "q", "z", "weights", "values"}:
                 raise SystemExit("unexpected output name: " + case.output)
         print(f"competitive device matrix ok: {len(cases)} cases")
         return 0
