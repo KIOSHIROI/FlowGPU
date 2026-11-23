@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.52.0
+
+- ShapeRunner falls back from a symbolic module to literal per-shape rewriting
+  when an operator has no symbolic lowering; verified on symbolic mean_last.
+
 ## 0.51.1
 
 - Validate the full 19-case matrix in one run: every backend passes, median

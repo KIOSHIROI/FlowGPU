@@ -33,12 +33,20 @@ class ShapeRunner:
     options: dict | None = None
 
     def __post_init__(self) -> None:
+        self._fallback_error = None
+        from flowgpu.compiler.runtime.literal_shape import LiteralShapeRunner
         if uses_symbolic_shapes(self.source, self.pipeline):
             from flowgpu.compiler.runtime.symbolic_shape import SymbolicShapeRunner
-            self._backend = SymbolicShapeRunner(
-                self.source, self.pipeline, self.cache_dir, self.options)
+            try:
+                self._backend = SymbolicShapeRunner(
+                    self.source, self.pipeline, self.cache_dir, self.options)
+            except Exception as error:
+                # An operator that cannot be emitted symbolically still has a
+                # per-shape path: rewrite the declared extents and compile.
+                self._fallback_error = error
+                self._backend = LiteralShapeRunner(
+                    self.source, self.pipeline, self.cache_dir, self.options)
         else:
-            from flowgpu.compiler.runtime.literal_shape import LiteralShapeRunner
             self._backend = LiteralShapeRunner(
                 self.source, self.pipeline, self.cache_dir, self.options)
 
@@ -47,7 +55,16 @@ class ShapeRunner:
         return type(self._backend).__name__
 
     def __call__(self, *tensors):
-        return self._backend(*tensors)
+        try:
+            return self._backend(*tensors)
+        except Exception as error:
+            if type(self._backend).__name__ != "SymbolicShapeRunner":
+                raise
+            from flowgpu.compiler.runtime.literal_shape import LiteralShapeRunner
+            self._fallback_error = error
+            self._backend = LiteralShapeRunner(
+                self.source, self.pipeline, self.cache_dir, self.options)
+            return self._backend(*tensors)
 
 
 __all__ = ["ShapeRunner", "uses_symbolic_shapes"]

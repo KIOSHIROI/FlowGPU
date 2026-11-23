@@ -37,7 +37,6 @@ class LiteralShapeRunner:
 
     def __post_init__(self) -> None:
         from flowgpu.compiler.compile import compile_source
-        from flowgpu.compiler.runtime.runtime import compile_pipeline
         self.options = dict(self.options or {})
         if "shape_bindings" in self.options:
             raise ValueError("LiteralShapeRunner rewrites literal input declarations")
@@ -52,10 +51,6 @@ class LiteralShapeRunner:
         self._names = tuple(statement.name for statement in selected.pipeline.statements
                             if getattr(statement, "type", None) is not None
                             and type(statement).__name__ == "InputDecl")
-        self._base_run = compile_pipeline(
-            self.source, pipeline=self.pipeline, cache_dir=self.cache_dir,
-            **self.options)
-
     def _run_for(self, tensors):
         key = tuple(tuple(int(extent) for extent in tensor.shape) for tensor in tensors)
         if key in self._runs:
@@ -71,11 +66,6 @@ class LiteralShapeRunner:
     def __call__(self, *tensors):
         if len(tensors) != len(self._names):
             raise ValueError(f"expected {len(self._names)} input tensors, got {len(tensors)}")
-        key = tuple(tuple(int(extent) for extent in tensor.shape) for tensor in tensors)
-        # The base module is valid only for the declared shapes; cache it under
-        # that key and rewrite the declarations for every other shape.
-        if not self._runs:
-            self._runs[key] = self._base_run
         return self._run_for(tensors)(*tensors)
 
 
