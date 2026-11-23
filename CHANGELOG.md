@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.53.1
+
+- Refresh the one-page competitive summary for the 19-case matrix, tuning,
+  dynamic fallback, and the remaining external baseline/PyPI gaps.
+
 ## 0.53.0
 
 - Update compile-time and peak-memory reports to all 19 cases, including MoE

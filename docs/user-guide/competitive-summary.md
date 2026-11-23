@@ -8,40 +8,49 @@ public probes; no private fixture is used.
 | area | status | evidence |
 |---|---|---|
 | LLM operator checklist | **45 present / 1 partial / 0 missing** | [Operator coverage](operator-coverage.md) |
-| dynamic shapes | symbolic one-module, literal rewrite, per-shape fallback | [Prepared deployment](deployment.md) |
-| fixed-shape deployment | allocated prepared → copy+graph → zero-copy graph | [M2 H100 report](competitive-m2-h100.md) |
-| correctness | 9-case matrix × 6 backends, 3 seeds | [M2 H100 report](competitive-m2-h100.md) |
-| memory | peak-allocated metric published | [M2 H100 report](competitive-m2-h100.md#peak-allocated-memory) |
-| packaging | wheel/sdist, Python 3.11–3.14 CI, clean-venv installs | CI |
+| dynamic shapes | symbolic one-module, literal rewrite, automatic fallback | [Prepared deployment](deployment.md) |
+| fixed-shape deployment | prepared → copy+graph → zero-copy graph | [M2 H100 report](competitive-m2-h100.md) |
+| tuning | measured conv tile selection with a cache | [M2 H100 report](competitive-m2-h100.md#conv-tile-tuning) |
+| correctness | **19 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#19-case-validation-run) |
+| compile time | 19-case distribution, median 15.0 ms | [M2 H100 report](competitive-m2-h100.md#compile-time-19-case-matrix) |
+| memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
+| packaging | wheel/sdist, Python 3.11–3.14 CI, clean-venv installs, CPU Docker image | CI |
 | PyPI | **blocked**: trusted publisher not configured; both indexes 404 | external action |
 
 ## Latency snapshot (H100 GPU1, full-call µs)
 
-| path | simple cases | fused residual |
-|---|---:|---:|
-| eager | 4.8–9.6 | 62.5 |
-| explicit Triton | 11.6–16.5 | 12.7 |
-| FlowGPU prepared | 12.0–16.5 | 16.5 |
-| FlowGPU copy+graph | 8.6–14.7 | 11.9 |
-| FlowGPU zero-copy graph | **2.9–4.3** | **2.9** |
+| path | stable range |
+|---|---:|
+| eager | 2.2–23.4 (up to 151 on MoE) |
+| explicit Triton | 2.1–17.0 where a baseline exists |
+| FlowGPU prepared | 2.2–4.0 |
+| FlowGPU copy+graph | 4.4–7.6 |
+| FlowGPU zero-copy graph | **2.2–4.3** |
+| FlowGPU tuned | stride-2 conv **3.7** vs 18–22 default |
+| MoE router (multi-anchor) | 48.6 (graph) vs 151.6 eager |
 
 - The kernel path is competitive with explicit Triton.
-- The remaining default-path gap is host guards/allocation/Triton dispatch, not
-  math; CUDA Graph removes it for fixed metadata.
-- Static zero-copy replay is under eager on every measured case.
+- After the allocated path, host overhead is removed by prepared/copy+graph;
+  zero-copy replay is the fixed-metadata floor.
+- Default-path outliers on a shared GPU are separated in the M2 report, not
+  hidden.
 
 ## Honest limitations
 
-- default/prepared calls still lose to eager on simple pointwise/softmax;
-- `sort_last` requires literal extents and currently exposes values only;
-- `conv2d` is 1x1, NHWC, flattened `[O,C]` weight only;
+- default calls still lose to fresh prepared/graph calls for some cases on a
+  shared GPU; zero-copy graph is not a general dispatch replacement;
+- `sort_last` and `topk_last` require literal extents; sort exposes values;
+- conv supports NHWC and static stride/padding (via `conv2d_ex`), not arbitrary
+  layouts/dilation;
 - dynamic shapes are partial: literal-only bodies may need per-shape rewrite;
-- PyPI publication is blocked by an external trusted-publisher setting.
+- PyPI publication is blocked by an external trusted-publisher setting;
+- no TVM/FlagOS/TensorRT baseline is measured yet; the matrix is Triton,
+  eager, TorchInductor and FlowGPU.
 
 ## Next
 
-1. default host path (guards/launch) if it can be improved without weakening
-   the exact-context contract;
+1. default host path only if it can be improved without weakening the
+   exact-context contract;
 2. general dynamic handling for literal-only bodies;
-3. real sort/conv2d kernels only after a measured workload justifies them;
-4. adoption: PyPI trusted publisher, issue/PR templates already present.
+3. TVM/Relax and FlagTree-class baselines when their environments are available;
+4. adoption: PyPI trusted publisher.
