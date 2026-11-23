@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.46.1
+
+- Publish the full 17-case latency/correctness snapshot and mark shared-GPU
+  outliers separately from prepared/graph values.
+
 ## 0.46.0
 
 - Add conv2d_stride2_same (3x3, stride 2, padding 1); prepared/graph are

@@ -142,6 +142,39 @@ Raw data: [`symbolic-h100-gpu1-20261122.json`](https://github.com/KIOSHIROI/Flow
 
 
 
+
+## Full 17-case snapshot
+
+Single shared-GPU run, 20 iterations, all correctness checks pass. Default-path
+values marked with `*` are contention outliers; prepared/zero-copy graph are the
+stable columns.
+
+| case | flowgpu | prepared | graph | eager | triton |
+|---|---:|---:|---:|---:|---:|
+| add | 18.37* | 2.24 | 2.21 | 2.20 | 2.16 |
+| vectoradd | 18.38* | 2.27 | 2.39 | 2.24 | 2.19 |
+| matmul | 4.05 | 4.04 | 4.27 | 3.59 | 2.98 |
+| softmax | 2.60 | 2.70 | 2.69 | 5.27 | 2.58 |
+| residual_norm | 2.39 | 2.41 | 2.40 | 153.95* | 2.30 |
+| mapping | 2.12 | 2.22 | 2.28 | 4.22 | 2.13 |
+| neg | 26.22* | 2.14 | 2.28 | 2.24 | 26.22* |
+| pow | 3.66 | 3.74 | 3.66 | 3.62 | 2.50 |
+| mean_last | 2.32 | 2.28 | 2.28 | 3.34 | 2.26 |
+| sort_last | 2.34 | 2.39 | 2.47 | 13.98 | 2.32 |
+| layer_norm | 2.30 | 26.02* | 18.86* | 55.06 | - |
+| batch_norm | 2.35 | 2.36 | 2.47 | 46.38 | - |
+| conv2d_1x1 | 2.28 | 2.39 | 2.47 | 34.84 | - |
+| conv2d_3x3 | 4.03 | 4.00 | 4.03 | 23.42 | - |
+| conv2d_same | 20.79* | 3.79 | 4.08 | 23.45 | - |
+| conv2d_stride2 | 26.39* | 3.79 | 4.06 | 22.91 | - |
+| conv2d_stride2_same | 25.89* | 3.53 | 3.72 | 22.95 | - |
+
+The stable prepared/graph paths are 2.1–4.3 µs except the matmul case at 4.0.
+The remaining large spread is host/GPU contention in this shared run, not a
+kernel-level regression.
+
+Raw data: [`m2-h100-gpu1-17case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-17case-20261123.json).
+
 ## Peak memory, all 16 cases
 
 `max_memory_allocated()` in KiB, including first-use compilation allocations:
