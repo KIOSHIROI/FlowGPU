@@ -291,7 +291,7 @@ kernel-level regression.
 
 Raw data: [`m2-h100-gpu1-17case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-17case-20261123.json).
 
-## Peak memory, all 16 cases
+## Peak memory, all 19 cases
 
 `max_memory_allocated()` in KiB, including first-use compilation allocations:
 
@@ -312,32 +312,33 @@ Raw data: [`m2-h100-gpu1-17case-20261123.json`](https://github.com/KIOSHIROI/Flo
 | conv2d_1x1 | 32791.5 | 22.5 | 32791.5 |
 | conv2d_3x3 | 33.5 | 32.5 | 33.5 |
 | conv2d_same | 64.5 | 62.0 | 64.5 |
-| conv2d_stride2 | 27.0 | 26.0 | 31.5 |
+| conv2d_stride2 | 27.0 | 26.0 | 26.0 |
+| conv2d_stride2_same | 34.5 | 33.5 | 34.5 |
+| moe_router_topk | 32782.5 | 13.0 | 32782.5 |
+| topk_last | 72.5 | 71.5 | 72.5 |
 
-The 32 MiB entries are first-use compilation/allocator effects for matmul and
-1x1 conv, not kernel working sets; prepared/static paths show the actual small
-buffers. The metric is useful for spotting that class of cost, not for claiming
-a smaller working set without a cleaner protocol.
+The 32 MiB entries are first-use compilation/allocator effects for matmul,
+1x1 conv and the MoE router, not kernel working sets; prepared/static paths show
+the actual small buffers. The metric spots that class of cost, not a smaller
+working set.
 
-Raw data: [`m2-h100-gpu1-16case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-16case-20261123.json).
+Raw data: [`m2-h100-gpu1-19case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-19case-20261123.json).
 
-## Compile time (16-case matrix)
+## Compile time (19-case matrix)
 
-`compile_ms` from the same run, including Triton source generation and the
-first module load:
+`compile_ms` from the same run, including Triton source generation and the first
+module load:
 
 | group | cost |
 |---|---:|
-| first case (cold Triton cache) | 129.0 ms |
-| remaining cases | 11.7–27.5 ms |
-| median of all 16 | 15.2 ms |
+| first case (cold Triton cache) | 114.6 ms |
+| remaining cases | 9.3–26.9 ms |
+| median of all 19 | **15.0 ms** |
 
 Compile time is dominated by the first Triton compilation; normal cache hits
-are in the low tens of milliseconds. It is not the current bottleneck relative
-to the 2.3–4.6 µs launch paths.
+are in the low tens of milliseconds.
 
-Raw data: [`m2-h100-gpu1-16case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-16case-20261123.json).
-
+Raw data: [`m2-h100-gpu1-19case-20261123.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-19case-20261123.json).
 
 ## Stride-2 same convolution
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.53.0
+
+- Update compile-time and peak-memory reports to all 19 cases, including MoE
+  and top-k; MoE shows the same 32 MiB first-use allocation effect.
+
 ## 0.52.1
 
 - Lock ShapeRunner symbolic-to-literal fallback with constructor and runtime
