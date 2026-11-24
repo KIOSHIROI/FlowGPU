@@ -16,7 +16,7 @@ public probes; no private fixture is used.
 | memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
 | prefill + decode | 16-token prefill 0.564 ms; decode 83.71 µs/token | [Prefill + decode](prefill-decode.md) |
 | continuous batching | in-place 4-slot: 32.26 µs/token, 30,997.9 tok/s | [Continuous batching](continuous-batching.md) |
-| token generation | functional 105.53 / in-place 72.11 µs per token | [Token generation](token-generation.md) |
+| token generation | compiled 38.76 / graph 20.83 µs per token | [Token generation](token-generation.md) |
 | FlagOS/FlagGems | 10-case baseline measured; matmul/add excluded by Triton-3.8 incompatibility | [FlagOS baseline](competitive-flagos.md) |
 | TVM/Relax | **blocked**: PyPI wheel is CPU-only (`cuda` disabled) | [FlagOS baseline](competitive-flagos.md#tvm) |
 | packaging | wheel/sdist, Python 3.11–3.14 CI, clean-venv installs, CPU Docker image | CI |

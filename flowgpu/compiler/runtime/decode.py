@@ -20,12 +20,17 @@ class DecodeSession:
     query_heads: int = 4
     prepared: bool = False
     inplace: bool = False
+    graph: bool = False
     _pos: int = field(default=0, init=False)
 
     def __post_init__(self) -> None:
         import torch
         from flowgpu.compiler.runtime.runtime import compile_pipeline
         self._torch = torch
+        if self.graph and not self.inplace:
+            raise ValueError("graph decode requires inplace=True")
+        self._runner = None
+        self._q_static = None
         if self.prepared:
             self._plan = None
             self._buffers = None
@@ -44,6 +49,8 @@ class DecodeSession:
         # set and must not alias the next call's inputs.
         self._k = None
         self._v = None
+        self._runner = None
+        self._q_static = None
         self._next_buffer = 0
 
     def seed(self, k_cache, v_cache, position: int) -> None:
@@ -52,6 +59,8 @@ class DecodeSession:
         self._v = v_cache
         self._pos = position
         self._device = k_cache.device
+        self._runner = None
+        self._q_static = None
 
     def _ensure(self, q):
         import torch
@@ -63,8 +72,28 @@ class DecodeSession:
         if self._pos >= self.keys:
             raise ValueError("decode session cache is full; reset before continuing")
 
+    def _capture_graph(self, q) -> None:
+        from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+        from flowgpu.compiler.runtime.graph import GraphRunner
+        self._q_static = self._torch.empty_like(q)
+        plan = prepare_execution_plan(
+            self.source, pipeline=self.pipeline,
+            args=(self._q_static, self._k, self._v),
+            cache_dir=self.cache_dir, validator=lambda result: True)
+        self._runner = GraphRunner(plan, (self._q_static, self._k, self._v),
+                                   copy_inputs=False)
+
     def step(self, q, k_new, v_new):
         self._ensure(q)
+        if self.graph:
+            if self._runner is None:
+                self._capture_graph(q)
+            self._k[:, self._pos].copy_(k_new)
+            self._v[:, self._pos].copy_(v_new)
+            self._q_static.copy_(q)
+            result = self._runner.replay()
+            self._pos += 1
+            return result["out"]
         if self.inplace:
             self._k[:, self._pos].copy_(k_new)
             self._v[:, self._pos].copy_(v_new)

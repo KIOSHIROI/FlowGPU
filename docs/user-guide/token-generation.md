@@ -16,18 +16,28 @@ reshapes the head-major cache and runs native attention.
 
 ## Measured loop (H100 GPU1, shared)
 
-32 steps, 4 warmup:
+32 steps, 4 warmup, tokens precomputed **outside** the timed loop (a real model
+produces them on device; allocating `torch.randn` inside the loop measures the
+allocator, not decode):
 
 | path | per token | tokens/s |
 |---|---:|---:|
-| functional cache write | 105.53 µs | 9,475.8 |
-| prepared functional | 102.30 µs | 9,774.7 |
-| **caller-owned cache, in-place row write** | **72.11 µs** | **13,867.4** |
+| compiled in-place stride | **38.76 µs** | **25,803.0** |
+| **in-place + CUDA Graph replay** | **20.83 µs** | **48,002.3** |
 
-The in-place path uses `DecodeSession(inplace=True)`: the caller's `[H,S,D]`
-cache is updated with one row copy and the compiled attention pipeline only
-reads it. This removes the full-cache functional copy. It is still not a
-finished throughput claim; the remaining cost is Python/host dispatch and the
-absence of a captured multi-step graph.
+The graph path is 1.86x the compiled in-place loop. It captures the
+attention-only pipeline with caller-owned cache and query buffers:
 
-Raw data: [`token-loop-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-h100-gpu1-20261124.json), [`token-loop-inplace-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-inplace-h100-gpu1-20261124.json).
+```python
+session = DecodeSession(
+    source, "quickstart_decode_gqa_attention_nocopy",
+    ".flowgpu-cache", inplace=True, graph=True)
+out = session.step(q, k_new, v_new)
+```
+
+The earlier 72.11 µs/token figure is retained only as a historical number: it
+allocated random tensors inside the timed loop and is not comparable. The graph
+session captures on the first step, so warm it up before measuring and do not
+reset between warmup and timing.
+
+Raw data: [`token-loop-graph-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-graph-h100-gpu1-20261124.json).

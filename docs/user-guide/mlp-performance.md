@@ -54,16 +54,60 @@ path, but the graph path on the same build is **11.9 µs**, faster than eager
 (31.3 µs). The default host is the price of the safety checks, not of the
 generated GEMM.
 
+## The fair comparison is best deployment vs best deployment
+
+A comparison is only fair when both sides use the same deployment tier and the
+same timing boundary. Three tiers are worth reporting, separately:
+
+### Best deployment, steady-state loop (recommended headline)
+
+Both frameworks captured in a CUDA Graph and replayed without per-call sync:
+
+| path | µs/call |
+|---|---:|
+| **FlowGPU zero-copy GraphRunner** | **7.90** |
+| eager + CUDA Graph | 11.90 |
+
+FlowGPU is 1.5x faster here because the first GEMM fuses silu (two kernels
+instead of eager's three). The GPU kernel times are close: FlowGPU 5.45 µs,
+eager 4.98 µs.
+
+### Out-of-the-box guarded per-call (secondary table)
+
+| path | per-call p50 |
+|---|---:|
+| FlowGPU default | 39.1 µs |
+| eager bf16 | 31.3 µs |
+| torch.compile default | 59.5 µs |
+
+This tier says what a user gets without choosing a deployment path; it is not
+the serving comparison, because the guarded FlowGPU call includes allocation
+and validation that the graph path deliberately removes.
+
+### GPU kernel time only
+
+| path | kernels |
+|---|---:|
+| FlowGPU (2 kernels) | 5.45 µs |
+| eager (2 cuBLAS + silu) | 4.98 µs |
+
+Do **not** compare FlowGPU zero-copy graph (7.90) against eager default
+(31.3), or the M2 `graph` value (6.77) against the M2 `eager` value (34.91):
+those mix deployment tiers. Report each tier with its label.
+
 ## What to use
 
 ```python
-from flowgpu.compiler.runtime.graph import prepare_graph_pipeline
+from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+from flowgpu.compiler.runtime.graph import GraphRunner
 
-runner = prepare_graph_pipeline(
+plan = prepare_execution_plan(
     source, pipeline="mlp", args=(x, w1, w2),
-    cache_dir=".flowgpu-cache", shape_bindings={"B": 64, "D": 256, "H": 512})
-runner(x, w1, w2)   # CUDA Graph replay path
+    cache_dir=".flowgpu-cache", validator=lambda r: True,
+    shape_bindings={"B": 64, "D": 256, "H": 512})
+runner = GraphRunner(plan, (x, w1, w2), copy_inputs=False)
+runner.replay()
 ```
 
-For latency-sensitive serving, use the graph path; keep the guarded call for
-validation and testing. The small-M tile fix applies to both.
+For latency-sensitive serving, use the zero-copy graph; keep the guarded call
+for validation and testing. The small-M tile fix applies to both.

@@ -1,0 +1,9 @@
+{
+  "environment": "H100 GPU1, shared",
+  "steps": 32,
+  "warmup": 4,
+  "protocol": "precomputed token tensors; warmup before timing; no per-call sync",
+  "compiled_inplace": {"per_token_us": 38.75518450513482, "tokens_per_s": 25802.99933464402},
+  "graph_inplace": {"per_token_us": 20.832318114116788, "tokens_per_s": 48002.339179064336},
+  "note": "the earlier 72.11 us/token figure allocated random tensors inside the timed loop and is superseded by this precomputed measurement"
+}

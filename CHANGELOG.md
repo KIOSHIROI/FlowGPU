@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.73.0
+
+- Add CUDA Graph replay to DecodeSession: 20.83 us/token, 48,002.3 tokens/s
+  vs 38.76 us/token for the compiled in-place loop.
+- Fix the token-loop timing protocol: tokens are precomputed before timing; the
+  old 72.11 us/token included torch.randn allocation.
+
 ## 0.72.0
 
 - Add a small-M wide-N matmul tile: M=64 MLP kernels drop from 11.81 us to
