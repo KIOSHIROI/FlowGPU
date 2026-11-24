@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.91.0
+
+- Add BlockTable: request -> blocks mapping, per-token append, flat locations
+  and release over PagedKVCache.
+
 ## 0.90.0
 
 - Add llama3_prefill_block.fgpu: 8-token causal prefill with contiguous KV
