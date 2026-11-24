@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.96.0
+
+- Add llama3_decode_block_masked.fgpu: explicit masked attention with host
+  mask and q_scale. Invalid cache slots no longer contribute (bit-identical
+  output in the smoke test).
+- decode_loop / generate_loop use the masked block; the unmasked example now
+  requires all cache slots to hold real tokens.
+
 ## 0.95.0
 
 - Add examples/generate_loop.py: embedding -> cached decode block -> lm_head ->

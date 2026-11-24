@@ -14,12 +14,12 @@ token id
 Host pieces used:
 
 - `PagedKVCache` and `BlockTable` for the KV slots;
-- the compiled `llama3_decode_block` for attention/MLP/cache;
+- the compiled masked decode block for attention/MLP/cache;
 - the compiled `lm_head` for logits;
 - `greedy` from `sampling`.
 
 H100 run: 8 decode steps, cache locations `[0..7]`, tokens
-`[3, 105, 43, 17, 95, 10, 86, 60, 7]`, all inside the 128-token vocabulary.
+`[3, 103, 107, 63, 62, 118, 61, 81, 56]`, all inside the 128-token vocabulary.
 
 ## Scope
 

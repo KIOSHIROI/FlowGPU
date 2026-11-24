@@ -41,9 +41,25 @@ Still outside this example: causal mask (decode reads one slot), paged
 allocation inside the compiler, and dynamic batching.
 
 
+
+## Masked variant (use this for incremental decode)
+
+`examples/llama3_decode_block_masked.fgpu` replaces the attention operator
+with explicit 2D matmuls plus a host-supplied `mask [1,8]` and
+`q_scale [1,64]`:
+
+- `mask` is 0 for valid slots and `-1e9` for unused slots;
+- `q_scale` is `1/sqrt(depth)` (0.125 for depth 64);
+- scores are `q @ K^T`, masked, softmaxed, then multiplied by V.
+
+H100 check: with slots 0..3 valid, filling slots 4..7 with arbitrary values
+leaves `out` **bit-identical** (max diff 0.0). The unmasked example is only
+valid when every cache slot holds a real token; incremental decode must use
+the masked variant.
+
 ## Host loop wiring
 
-`examples/decode_loop.py` drives 8 decode steps for one request:
+`examples/decode_loop.py` drives 8 decode steps for one request using the masked variant:
 
 1. `BlockTable.add("req-1")`;
 2. each step calls `table.append("req-1")` to get the next flat cache slot;
