@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.69.0
+
+- Add ContinuousBatchSession with dynamic admission/retirement and an in-place
+  cache path: 30,997.9 tokens/s on 16 requests with a 4-slot batch.
+
 ## 0.68.0
 
 - Add rank-3 attention and a no-copy GQA decode: graph 7.09 us vs 9.04 us

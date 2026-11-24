@@ -1,0 +1,11 @@
+{
+  "environment": "H100 GPU1, shared",
+  "requests": 16,
+  "tokens": 128,
+  "capacity": 4,
+  "inplace": true,
+  "total_ms": 4.129314795136452,
+  "per_token_us": 32.26027183700353,
+  "tokens_per_s": 30997.878909779338,
+  "pipeline": "examples/quickstart/decode_batch_attention.fgpu"
+}

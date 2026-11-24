@@ -42,6 +42,7 @@ nav:
   - Python integration: integration.md
   - Prepared deployment: deployment.md
   - Token generation: token-generation.md
+  - Continuous batching: continuous-batching.md
   - Container image: container.md
   - Backends: backends.md
   - FAQ: faq.md

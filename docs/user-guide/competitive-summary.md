@@ -14,6 +14,7 @@ public probes; no private fixture is used.
 | correctness | **28 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#21-case-validation-run) |
 | compile time | 21-case distribution, median 11.3 ms | [M2 H100 report](competitive-m2-h100.md#compile-time-19-case-matrix) |
 | memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
+| continuous batching | in-place 4-slot: 32.26 µs/token, 30,997.9 tok/s | [Continuous batching](continuous-batching.md) |
 | token generation | functional 105.53 / in-place 72.11 µs per token | [Token generation](token-generation.md) |
 | FlagOS/FlagGems | 10-case baseline measured; matmul/add excluded by Triton-3.8 incompatibility | [FlagOS baseline](competitive-flagos.md) |
 | TVM/Relax | **blocked**: PyPI wheel is CPU-only (`cuda` disabled) | [FlagOS baseline](competitive-flagos.md#tvm) |

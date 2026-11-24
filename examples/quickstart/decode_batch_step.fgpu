@@ -1,0 +1,15 @@
+# One batched GQA decode step exposing the updated cache for scheduling.
+pipeline quickstart_decode_batch_step {
+  input q:bf16[4, 4, 1, 64]
+  input k_cache:bf16[4, 2, 128, 64]
+  input v_cache:bf16[4, 2, 128, 64]
+  input k_new:bf16[4, 2, 64]
+  input v_new:bf16[4, 2, 64]
+  input loc:int32[4]
+  k2 = cache_write_hsd_batch(k_cache, k_new, loc)
+  v2 = cache_write_hsd_batch(v_cache, v_new, loc)
+  out = attention(q, k2, v2)
+  output k2
+  output v2
+  output out
+}

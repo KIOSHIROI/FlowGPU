@@ -1,0 +1,8 @@
+# Batched decode attention over caller-owned head-major caches.
+pipeline quickstart_decode_batch_attention {
+  input q:bf16[4, 4, 1, 64]
+  input k_cache:bf16[4, 2, 128, 64]
+  input v_cache:bf16[4, 2, 128, 64]
+  out = attention(q, k_cache, v_cache)
+  output out
+}
