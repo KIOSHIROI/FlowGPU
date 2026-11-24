@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.61.0
+
+- Add a native Triton causal/GQA attention kernel; prepared/graph work and
+  graph is 2.93 us vs eager 186.26 us / Inductor 77.34 us.
+
 ## 0.60.0
 
 - Add a causal GQA attention case; correctness passes, but the library path

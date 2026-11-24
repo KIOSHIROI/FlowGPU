@@ -186,27 +186,24 @@ Raw data: [`m2-h100-gpu1-moe-large-20261124.json`](https://github.com/KIOSHIROI/
 
 
 
-## Causal GQA attention (library path)
+## Native causal GQA attention
 
-`causal_attention_gqa` is 4 query heads sharing 2 KV heads, causal prefill.
-This uses the hybrid **library** attention path, and it exposes the next missing
-production piece:
+`causal_attention_gqa` is 4 query heads sharing 2 KV heads with a causal mask.
+The default path is now a **native Triton attention kernel**: one program per
+(batch, query head, query position), scores computed against the key axis,
+causal mask in registers, softmax and value projection in the same kernel.
 
-| flowgpu | prepared | graph | eager | inductor |
-|---:|---:|---:|---:|---:|
-| 198.43 | unsupported | unsupported | 190.62 | **78.28** |
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 19.82 | 16.25 | 12.84 | **2.93** | 186.26 | 77.34 |
 
-- correctness passes against a float64 causal-GQA oracle;
-- the library SDPA host uses `torch.is_autocast_enabled`, which the execution
-  plan cannot freeze, so prepared/graph are unsupported;
-- Inductor is clearly faster.
-
-This is a real gap, not a win: a native Triton causal/GQA attention kernel and
-an execution-plan-compatible host are required before attention can claim a
-production path.
+Graph is 63x faster than eager and 26x faster than Inductor on this shape.
+Prepared and zero-copy graph now work because the host has no library call.
+Correctness matches a float64 causal-GQA oracle. The hybrid library path
+remains available via `gpu_backend='hybrid'`.
 
 The matrix is now 24 cases.
-Raw data: [`m2-h100-gpu1-causal-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-causal-20261124.json).
+Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-causal-native2-20261124.json).
 
 ## Decode-step attention over a KV cache
 

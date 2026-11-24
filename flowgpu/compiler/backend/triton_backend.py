@@ -2376,6 +2376,7 @@ from flowgpu.compiler.backend.conv2d_same_backend import conv2d_same_triton_kern
 from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_triton_kernel as _conv2d_stride2_kernel
 from flowgpu.compiler.backend.conv2d_stride2_backend import conv2d_stride2_same_triton_kernel as _conv2d_stride2_same_kernel
 from flowgpu.compiler.backend.conv2d_ex_backend import conv2d_ex_triton_kernel as _conv2d_ex_kernel
+from flowgpu.compiler.backend.attention_backend import attention_triton_kernel as _native_attention_kernel
 from flowgpu.compiler.backend.reduce_with_index_backend import (
     triton_kernel as _reduce_with_index_kernel)
 
@@ -2408,6 +2409,7 @@ EMITTERS = {
     "reduce_with_index": _reduce_with_index_kernel,
     "index_table": _segment_rank_kernel,
     "recurrence": _recurrence_kernel,
+    "attention": _native_attention_kernel,
 }
 
 
@@ -2601,10 +2603,6 @@ def lower(pipeline, graph, fusion, memory, *, gpu_backend="triton", library_matm
                     "Triton"))
                 continue
 
-        if group.anchor is not None and group.anchor.op in {"attention", "causal_attention"} and gpu_backend != "hybrid":
-            refusals.append(Refusal(group.anchor.op, (group.anchor.output,),
-                                    f"{group.anchor.op} requires gpu_backend='hybrid' (library attention)", "Triton"))
-            continue
         # Selective hybrid: a bare matmul group has no fused region, so
         # fusion gives it nothing and cuBLAS is the measured faster target
         # for a plain GEMM. A matmul with an attached prologue/epilogue
@@ -2670,10 +2668,19 @@ def lower(pipeline, graph, fusion, memory, *, gpu_backend="triton", library_matm
             kernels.append(emitter(graph, group, memory, name, config, autotune_fold=True))
         elif emitter is _layout_kernel and config.layout_on_device:
             kernels.append(_layout_device_kernel(graph, group, memory, name, config))
-        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _conv2d_ex_kernel, _gather_last_kernel,
+        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _conv2d_ex_kernel, _native_attention_kernel, _gather_last_kernel,
                                         _segment_rank_kernel, _recurrence_kernel,
                                         _reduce_with_index_kernel):
-            emitted = emitter(graph, group, memory, name, config)
+            try:
+                emitted = emitter(graph, group, memory, name, config)
+            except ValueError as error:
+                if kind == "attention" and "literal extents" in str(error):
+                    refusals.append(Refusal(
+                        group.anchor.op, tuple(group_results(graph, group)),
+                        "native attention requires literal extents; use "
+                        "gpu_backend='hybrid' for symbolic attention", "Triton"))
+                    continue
+                raise
             # A lowering may need more than one launch for one IR group: a pure
             # scatter is "copy the base, then write the addressed rows", and the
             # copy must complete before the scattered writes. The protocol is
