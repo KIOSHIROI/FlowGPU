@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.88.0
+
+- Add llama3_decode_block.fgpu: RMSNorm, QKV, RoPE, cache write, attention,
+  output projection, residual, SwiGLU MLP and residual in one cached decode
+  subgraph (single-head, batch 1).
+
 ## 0.87.0
 
 - Add PagedKVCache: host block allocator with block reuse, zeroing, page-bound

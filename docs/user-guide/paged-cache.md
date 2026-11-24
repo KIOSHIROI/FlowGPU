@@ -21,6 +21,8 @@ cache.release(block)
 - `write/read` validate `[heads, depth]` and page bounds;
 - no scheduler, request lifecycle or eviction policy is implied.
 
+A cached decode block example is in [Cached decode block](decode-block.md).
+
 The allocator is deliberately separate from the compiler: a serving engine can
 own request scheduling and block tables while FlowGPU compiles the cache-aware
 attention and MLP subgraphs.
