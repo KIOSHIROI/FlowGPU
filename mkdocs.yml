@@ -47,6 +47,7 @@ nav:
   - Paged KV cache: paged-cache.md
   - Token loop: generate-loop.md
   - Closed loop: closed-loop.md
+  - Trained parity: trained-parity.md
   - Dynamic batching: dynamic-batching.md
   - Cached decode block: decode-block.md
   - Cached prefill block: prefill-block.md

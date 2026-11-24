@@ -1,0 +1,14 @@
+{
+  "model": "one TinyBlock layer, D=64, H=128, vocab=128, 8-token prompt",
+  "training": "400 Adam steps on a fixed 0..7 pattern, final loss 2.8177e-05",
+  "dtype": "bf16",
+  "prompt": [0, 1, 2, 3, 4, 5, 6, 7],
+  "torch_generated": [0, 0, 0, 0, 7],
+  "flowgpu_generated": [0, 0, 0, 0, 7],
+  "token_match": true,
+  "prefill_hidden_maxdiff": 0.09375,
+  "prefill_k_maxdiff": 0.0234375,
+  "prefill_v_maxdiff": 0.015625,
+  "fp32_control": {"token_match": true, "prefill_hidden_maxdiff": 2.86102294921875e-06, "prefill_k_maxdiff": 7.152557373046875e-07},
+  "note": "Synthetic pattern, not language quality. The bf16 chain matches PyTorch token-for-token; the fp32 control confirms the semantics rather than bf16 rounding."
+}

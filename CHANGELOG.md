@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Add a trained tiny-model parity experiment: PyTorch and FlowGPU generate
+  the same 5 tokens; bf16 hidden diff is 0.094 and the fp32 control is 2.9e-6.
+- This is semantic/correctness evidence, not language quality or speed.
+
 ## 1.0.0
 
 - Add examples/prefill_decode_generate.py: prompt -> cached prefill -> LM head ->

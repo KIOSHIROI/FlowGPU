@@ -1,0 +1,55 @@
+# One cached decode block: RMSNorm, QKV, RoPE, KV-cache write, attention,
+# output projection, residual, SwiGLU MLP and residual.
+#
+# Single-head, batch=1, cache is [heads=1, slots=8, depth=64]; the caller
+# supplies the RoPE table for the current position and the flat cache slot.
+pipeline llama3_decode_block_masked32_fp32 {
+    input x        : fp32[1,64]
+    input norm1_w  : fp32[64]
+    input w_q      : fp32[64,64]
+    input w_k      : fp32[64,64]
+    input w_v      : fp32[64,64]
+    input w_o      : fp32[64,64]
+    input norm2_w  : fp32[64]
+    input w_gate   : fp32[64,128]
+    input w_up     : fp32[64,128]
+    input w_down   : fp32[128,64]
+    input rope_cos : fp32[1,64]
+    input rope_sin : fp32[1,64]
+    input k_cache  : fp32[1,32,64]
+    input v_cache  : fp32[1,32,64]
+    input loc      : int32[1]
+    input mask     : fp32[1,32]
+    input q_scale  : fp32[1,64]
+
+    x_norm1 = rms_norm(x, norm1_w)
+    q = rope(matmul(x_norm1, w_q), rope_cos, rope_sin)
+    k_new = rope(matmul(x_norm1, w_k), rope_cos, rope_sin)
+    v_new = matmul(x_norm1, w_v)
+
+    k3 = reshape(k_new, [1,64])
+    v3 = reshape(v_new, [1,64])
+    k_out = cache_write_hsd(k_cache, k3, loc)
+    v_out = cache_write_hsd(v_cache, v3, loc)
+    k2 = reshape(k_out, [32,64])
+    q_scaled = mul(q, q_scale)
+    q_t = transpose(q_scaled)
+    scores = add(transpose(matmul(k2, q_t)), mask)
+    probs = softmax(scores)
+    v2 = reshape(v_out, [32,64])
+    attn = matmul(probs, v2)
+    attn_proj = matmul(attn, w_o)
+    x_mid = add(x, attn_proj)
+
+    x_norm2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(x_norm2, w_gate)
+    up = matmul(x_norm2, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+    output k_out
+    output v_out
+}

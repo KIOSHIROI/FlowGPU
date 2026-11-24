@@ -24,6 +24,8 @@ Components used:
 H100 run: prompt `[0..7]`, decode locations `[8..11]`, generated tokens
 `[88, 109, 50, 75, 59]`, all inside the 128-token vocabulary.
 
+A trained-weights token-for-token check is in [Trained-model parity](trained-parity.md).
+
 ## What v1.0.0 means
 
 The runtime pieces now form a complete token loop: cache, prefill, decode,

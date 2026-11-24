@@ -1,0 +1,7 @@
+# Minimal LM head: hidden state -> vocabulary logits.
+pipeline lm_head_fp32 {
+    input h: fp32[1,64]
+    input w: fp32[64,128]
+    logits = matmul(h, w)
+    output logits
+}
