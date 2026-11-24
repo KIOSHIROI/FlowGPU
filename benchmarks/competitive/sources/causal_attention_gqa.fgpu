@@ -1,0 +1,8 @@
+# Causal GQA attention prefill: 4 query heads share 2 KV heads.
+pipeline quickstart_causal_gqa {
+  input q:bf16[2, 4, 16, 32]
+  input k:bf16[2, 2, 16, 32]
+  input v:bf16[2, 2, 16, 32]
+  out = causal_attention(q, k, v)
+  output out
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.60.0
+
+- Add a causal GQA attention case; correctness passes, but the library path
+  loses to Inductor and is not prepared/graph compatible. Native attention is
+  the next production gap.
+
 ## 0.59.0
 
 - Add decode-step attention over a fixed KV cache: graph 9.88 us vs eager

@@ -25,7 +25,7 @@ import argparse
 import json
 import pathlib
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -44,6 +44,7 @@ class DeviceCase:
     output: str
     atol: float
     rtol: float
+    compile_options: dict = field(default_factory=dict)
 
 
 def load_cases(path: pathlib.Path) -> list[DeviceCase]:
@@ -59,6 +60,7 @@ def load_cases(path: pathlib.Path) -> list[DeviceCase]:
                          for name, shape, dtype in case["inputs"]),
             output=case["output"], atol=float(case.get("atol", 1e-4)),
             rtol=float(case.get("rtol", 1e-4)),
+            compile_options=dict(case.get("compile_options", {})),
         ))
     return cases
 
@@ -174,12 +176,12 @@ def _flowgpu_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     from flowgpu.compiler.runtime.runtime import compile_pipeline
     source = (ROOT / case.source).read_text()
     started = time.perf_counter()
-    compiled = compile_source(source, shape_bindings=case.bindings)
+    compiled = compile_source(source, shape_bindings=case.bindings, **case.compile_options)
     by_name = {item.pipeline.name: item for item in compiled.pipelines}
     if case.pipeline not in by_name:
         raise ValueError(f"no pipeline {case.pipeline!r}")
     run = compile_pipeline(source, pipeline=case.pipeline, cache_dir=str(cache_dir),
-                           shape_bindings=case.bindings)
+                           shape_bindings=case.bindings, **case.compile_options)
     compile_ms = (time.perf_counter() - started) * 1000.0
     def call():
         return _as_dict(run(*args), case.output)
@@ -246,7 +248,7 @@ def _flowgpu_graph_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
         validator=lambda result: all(
             bool(torch.isfinite(value).all()) for value in result.values()
             if hasattr(value, "isfinite")),
-        shape_bindings=case.bindings,
+        shape_bindings=case.bindings, **case.compile_options,
     )
     runner = GraphRunner(plan, args, copy_inputs=False)
     prep_ms = (time.perf_counter() - started) * 1000.0
@@ -264,7 +266,7 @@ def _flowgpu_prepared_graph_runner(case: DeviceCase, args, *, cache_dir: pathlib
         validator=lambda result: all(
             bool(torch.isfinite(value).all()) for value in result.values()
             if hasattr(value, "isfinite")),
-        shape_bindings=case.bindings,
+        shape_bindings=case.bindings, **case.compile_options,
     )
     prep_ms = (time.perf_counter() - started) * 1000.0
     return (lambda: runner(*args)), prep_ms
@@ -284,7 +286,7 @@ def _flowgpu_prepared_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path)
         validator=lambda result: all(
             bool(torch.isfinite(value).all()) for value in result.values()
             if hasattr(value, "isfinite")),
-        shape_bindings=case.bindings,
+        shape_bindings=case.bindings, **case.compile_options,
     )
     prep_ms = (time.perf_counter() - started) * 1000.0
     buffers = plan.allocate_buffers()

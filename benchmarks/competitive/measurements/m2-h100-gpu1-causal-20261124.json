@@ -1,0 +1,59 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "causal_attention_gqa",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 29.899200797080994,
+          "full_us": 198.4287977218628,
+          "compile_ms": 111.91238183528185,
+          "peak_bytes": 67240448
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 30.76159954071045,
+          "full_us": 190.62399864196777,
+          "compile_ms": 0.0,
+          "peak_bytes": 67232256
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 13.651199638843536,
+          "full_us": 78.27839851379395,
+          "compile_ms": 2083.38485378772,
+          "peak_bytes": 67207168
+        }
+      },
+      "flowgpu_prepared_error": "ValueError: unsupported host operation in execution plan: torch.is_autocast_enabled",
+      "flowgpu_prepared_graph_error": "ValueError: unsupported host operation in execution plan: torch.is_autocast_enabled",
+      "flowgpu_graph_error": "ValueError: unsupported host operation in execution plan: torch.is_autocast_enabled",
+      "triton_error": "ValueError: no Triton baseline for causal_attention_gqa"
+    }
+  ]
+}

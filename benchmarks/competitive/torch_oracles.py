@@ -9,6 +9,15 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "causal_attention_gqa":
+        q, k, v = args
+        h, g = q.shape[1], k.shape[1]
+        kk = k.repeat_interleave(h // g, dim=1)
+        vv = v.repeat_interleave(h // g, dim=1)
+        scores = q.float() @ kk.float().transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        mask = torch.ones(q.shape[-2], k.shape[-2], device=q.device, dtype=torch.bool).tril()
+        scores = scores.masked_fill(~mask, float("-inf"))
+        return {"out": (torch.softmax(scores, dim=-1) @ vv.float()).to(q.dtype)}
     if case_name == "decode_attention":
         q, k_cache, v_cache = args
         return {"out": torch.softmax(q @ k_cache.t(), dim=-1) @ v_cache}
@@ -127,6 +136,15 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "causal_attention_gqa":
+        q, k, v = args
+        h, g = q.shape[1], k.shape[1]
+        kk = k.repeat_interleave(h // g, dim=1)
+        vv = v.repeat_interleave(h // g, dim=1)
+        scores = q.double() @ kk.double().transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        mask = torch.ones(q.shape[-2], k.shape[-2], device=q.device, dtype=torch.bool).tril()
+        scores = scores.masked_fill(~mask, float("-inf"))
+        return {"out": torch.softmax(scores, dim=-1) @ vv.double()}
     if case_name == "decode_attention":
         q, k_cache, v_cache = args
         return {"out": torch.softmax(q.double() @ k_cache.double().t(), dim=-1) @ v_cache.double()}
