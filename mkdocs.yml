@@ -44,6 +44,7 @@ nav:
   - Token generation: token-generation.md
   - Continuous batching: continuous-batching.md
   - Prefill + decode: prefill-decode.md
+  - Paged KV cache: paged-cache.md
   - MLP performance: mlp-performance.md
   - Real Llama 3 MLP: real-llama3-mlp.md
   - PyTorch custom op: torch-integration.md

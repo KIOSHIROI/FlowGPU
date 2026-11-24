@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.87.0
+
+- Add PagedKVCache: host block allocator with block reuse, zeroing, page-bound
+  checks and flat locations for cache-aware pipelines.
+
 ## 0.86.0
 
 - Add inference-only token selection helpers: greedy and temperature/top-k
