@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.59.0
+
+- Add decode-step attention over a fixed KV cache: graph 9.88 us vs eager
+  25.29 us / Inductor 59.71 us.
+
 ## 0.58.0
 
 - Add the first end-to-end decoder layer to M2: graph 32.16 us vs eager

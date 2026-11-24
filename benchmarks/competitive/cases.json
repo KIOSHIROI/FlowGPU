@@ -820,6 +820,42 @@
       "atol": 0.05,
       "rtol": 0.05,
       "oracle": "llama3_decoder_layer"
+    },
+    {
+      "name": "decode_attention",
+      "source": "examples/quickstart/decode_attention.fgpu",
+      "pipeline": "quickstart_decode_attention",
+      "bindings": {},
+      "inputs": [
+        [
+          "q",
+          [
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_cache",
+          [
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_cache",
+          [
+            128,
+            64
+          ],
+          "bf16"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "decode_attention"
     }
   ]
 }
