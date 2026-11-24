@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.81.0
+
+- Add register_torch_op(): expose a compiled FlowGPU subgraph as a PyTorch
+  custom op while the host owns weights and scheduling.
+- Verified on the real Llama 3 MLP (relative error 1.7e-3).
+
 ## 0.80.0
 
 - compile_pipeline() auto-resolves the device GEMM policy like prepared plans.

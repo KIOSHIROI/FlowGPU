@@ -46,6 +46,7 @@ nav:
   - Prefill + decode: prefill-decode.md
   - MLP performance: mlp-performance.md
   - Real Llama 3 MLP: real-llama3-mlp.md
+  - PyTorch custom op: torch-integration.md
   - Container image: container.md
   - Backends: backends.md
   - FAQ: faq.md

@@ -88,6 +88,10 @@ session. L4 keeps the safe 16x64x64 small-M and 128x128 large-N tiles. Shared
 device load moved absolute times, so treat this as a deployment-path
 observation, not a universal speed claim.
 
+## Host integration
+
+`register_torch_op()` exposes the compiled MLP as `torch.ops.flowgpu.llama3_mlp`; the host keeps the weights and schedule. See [PyTorch custom op](torch-integration.md).
+
 ## Why this task matters
 
 It exposes the real boundary of the current implementation:
