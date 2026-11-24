@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.0
+
+- Add a stacked-MLP benchmark: one prepared plan reused across 4 layer weight
+  sets, 1.007x eager at T=1. Document the host buffer ping-pong requirement
+  and why a static graph is not the reuse path when weights change.
+
 ## 0.81.0
 
 - Add register_torch_op(): expose a compiled FlowGPU subgraph as a PyTorch

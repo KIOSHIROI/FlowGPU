@@ -92,6 +92,29 @@ observation, not a universal speed claim.
 
 `register_torch_op()` exposes the compiled MLP as `torch.ops.flowgpu.llama3_mlp`; the host keeps the weights and schedule. See [PyTorch custom op](torch-integration.md).
 
+
+## Reusing one compiled artifact across layers
+
+A decoder has many MLPs with the same shape but different weights. The compiled
+host can be prepared once and called with each layer's weights:
+
+```python
+result = plan.run_into(x, w_gate, w_up, w_down, buffers=buffers)
+```
+
+The input must be copied from the previous output buffer before the next layer:
+the prepared plan's output buffer cannot alias its input. That copy is tiny for
+decode (one row) and is the host's responsibility.
+
+Four stacked layers with distinct weights, T=1, measured **1.007x eager** on a
+shared H100 (relative error 8.8e-3). The compiled artifact is reused; only the
+weight tensors change. A static CUDA Graph is not suitable here because its
+weight pointers are fixed per layer; prepared/custom-op calls are the reuse
+path.
+
+This is the host-integration lesson for a real model: **reuse code, pass
+weights, ping-pong buffers.**
+
 ## Why this task matters
 
 It exposes the real boundary of the current implementation:
@@ -100,4 +123,4 @@ It exposes the real boundary of the current implementation:
 - the remaining gap is GEMM tile/scheduling quality, not the language;
 - next steps are tile/autotune, split-K for decode, and gate/up packing.
 
-Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json), [`clamped`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-clamped-20261124.json), [`warps`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-warps-20261124.json), [`k128`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-k128-20261124.json), [`auto-device`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-auto-device-20261124.json).
+Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json), [`clamped`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-clamped-20261124.json), [`warps`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-warps-20261124.json), [`k128`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-k128-20261124.json), [`auto-device`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-auto-device-20261124.json), [`stack`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-stack-h100-20261124.json).
