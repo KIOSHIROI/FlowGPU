@@ -28,6 +28,22 @@ H100 check: with `loc=4`, filling slots 12..31 with arbitrary values leaves
 `(1,32,64)` are finite. The plain prefill example only attends to the new
 tokens; this variant is the one that matches a real cached prefill.
 
+
+## Prefill to decode on the same cache
+
+`examples/prefill_decode_loop.py` uses one 32-slot `PagedKVCache`:
+
+1. `BlockTable` reserves slots 0..7 for an 8-token prompt;
+2. `llama3_prefill_block_cached` writes those slots and returns the last
+   hidden state;
+3. `llama3_decode_block_masked32` (same 32-slot cache shape) appends four
+   decode tokens at locations 8..11;
+4. each decode step masks positions past the written count.
+
+H100 run: locations `[0..11]`, decode output `(1,64)` finite, and all twelve
+slots are written. The two pipelines share one cache layout; the host owns the
+position bookkeeping.
+
 ## Scope
 
 Single-head, batch 1, fixed 8-token prompt and 32 slots. The causal attention

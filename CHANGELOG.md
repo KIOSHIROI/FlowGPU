@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.99.0
+
+- Add examples/prefill_decode_loop.py: one 32-slot PagedKVCache written by
+  cached prefill (slots 0..7) then masked decode (8..11).
+- Add llama3_decode_block_masked32.fgpu for the shared 32-slot cache shape.
+
 ## 0.98.0
 
 - Add cached_attention: causal attention over a cached prefix plus the new
