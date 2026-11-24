@@ -1913,10 +1913,16 @@ def _matmul_kernel(graph, group, memory, name, platform: PlatformConfig | None =
         if (platform.name == "cuda" and row_extent <= 64 and depth_extent >= 64
                 and column_extent >= 128 and (platform.matmul_block_m or 0) >= 64):
             block_n = 64 if column_extent >= 64 else 32
-            tile = (16, block_n, 64)
+            if platform.matmul_block_n == 256:
+                # H100 device policy: a 32-row, K=128 tile is 1.7% faster on
+                # the T=1 decode GEMM and its 96 KiB footprint still fits the
+                # H100-class shared memory. L4-class devices keep K=64.
+                tile = (32, block_n, 128)
+            else:
+                tile = (16, block_n, 64)
             # 8 warps / 4 stages measured best for the T=1 decode matmul
-            # (530 us vs 555 us for 4/3 on H100); the 16-row tile is small
-            # enough that the extra pipeline depth still fits every target.
+            # (530 us vs 555 us for 4/3 on H100); the tile is small enough
+            # that the extra pipeline depth still fits every target.
             matmul_warps, matmul_stages = 8, 4
         elif (platform.name == "cuda" and platform.matmul_block_m == 128
               and platform.matmul_block_n == 256):

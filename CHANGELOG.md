@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.79.0
+
+- H100 small-M tile uses 32x64x128 / 8 warps / 4 stages: prepared real
+  Llama 3 decode 0.99x eager, graph 0.99x, prepared prefill 0.96x.
+
 ## 0.78.0
 
 - Small-M GEMM tile uses 8 warps / 4 stages: real Llama 3 decode drops from
