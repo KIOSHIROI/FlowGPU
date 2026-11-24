@@ -1,0 +1,89 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "llama3_decoder_layer",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 32.206401228904724,
+          "full_us": 207.7183961868286,
+          "compile_ms": 187.28465773165226,
+          "peak_bytes": 33749504
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 32.16640055179596,
+          "full_us": 158.58880281448364,
+          "compile_ms": 6324.147393926978,
+          "peak_bytes": 33748992
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": null,
+          "full_us": 36.97119951248169,
+          "compile_ms": 223.54970034211874,
+          "peak_bytes": 33748992
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": null,
+          "full_us": 32.15999901294708,
+          "compile_ms": 129.33247070759535,
+          "peak_bytes": 33748992
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 1.9660554532954393,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 136.9920015335083,
+          "full_us": 475.545597076416,
+          "compile_ms": 0.0,
+          "peak_bytes": 67341312
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 1.9660554532954393,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 54.56640124320984,
+          "full_us": 197.63360023498535,
+          "compile_ms": 3534.025684930384,
+          "peak_bytes": 67336192
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for llama3_decoder_layer"
+    }
+  ]
+}

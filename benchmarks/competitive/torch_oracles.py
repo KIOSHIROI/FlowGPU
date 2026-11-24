@@ -9,6 +9,27 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "llama3_decoder_layer":
+        x, norm1_w, w_q, w_k, w_v, w_o, norm2_w, w_gate, w_up, w_down, cos, sin = args
+        def rms(v, w):
+            vf = v.float()
+            return vf * torch.rsqrt((vf * vf).mean(dim=-1, keepdim=True) + 1e-6) * w.float()
+        def rope(v, c, s):
+            d = v.shape[-1]
+            first = torch.arange(d, device=v.device) < d // 2
+            partner = torch.where(first, torch.arange(d, device=v.device) + d // 2,
+                                  torch.arange(d, device=v.device) - d // 2)
+            vp = v.index_select(-1, partner)
+            sign = torch.where(first, -1.0, 1.0)
+            return v * c.float() + sign * vp * s.float()
+        n1 = rms(x, norm1_w)
+        q, k, v = n1 @ w_q.float(), n1 @ w_k.float(), n1 @ w_v.float()
+        q, k = rope(q, cos, sin), rope(k, cos, sin)
+        attn = torch.softmax(q @ k.t(), dim=-1) @ v
+        x_mid = x.float() + attn @ w_o.float()
+        n2 = rms(x_mid, norm2_w)
+        hidden = torch.nn.functional.silu(n2 @ w_gate.float()) * (n2 @ w_up.float())
+        return {"out": (x_mid + hidden @ w_down.float()).to(x.dtype)}
     if case_name == "qk_transform":
         q, k, qw, kw, cos, sin = args
         def rms(x, w):
@@ -103,6 +124,27 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "llama3_decoder_layer":
+        x, norm1_w, w_q, w_k, w_v, w_o, norm2_w, w_gate, w_up, w_down, cos, sin = args
+        def rms(v, w):
+            vf = v.double()
+            return vf * torch.rsqrt((vf * vf).mean(dim=-1, keepdim=True) + 1e-6) * w.double()
+        def rope_fn(v, c, s):
+            d = v.shape[-1]
+            first = torch.arange(d, device=v.device) < d // 2
+            partner = torch.where(first, torch.arange(d, device=v.device) + d // 2,
+                                  torch.arange(d, device=v.device) - d // 2)
+            vp = v.index_select(-1, partner)
+            sign = torch.where(first, -1.0, 1.0)
+            return v * c.double() + sign * vp * s.double()
+        n1 = rms(x, norm1_w)
+        q, k, v = n1 @ w_q.double(), n1 @ w_k.double(), n1 @ w_v.double()
+        q, k = rope_fn(q, cos, sin), rope_fn(k, cos, sin)
+        attn = torch.softmax(q @ k.t(), dim=-1) @ v
+        x_mid = x.double() + attn @ w_o.double()
+        n2 = rms(x_mid, norm2_w)
+        hidden = torch.nn.functional.silu(n2 @ w_gate.double()) * (n2 @ w_up.double())
+        return {"out": x_mid + hidden @ w_down.double()}
     if case_name == "qk_transform":
         q, k, qw, kw, cos, sin = args
         def rms(x, w):

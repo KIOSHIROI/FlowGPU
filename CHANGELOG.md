@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.58.0
+
+- Add the first end-to-end decoder layer to M2: graph 32.16 us vs eager
+  475.55 us / Inductor 197.63 us.
+
 ## 0.57.1
 
 - Align the competitive summary with the 21-case matrix and the measured

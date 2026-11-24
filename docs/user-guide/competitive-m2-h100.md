@@ -183,6 +183,23 @@ cases.
 
 Raw data: [`m2-h100-gpu1-moe-large-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-moe-large-20261124.json).
 
+
+## End-to-end decoder layer
+
+`llama3_decoder_layer` is the first full decoder block in the matrix: RMSNorm,
+QKV projections, RoPE, unscaled attention, output projection, residual, SwiGLU
+MLP and a second residual, all in one pipeline.
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 207.72 | 158.59 | 36.97 | **32.16** | 475.55 | 197.63 |
+
+Graph is 6.1x faster than Inductor and 14.8x faster than eager on this shape.
+The matrix is now 22 cases. This is still a single-head, non-causal, no-cache
+layer; KV-cache decode and GQA remain next-stage work.
+
+Raw data: [`m2-h100-gpu1-decoder-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decoder-20261124.json).
+
 ## QK RMSNorm + RoPE
 
 `qk_transform` is the QKV path: RMSNorm then split-half RoPE on 4-D `[B,H,S,D]`

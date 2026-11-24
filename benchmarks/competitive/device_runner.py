@@ -77,17 +77,22 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
     torch = _torch()
     generator = torch.Generator(device="cpu").manual_seed(seed)
     tensors = []
-    for _, shape, dtype in case.inputs:
+    for name, shape, dtype in case.inputs:
         torch_dtype = getattr(torch, DTYPES[dtype])
+        if case.name == "llama3_decoder_layer" and name in {"rope_cos", "rope_sin"}:
+            angles = torch.rand(shape, generator=generator) * 0.1
+            tensor = (torch.cos(angles) if name == "rope_cos" else torch.sin(angles)).to(torch_dtype)
+            tensors.append(tensor.cuda())
+            continue
         if not shape:
             # Rank-0 program scalars are Python numbers, not tensors.
             tensors.append(float(torch.rand((), generator=generator) * 0.001 + 1e-5))
             continue
         if dtype == "int32":
             tensor = torch.randint(-8, 9, shape, generator=generator, dtype=torch.int32)
-        elif case.name in {"moe_router_topk", "moe_router_topk_large"} and _ == "cap":
+        elif case.name in {"moe_router_topk", "moe_router_topk_large"} and name == "cap":
             tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)
-        elif case.name == "batch_norm" and _ == "var":
+        elif case.name == "batch_norm" and name == "var":
             tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)
         elif case.name == "pow_literal":
             # Negative base with a fractional exponent is NaN by contract; keep
