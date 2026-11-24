@@ -1,0 +1,89 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "moe_router_topk_large",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 28.206399083137512,
+          "full_us": 79.28799986839294,
+          "compile_ms": 133.5451602935791,
+          "peak_bytes": 33862656
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 28.174400329589844,
+          "full_us": 60.61599850654602,
+          "compile_ms": 5128.267601132393,
+          "peak_bytes": 33816064
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": null,
+          "full_us": 32.395198941230774,
+          "compile_ms": 143.444636836648,
+          "peak_bytes": 33816064
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": null,
+          "full_us": 27.983999252319336,
+          "compile_ms": 58.058504946529865,
+          "peak_bytes": 33816064
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 3.317207668274147e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 29.70080077648163,
+          "full_us": 61.580801010131836,
+          "compile_ms": 0.0,
+          "peak_bytes": 67393536
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 3.838570260261687e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 23.99519979953766,
+          "full_us": 90.36639928817749,
+          "compile_ms": 2996.785609051585,
+          "peak_bytes": 67389952
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for moe_router_topk_large"
+    }
+  ]
+}

@@ -25,6 +25,13 @@ def eager(case_name: str, args):
         return {"qr": rope(rms(q, qw), cos, sin)}
     if case_name == "topk_last":
         return {"values": torch.topk(args[0], 8, dim=-1).values}
+    if case_name == "moe_router_topk_large":
+        x, router_weight, cap = args
+        logits = x @ router_weight.t()
+        capped = torch.tanh(logits / cap) * cap
+        probs = torch.softmax(capped, dim=-1)
+        values, ids = torch.topk(capped, 8, dim=-1)
+        return {"weights": torch.gather(probs, -1, ids)}
     if case_name == "moe_router_topk":
         x, router_weight, cap = args
         logits = x @ router_weight.t()
@@ -112,6 +119,13 @@ def oracle(case_name: str, args):
         return {"qr": rope(rms(q, qw), cos, sin)}
     if case_name == "topk_last":
         return {"values": torch.topk(args[0].double(), 8, dim=-1).values}
+    if case_name == "moe_router_topk_large":
+        x, router_weight, cap = args
+        logits = x.double() @ router_weight.double().t()
+        capped = torch.tanh(logits / cap.double()) * cap.double()
+        probs = torch.softmax(capped, dim=-1)
+        values, ids = torch.topk(capped, 8, dim=-1)
+        return {"weights": torch.gather(probs, -1, ids)}
     if case_name == "moe_router_topk":
         x, router_weight, cap = args
         logits = x.double() @ router_weight.double().t()

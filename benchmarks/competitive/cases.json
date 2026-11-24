@@ -674,6 +674,42 @@
       "atol": 0.02,
       "rtol": 0.02,
       "oracle": "qk_transform"
+    },
+    {
+      "name": "moe_router_topk_large",
+      "source": "examples/quickstart/moe_router_topk_large.fgpu",
+      "pipeline": "moe_router_topk_large",
+      "bindings": {},
+      "inputs": [
+        [
+          "x",
+          [
+            32,
+            128
+          ],
+          "fp32"
+        ],
+        [
+          "router_weight",
+          [
+            64,
+            128
+          ],
+          "fp32"
+        ],
+        [
+          "cap",
+          [
+            1,
+            1
+          ],
+          "fp32"
+        ]
+      ],
+      "output": "weights",
+      "atol": 0.02,
+      "rtol": 0.02,
+      "oracle": "moe_router_topk_large"
     }
   ]
 }

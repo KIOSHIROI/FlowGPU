@@ -84,7 +84,7 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
             continue
         if dtype == "int32":
             tensor = torch.randint(-8, 9, shape, generator=generator, dtype=torch.int32)
-        elif case.name == "moe_router_topk" and _ == "cap":
+        elif case.name in {"moe_router_topk", "moe_router_topk_large"} and _ == "cap":
             tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)
         elif case.name == "batch_norm" and _ == "var":
             tensor = (torch.rand(shape, generator=generator) + 0.5).to(torch_dtype)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.55.0
+
+- Add a larger MoE router case ([32,128], 64 experts, k=8); graph 27.98 us
+  vs eager 61.58 us, showing the small-case gap is launch-bound.
+
 ## 0.54.2
 
 - Refresh the summary for 20 cases and record the MoE router as an open

@@ -167,6 +167,22 @@ and cached by the call site.
 
 
 
+
+## MoE scaling
+
+The same routing pipeline at a more realistic batch/router width
+(`[32,128]`, 64 experts, k=8):
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 79.29 | 60.62 | 32.40 | **27.98** | 61.58 | 90.37 |
+
+At this size FlowGPU's graph path beats eager and Inductor; the tiny `[4,16]`
+case still loses because six kernel launches dominate. The matrix is now 21
+cases.
+
+Raw data: [`m2-h100-gpu1-moe-large-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-moe-large-20261124.json).
+
 ## QK RMSNorm + RoPE
 
 `qk_transform` is the QKV path: RMSNorm then split-half RoPE on 4-D `[B,H,S,D]`
