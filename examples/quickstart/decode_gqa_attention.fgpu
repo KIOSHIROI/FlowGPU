@@ -1,0 +1,11 @@
+# Decode attention over a caller-owned head-major KV cache; the runtime writes
+# the new row in place before invoking this pipeline.
+pipeline quickstart_decode_gqa_attention {
+  input q:bf16[1, 4, 1, 64]
+  input k_cache:bf16[2, 128, 64]
+  input v_cache:bf16[2, 128, 64]
+  k4 = reshape(k_cache, [1, 2, 128, 64])
+  v4 = reshape(v_cache, [1, 2, 128, 64])
+  out = attention(q, k4, v4)
+  output out
+}

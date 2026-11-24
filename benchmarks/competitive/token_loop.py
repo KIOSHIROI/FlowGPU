@@ -13,13 +13,21 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--steps", type=int, default=8)
     parser.add_argument("--warmup", type=int, default=3)
+    parser.add_argument("--prepared", action="store_true")
+    parser.add_argument("--inplace", action="store_true")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     import torch
     from flowgpu.compiler.runtime.decode import DecodeSession
-    source = (ROOT / "examples/quickstart/decode_gqa_step.fgpu").read_text()
-    session = DecodeSession(source, "quickstart_decode_gqa_step",
-                            str(ROOT / ".competitive-cache/token-loop"))
+    if args.inplace:
+        source = (ROOT / "examples/quickstart/decode_gqa_attention.fgpu").read_text()
+        pipeline = "quickstart_decode_gqa_attention"
+    else:
+        source = (ROOT / "examples/quickstart/decode_gqa_step.fgpu").read_text()
+        pipeline = "quickstart_decode_gqa_step"
+    session = DecodeSession(source, pipeline,
+                            str(ROOT / ".competitive-cache/token-loop"),
+                            prepared=args.prepared, inplace=args.inplace)
     q = torch.randn(1, 4, 1, 64, device="cuda", dtype=torch.bfloat16)
     def run_steps(count):
         for _ in range(count):
@@ -30,7 +38,7 @@ def main(argv=None) -> int:
     torch.cuda.synchronize()
     start = time.perf_counter(); run_steps(args.steps); torch.cuda.synchronize()
     elapsed = time.perf_counter() - start
-    result = dict(steps=args.steps, total_ms=elapsed * 1000.0,
+    result = dict(steps=args.steps, prepared=args.prepared, inplace=args.inplace, total_ms=elapsed * 1000.0,
                   per_token_us=elapsed * 1e6 / args.steps,
                   tokens_per_s=args.steps / elapsed)
     print(json.dumps(result, indent=2) if args.json else result)

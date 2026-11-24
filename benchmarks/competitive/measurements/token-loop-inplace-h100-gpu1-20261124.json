@@ -1,0 +1,10 @@
+{
+  "environment": "H100 GPU1, shared",
+  "steps": 32,
+  "warmup": 4,
+  "inplace": true,
+  "prepared": false,
+  "per_token_us": 72.11181218735874,
+  "tokens_per_s": 13867.353623035158,
+  "pipeline": "examples/quickstart/decode_gqa_attention.fgpu"
+}

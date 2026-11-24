@@ -18,14 +18,16 @@ reshapes the head-major cache and runs native attention.
 
 32 steps, 4 warmup:
 
-| metric | value |
-|---|---:|
-| per token | **105.53 µs** |
-| tokens/s | **9,475.8** |
+| path | per token | tokens/s |
+|---|---:|---:|
+| functional cache write | 105.53 µs | 9,475.8 |
+| prepared functional | 102.30 µs | 9,774.7 |
+| **caller-owned cache, in-place row write** | **72.11 µs** | **13,867.4** |
 
-This is the **unoptimized functional-cache loop**: each step copies the entire
-16K cache and pays Python/host dispatch. It is a correctness-capable generation
-path, not a throughput claim. The next step is an in-place cache ABI and a
-prepared/graph decode loop.
+The in-place path uses `DecodeSession(inplace=True)`: the caller's `[H,S,D]`
+cache is updated with one row copy and the compiled attention pipeline only
+reads it. This removes the full-cache functional copy. It is still not a
+finished throughput claim; the remaining cost is Python/host dispatch and the
+absence of a captured multi-step graph.
 
-Raw data: [`token-loop-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-h100-gpu1-20261124.json).
+Raw data: [`token-loop-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-h100-gpu1-20261124.json), [`token-loop-inplace-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/token-loop-inplace-h100-gpu1-20261124.json).

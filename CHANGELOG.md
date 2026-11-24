@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.0
+
+- Add an in-place decode session path: 72.11 us/token and 13,867.4 tokens/s
+  vs 105.53 us/token for the functional cache loop.
+
 ## 0.65.0
 
 - Add DecodeSession and a 32-step token-generation benchmark: 105.53 us per
