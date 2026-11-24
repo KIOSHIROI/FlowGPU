@@ -233,8 +233,9 @@ runner(a, b)
 
 Verified on H100 GPU1 for symbolic vectoradd (128x128, 64x64) and literal add
 (1024, 2048). If a symbolic program uses an operator with no symbolic lowering
-(for example `mean_last`), `ShapeRunner` falls back to the literal per-shape
-rewrite instead of failing; `runner.mode` then reports `LiteralShapeRunner`.
+(for example `mean_last`, `sort_last`, `topk_last` or `conv2d`), `ShapeRunner`
+falls back to the literal per-shape rewrite instead of failing; `runner.mode`
+then reports `LiteralShapeRunner`.
 
 
 ## Candidate spaces

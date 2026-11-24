@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.56.0
+
+- Declaration-only shape detection: literal-only operators (sort/topk/conv)
+  now work from symbolic declarations through per-shape rewriting.
+- Verified symbolic sort_last and conv2d across two shapes on H100.
+
 ## 0.55.1
 
 - Validate all 21 cases: every backend passes, median compile 11.3 ms.

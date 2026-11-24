@@ -78,3 +78,29 @@ def test_shape_runner_falls_back_on_a_runtime_symbolic_failure(monkeypatch):
     assert runner("x")["out"] == "x"
     assert runner.mode == "LiteralShapeRunner"
     assert calls == ["symbolic-init", "literal-init", "literal-call"]
+
+
+def test_symbolic_declarations_are_detected_before_lowering():
+    from flowgpu.compiler.runtime.shape_runner import uses_symbolic_shapes
+    source = """
+pipeline p {
+  input x:fp16[N,D]
+  out = sort_last(x)
+  output out
+}
+"""
+    assert uses_symbolic_shapes(source, "p") is True
+
+
+def test_literal_runner_parses_declarations_without_lowering():
+    from flowgpu.compiler.runtime.literal_shape import LiteralShapeRunner
+    source = """
+pipeline p {
+  input a:fp16[N,D]
+  input b:fp16[N,D]
+  out = add(a, b)
+  output out
+}
+"""
+    runner = LiteralShapeRunner(source, "p", ".cache")
+    assert runner._names == ("a", "b")

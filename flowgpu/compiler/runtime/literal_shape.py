@@ -36,21 +36,15 @@ class LiteralShapeRunner:
     _runs: dict = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
-        from flowgpu.compiler.compile import compile_source
         self.options = dict(self.options or {})
         if "shape_bindings" in self.options:
             raise ValueError("LiteralShapeRunner rewrites literal input declarations")
-        compiled = compile_source(self.source, emit=False, **self.options)
-        selected = None
-        for item in compiled.pipelines:
-            if item.pipeline.name == self.pipeline:
-                selected = item
-                break
-        if selected is None:
-            raise ValueError(f"no pipeline {self.pipeline!r}")
-        self._names = tuple(statement.name for statement in selected.pipeline.statements
-                            if getattr(statement, "type", None) is not None
-                            and type(statement).__name__ == "InputDecl")
+        # Parse declarations without lowering: an operator that rejects
+        # symbolic extents must still be usable after the per-shape rewrite.
+        self._names = tuple(re.findall(r"input\s+([A-Za-z_][A-Za-z0-9_]*)\s*:",
+                                       self.source))
+        if not self._names:
+            raise ValueError("LiteralShapeRunner found no input declarations")
     def _run_for(self, tensors):
         key = tuple(tuple(int(extent) for extent in tensor.shape) for tensor in tensors)
         if key in self._runs:

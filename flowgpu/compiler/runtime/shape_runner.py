@@ -11,18 +11,16 @@ from dataclasses import dataclass
 
 
 def uses_symbolic_shapes(source: str, pipeline: str) -> bool:
-    from flowgpu.compiler.compile import compile_source
-    compiled = compile_source(source, emit=False)
-    for item in compiled.pipelines:
-        if item.pipeline.name != pipeline:
-            continue
-        for node in item.dataflow.nodes:
-            if node.op != "input":
-                continue
-            if any(not str(extent).isdigit() for extent in item.dataflow.values[node.output].shape):
-                return True
-        return False
-    raise ValueError(f"no pipeline {pipeline!r}")
+    """Inspect declarations only: an operator may reject symbolic lowering."""
+    import re
+    if not re.search(rf"pipeline\s+{re.escape(pipeline)}\b", source):
+        raise ValueError(f"no pipeline {pipeline!r}")
+    for match in re.finditer(r"input\s+[A-Za-z_][A-Za-z0-9_]*\s*:\s*[A-Za-z_][A-Za-z0-9_]*\s*\[([^\]]*)\]",
+                             source):
+        dimensions = [item.strip() for item in match.group(1).split(",") if item.strip()]
+        if any(not dimension.isdigit() for dimension in dimensions):
+            return True
+    return False
 
 
 @dataclass
