@@ -1,0 +1,12 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "protocol": "prepared plan; small-M tile 16x64 with 8 warps / 4 stages; p50, 15 iterations, 3 repeats",
+  "device_policy": {"large_matmul_block_n": 256, "small_m_warps": 8, "small_m_stages": 4},
+  "cases": [
+    {"tokens": 1, "prepared_over_eager": 1.007, "graph_over_eager": 1.001, "default_over_eager": 1.005},
+    {"tokens": 2048, "prepared_over_eager": 0.951, "graph_over_eager": 0.994, "default_over_eager": 1.088}
+  ],
+  "note": "One shared-device session. Decode is now within about 1% of eager; prepared prefill is about 5% faster. Absolute times moved with load."
+}

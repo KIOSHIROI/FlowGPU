@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.78.0
+
+- Small-M GEMM tile uses 8 warps / 4 stages: real Llama 3 decode drops from
+  1.05x to 1.01x eager; prepared prefill measures 0.95x in one shared session.
+
 ## 0.77.0
 
 - Clamp the device 128x256 tile to literal M/N powers of two; 64-column GEMMs

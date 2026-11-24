@@ -1914,7 +1914,10 @@ def _matmul_kernel(graph, group, memory, name, platform: PlatformConfig | None =
                 and column_extent >= 128 and (platform.matmul_block_m or 0) >= 64):
             block_n = 64 if column_extent >= 64 else 32
             tile = (16, block_n, 64)
-            matmul_warps, matmul_stages = 4, 3
+            # 8 warps / 4 stages measured best for the T=1 decode matmul
+            # (530 us vs 555 us for 4/3 on H100); the 16-row tile is small
+            # enough that the extra pipeline depth still fits every target.
+            matmul_warps, matmul_stages = 8, 4
         elif (platform.name == "cuda" and platform.matmul_block_m == 128
               and platform.matmul_block_n == 256):
             # Device policy asks for the H100 128x256 tile. Clamp each literal

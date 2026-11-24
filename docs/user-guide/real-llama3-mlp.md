@@ -77,14 +77,15 @@ In one 3-repeat session on a shared H100, the prepared plan measured:
 
 | tokens | prepared / eager | graph / eager | default / eager |
 |---:|---:|---:|---:|
-| 1 | 1.05x | 1.05x | 1.05x |
-| 2048 | **0.98x** | 1.00x | 1.13x |
+| 1 | **1.01x** | 1.00x | 1.01x |
+| 2048 | **0.95x** | 0.99x | 1.09x |
 
-The prepared prefill path reused output buffers and the larger tile; decode is
-still about 5% slower. The device tile is clamped to literal M/N powers of two,
-so a 64-column GEMM does not launch a mostly-masked 256-column block. Shared
-device load moved absolute times, so treat this as a deployment-path
-observation, not a universal speed claim.
+The small-M tile now uses 8 warps and 4 stages (530 us vs 555 us for 4/3 on
+H100), bringing decode within about 1% of eager. Prepared prefill reused output
+buffers and the larger tile, measuring about 5% faster than eager in this
+session. The device tile is clamped to literal M/N powers of two. Shared device
+load moved absolute times, so treat this as a deployment-path observation, not
+a universal speed claim.
 
 ## Why this task matters
 
@@ -94,4 +95,4 @@ It exposes the real boundary of the current implementation:
 - the remaining gap is GEMM tile/scheduling quality, not the language;
 - next steps are tile/autotune, split-K for decode, and gate/up packing.
 
-Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json), [`clamped`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-clamped-20261124.json).
+Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json), [`clamped`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-clamped-20261124.json), [`warps`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-warps-20261124.json).
