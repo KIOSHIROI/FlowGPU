@@ -1915,6 +1915,15 @@ def _matmul_kernel(graph, group, memory, name, platform: PlatformConfig | None =
             block_n = 64 if column_extent >= 64 else 32
             tile = (16, block_n, 64)
             matmul_warps, matmul_stages = 4, 3
+        elif (platform.name == "cuda" and platform.matmul_block_m == 128
+              and platform.matmul_block_n == 256):
+            # Device policy asks for the H100 128x256 tile. Clamp each literal
+            # extent to a power of two so a 64-column GEMM does not launch a
+            # 256-column block that is mostly mask.
+            block_m = max(16, min(128, 1 << (row_extent - 1).bit_length()))
+            block_n = max(16, min(256, 1 << (column_extent - 1).bit_length()))
+            tile = (block_m, block_n, platform.matmul_block_k or 64)
+            matmul_warps, matmul_stages = 8, 3
     kernel = _make_kernel(
         name,
         "matmul",

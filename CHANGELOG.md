@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.77.0
+
+- Clamp the device 128x256 tile to literal M/N powers of two; 64-column GEMMs
+  no longer launch mostly-masked blocks. Prepared real MLP: prefill 0.98x
+  eager in one session, decode 1.05x; shared-device observation.
+
 ## 0.76.0
 
 - Prepared execution plans auto-select resolve_device_platform(): H100 uses

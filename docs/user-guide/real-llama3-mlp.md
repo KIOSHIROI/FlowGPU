@@ -77,12 +77,14 @@ In one 3-repeat session on a shared H100, the prepared plan measured:
 
 | tokens | prepared / eager | graph / eager | default / eager |
 |---:|---:|---:|---:|
-| 1 | 1.04x | 1.05x | 1.03x |
-| 2048 | **0.94x** | 0.97x | 1.11x |
+| 1 | 1.05x | 1.05x | 1.05x |
+| 2048 | **0.98x** | 1.00x | 1.13x |
 
-The prefill prepared path reused output buffers and the larger tile; decode is
-still about 4% slower. Shared-device load moved absolute times, so treat this
-as a deployment-path observation, not a universal speed claim.
+The prepared prefill path reused output buffers and the larger tile; decode is
+still about 5% slower. The device tile is clamped to literal M/N powers of two,
+so a 64-column GEMM does not launch a mostly-masked 256-column block. Shared
+device load moved absolute times, so treat this as a deployment-path
+observation, not a universal speed claim.
 
 ## Why this task matters
 
@@ -92,4 +94,4 @@ It exposes the real boundary of the current implementation:
 - the remaining gap is GEMM tile/scheduling quality, not the language;
 - next steps are tile/autotune, split-K for decode, and gate/up packing.
 
-Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json).
+Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json), [`clamped`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-prepared-clamped-20261124.json).
