@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.89.0
+
+- Add llama3_decode_block_gqa.fgpu: batch 2, 4 query heads, 2 KV heads,
+  depth 64, 8 slots; cache_write_hsd_batch plus full MLP/residual block.
+- H100 smoke test writes each batch's selected slot and leaves other slots zero.
+
 ## 0.88.0
 
 - Add llama3_decode_block.fgpu: RMSNorm, QKV, RoPE, cache write, attention,

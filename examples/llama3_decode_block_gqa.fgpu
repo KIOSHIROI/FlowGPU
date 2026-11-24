@@ -1,0 +1,48 @@
+# Batched GQA cached decode block: 2 sequences, 4 query heads, 2 KV heads,
+# depth 64, 8 cache slots. One row is written per (batch, KV head).
+pipeline llama3_decode_block_gqa {
+    input x        : bf16[2,64]
+    input norm1_w  : bf16[64]
+    input w_q      : bf16[64,256]
+    input w_k      : bf16[64,128]
+    input w_v      : bf16[64,128]
+    input w_o      : bf16[256,64]
+    input norm2_w  : bf16[64]
+    input w_gate   : bf16[64,128]
+    input w_up     : bf16[64,128]
+    input w_down   : bf16[128,64]
+    input rope_q_cos : bf16[2,256]
+    input rope_q_sin : bf16[2,256]
+    input rope_k_cos : bf16[2,128]
+    input rope_k_sin : bf16[2,128]
+    input k_cache  : bf16[2,2,8,64]
+    input v_cache  : bf16[2,2,8,64]
+    input loc      : int32[2]
+
+    x_norm1 = rms_norm(x, norm1_w)
+    q_flat = rope(matmul(x_norm1, w_q), rope_q_cos, rope_q_sin)
+    k_flat = rope(matmul(x_norm1, w_k), rope_k_cos, rope_k_sin)
+    v_flat = matmul(x_norm1, w_v)
+
+    q4 = reshape(q_flat, [2,4,1,64])
+    k3 = reshape(k_flat, [2,2,64])
+    v3 = reshape(v_flat, [2,2,64])
+    k_out = cache_write_hsd_batch(k_cache, k3, loc)
+    v_out = cache_write_hsd_batch(v_cache, v3, loc)
+    attn4 = attention(q4, k_out, v_out)
+    attn = reshape(attn4, [2,256])
+    attn_proj = matmul(attn, w_o)
+    x_mid = add(x, attn_proj)
+
+    x_norm2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(x_norm2, w_gate)
+    up = matmul(x_norm2, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+    output k_out
+    output v_out
+}

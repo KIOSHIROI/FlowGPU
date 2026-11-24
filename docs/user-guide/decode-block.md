@@ -20,6 +20,24 @@ The caller supplies:
 - `rope_cos/rope_sin`: the table for the current position;
 - the previous `k_cache/v_cache`.
 
+
+## Batched GQA variant
+
+`examples/llama3_decode_block_gqa.fgpu` is the serving-shaped variant:
+
+- batch `B=2`;
+- 4 query heads, 2 KV heads (GQA group size 2);
+- depth 64;
+- 8 cache slots;
+- `loc` is `[B]`, written with `cache_write_hsd_batch`;
+- outputs `out [2,64]`, `k_out/v_out [2,2,8,64]`.
+
+It compiles to 18 kernels. H100 smoke test: all outputs finite; batch 0 slot
+1 and batch 1 slot 5 are written; untouched slots stay zero.
+
+Still outside this example: causal mask (decode reads one slot), paged
+allocation inside the compiler, and dynamic batching.
+
 ## Scope
 
 This is a single-head, batch-1 decode block with a fixed 8-slot cache. It is
