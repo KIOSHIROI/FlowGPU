@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.63.0
+
+- Execution plans keep host layout helpers, so cache_write + reshape + attention
+  supports prepared/graph: 8.68 us vs eager 119.61 us.
+
 ## 0.62.0
 
 - Add cache_write and a decode-with-cache-write pipeline: 62.23 us vs eager

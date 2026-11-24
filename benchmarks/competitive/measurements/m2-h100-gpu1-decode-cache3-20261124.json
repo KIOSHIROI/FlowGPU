@@ -1,0 +1,77 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "decode_with_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": 9.070400148630142,
+          "full_us": 62.63840198516846,
+          "compile_ms": 113.38189709931612,
+          "peak_bytes": 33889280
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": 8.905600011348724,
+          "full_us": 53.24000120162964,
+          "compile_ms": 692.3906626179814,
+          "peak_bytes": 33824768
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 27.584001421928406,
+          "compile_ms": 130.42657542973757,
+          "peak_bytes": 33824768
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 8.675199747085571,
+          "compile_ms": 53.92191372811794,
+          "peak_bytes": 33824768
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 119.61120367050171,
+          "compile_ms": 0.0,
+          "peak_bytes": 67475968
+        }
+      }
+    }
+  ]
+}

@@ -192,6 +192,8 @@ def build_execution_plan(code, *, pipeline):
             allocations.append((statement,BufferRequirement(name,shape,dtype,tuple(k for k,v in outputs if v==name))))
     jit_names={n.name for n in tree.body if isinstance(n,ast.FunctionDef)
                and any(ast.unparse(d)=='triton.jit' for d in n.decorator_list)}
+    host_helpers={n.name for n in tree.body if isinstance(n,ast.FunctionDef)
+                  and not n.name.startswith('run_') and n.name not in jit_names}
     launches=[]
     metadata_methods={'data_ptr','stride','is_contiguous'}
     for n in ast.walk(host):
@@ -207,6 +209,7 @@ def build_execution_plan(code, *, pipeline):
             name=ast.unparse(n.func)
             # `abs` is the 32-bit address-range guard's runtime stride term.
             if name in {'torch.empty','tuple','str','float','type','isinstance','ValueError','_flowgpu_device_key','abs'}:continue
+            if name in host_helpers:continue
             if isinstance(n.func,ast.Attribute) and isinstance(n.func.value,ast.Name) and n.func.attr in metadata_methods:continue
             raise ValueError('unsupported host operation in execution plan: '+name)
     if sum(isinstance(n,ast.Call) and ast.unparse(n.func)=='torch.empty' for n in ast.walk(host))!=len(allocations):

@@ -209,19 +209,17 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 ## Decode with a functional KV-cache write
 
 `decode_with_cache` writes one new K/V row with `cache_write`, reshapes the
-128-token cache and runs native attention:
+128-token cache and runs native attention. Prepared and zero-copy graph now
+work after the execution plan learned to keep host layout helpers.
 
-| flowgpu | prepared | graph | eager | inductor |
+| flowgpu | prepared | prepared+graph | graph | eager |
 |---:|---:|---:|---:|---:|
-| 62.23 | unsupported | unsupported | 121.56 | 202.49 |
+| 62.64 | 53.24 | 27.58 | **8.68** | 119.61 |
 
-The default path is 2.0x faster than eager and 3.3x faster than Inductor, and
-correctness matches a float64 oracle. Prepared/graph still fail because the
-cache-write host includes a layout call that the execution plan cannot freeze;
-that is the next execution-plan gap.
+Graph is 13.8x faster than eager on the full cache-write + decode step.
+Correctness matches a float64 oracle. The matrix is now 25 cases.
 
-The matrix is now 25 cases.
-Raw data: [`m2-h100-gpu1-decode-cache2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-cache2-20261124.json).
+Raw data: [`m2-h100-gpu1-decode-cache3-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-cache3-20261124.json).
 
 ## Decode-step attention over a KV cache
 
