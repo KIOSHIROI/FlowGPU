@@ -40,6 +40,22 @@ It compiles to 18 kernels. H100 smoke test: all outputs finite; batch 0 slot
 Still outside this example: causal mask (decode reads one slot), paged
 allocation inside the compiler, and dynamic batching.
 
+
+## Host loop wiring
+
+`examples/decode_loop.py` drives 8 decode steps for one request:
+
+1. `BlockTable.add("req-1")`;
+2. each step calls `table.append("req-1")` to get the next flat cache slot;
+3. `PagedKVCache` storage is reshaped to the block's `[1,S,D]` cache input;
+4. the block returns `out`, `k_out`, `v_out`;
+5. the updated K/V are copied back into the paged storage and `out` becomes
+   the next `x`.
+
+H100 run: locations `[0..7]`, output `(1,64)` finite, all 8 cache slots
+written. This is the minimal end-to-end host chain; sampling and request
+eviction are still separate.
+
 ## Scope
 
 This is a single-head, batch-1 decode block with a fixed 8-slot cache. It is

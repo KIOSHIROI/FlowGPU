@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.93.0
+
+- Add examples/decode_loop.py: BlockTable + PagedKVCache driving the cached
+  decode block for 8 steps; all slots written and output finite on H100.
+
 ## 0.92.0
 
 - Add DynamicBatch: fixed-capacity request slots, padded steps and active-only
