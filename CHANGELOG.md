@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.0
+
+- Add head-major cache_write_hsd and a 4-query/2-KV-head GQA decode with
+  cache write: graph 9.04 us vs eager 190.72 / Inductor 234.33.
+
 ## 0.63.0
 
 - Execution plans keep host layout helpers, so cache_write + reshape + attention

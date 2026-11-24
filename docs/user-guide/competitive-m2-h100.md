@@ -206,6 +206,21 @@ The matrix is now 24 cases.
 Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-causal-native2-20261124.json).
 
 
+
+## Multi-head GQA decode with cache write
+
+`decode_gqa_cache` writes 2 KV heads in a **head-major [H,S,D]** cache, reshapes
+to `[1,2,128,64]`, and attends with 4 query heads:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 63.23 | 53.68 | 27.73 | **9.04** | 190.72 | 234.33 |
+
+Graph is 21x faster than eager and 26x faster than Inductor. Correctness matches
+a float64 GQA oracle; prepared/graph work. The matrix is now 26 cases.
+
+Raw data: [`m2-h100-gpu1-decode-gqa2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-gqa2-20261124.json).
+
 ## Decode with a functional KV-cache write
 
 `decode_with_cache` writes one new K/V row with `cache_write`, reshapes the

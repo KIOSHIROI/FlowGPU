@@ -9,6 +9,14 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "decode_gqa_cache":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.float().clone(); vc = v_cache.float().clone()
+        kc[:, loc[0]] = k_new.float(); vc[:, loc[0]] = v_new.float()
+        kk = kc.unsqueeze(0).repeat_interleave(2, dim=1)
+        vv = vc.unsqueeze(0).repeat_interleave(2, dim=1)
+        scores = q.float() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        return {"out": (torch.softmax(scores, dim=-1) @ vv).to(q.dtype)}
     if case_name == "decode_with_cache":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.float().clone()
@@ -144,6 +152,14 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "decode_gqa_cache":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.double().clone(); vc = v_cache.double().clone()
+        kc[:, loc[0]] = k_new.double(); vc[:, loc[0]] = v_new.double()
+        kk = kc.unsqueeze(0).repeat_interleave(2, dim=1)
+        vv = vc.unsqueeze(0).repeat_interleave(2, dim=1)
+        scores = q.double() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        return {"out": torch.softmax(scores, dim=-1) @ vv}
     if case_name == "decode_with_cache":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.double().clone()

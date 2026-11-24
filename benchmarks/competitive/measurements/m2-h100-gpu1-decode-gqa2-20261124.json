@@ -1,0 +1,89 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "decode_gqa_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 9.028799831867218,
+          "full_us": 63.228797912597656,
+          "compile_ms": 120.11838238686323,
+          "peak_bytes": 34350080
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 9.094399958848953,
+          "full_us": 53.68319749832153,
+          "compile_ms": 693.1090215221047,
+          "peak_bytes": 34224640
+        },
+        "flowgpu_prepared_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 27.728000283241272,
+          "compile_ms": 127.5864914059639,
+          "peak_bytes": 34224640
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 9.043200314044952,
+          "compile_ms": 55.93956261873245,
+          "peak_bytes": 34224640
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 190.71840047836304,
+          "compile_ms": 0.0,
+          "peak_bytes": 68171264
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 234.32800769805908,
+          "compile_ms": 2769.5047920569777,
+          "peak_bytes": 68040192
+        }
+      },
+      "triton_error": "ValueError: no Triton baseline for decode_gqa_cache"
+    }
+  ]
+}
