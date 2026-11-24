@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.95.0
+
+- Add examples/generate_loop.py: embedding -> cached decode block -> lm_head ->
+  greedy sampling -> next token, with PagedKVCache + BlockTable.
+- H100 run: 8 steps, locations 0..7, all sampled ids inside the vocabulary.
+
 ## 0.94.0
 
 - Add examples/decode_loop_batched.py: DynamicBatch + per-request PagedKVCache
