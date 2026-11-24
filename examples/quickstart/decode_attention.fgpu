@@ -3,9 +3,6 @@ pipeline quickstart_decode_attention {
   input q:bf16[1, 64]
   input k_cache:bf16[128, 64]
   input v_cache:bf16[128, 64]
-  k_t = transpose(k_cache)
-  scores = matmul(q, k_t)
-  probs = softmax(scores)
-  out = matmul(probs, v_cache)
+  out = attention(q, k_cache, v_cache)
   output out
 }

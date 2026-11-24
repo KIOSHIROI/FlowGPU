@@ -207,19 +207,19 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 
 ## Decode-step attention over a KV cache
 
-The first decode-phase case: `q [1,64]` attends over a 128-token single-head
-K/V cache.
+The decode-phase case: `q [1,64]` attends over a 128-token single-head K/V
+cache. It now uses the native attention kernel.
 
 | flowgpu | prepared | prepared+graph | graph | eager | inductor |
 |---:|---:|---:|---:|---:|---:|
-| 61.22 | 43.20 | 14.12 | **9.88** | 25.29 | 59.71 |
+| 18.74 | 15.88 | 13.03 | **3.49** | 33.10 | 58.02 |
 
-Graph is 2.6x faster than eager and 6.0x faster than Inductor. This is still a
-fixed cache length, single head, no mask and no cache update; the next stage is a
-full KV-cache decode step with cache write and GQA.
+Graph is 9.5x faster than eager and 16.6x faster than Inductor. This is a fixed
+cache length, single head, no mask and no cache update; the next stage is a full
+KV-cache decode step with cache write and GQA.
 
-The matrix is now 23 cases.
-Raw data: [`m2-h100-gpu1-decode-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-20261124.json).
+The matrix is now 24 cases.
+Raw data: [`m2-h100-gpu1-decode-native-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-native-20261124.json).
 
 ## End-to-end decoder layer
 

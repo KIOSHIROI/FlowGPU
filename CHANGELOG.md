@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.61.1
+
+- Use the native attention kernel for fixed-cache decode; graph improves from
+  9.88 to 3.49 us and prepared/graph correctness passes.
+
 ## 0.61.0
 
 - Add a native Triton causal/GQA attention kernel; prepared/graph work and

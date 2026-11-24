@@ -20,7 +20,7 @@ def eager(case_name: str, args):
         return {"out": (torch.softmax(scores, dim=-1) @ vv.float()).to(q.dtype)}
     if case_name == "decode_attention":
         q, k_cache, v_cache = args
-        return {"out": torch.softmax(q @ k_cache.t(), dim=-1) @ v_cache}
+        return {"out": torch.softmax(q @ k_cache.t() / (q.shape[-1] ** 0.5), dim=-1) @ v_cache}
     if case_name == "llama3_decoder_layer":
         x, norm1_w, w_q, w_k, w_v, w_o, norm2_w, w_gate, w_up, w_down, cos, sin = args
         def rms(v, w):
@@ -147,7 +147,7 @@ def oracle(case_name: str, args):
         return {"out": torch.softmax(scores, dim=-1) @ vv.double()}
     if case_name == "decode_attention":
         q, k_cache, v_cache = args
-        return {"out": torch.softmax(q.double() @ k_cache.double().t(), dim=-1) @ v_cache.double()}
+        return {"out": torch.softmax(q.double() @ k_cache.double().t() / (q.shape[-1] ** 0.5), dim=-1) @ v_cache.double()}
     if case_name == "llama3_decoder_layer":
         x, norm1_w, w_q, w_k, w_v, w_o, norm2_w, w_gate, w_up, w_down, cos, sin = args
         def rms(v, w):
