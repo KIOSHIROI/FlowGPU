@@ -1,0 +1,17 @@
+# One GQA decode step that exposes the updated KV cache for a token loop.
+pipeline quickstart_decode_gqa_step {
+  input q:bf16[1, 4, 1, 64]
+  input k_cache:bf16[2, 128, 64]
+  input v_cache:bf16[2, 128, 64]
+  input k_new:bf16[2, 64]
+  input v_new:bf16[2, 64]
+  input loc:int32[1]
+  k2 = cache_write_hsd(k_cache, k_new, loc)
+  v2 = cache_write_hsd(v_cache, v_new, loc)
+  k4 = reshape(k2, [1, 2, 128, 64])
+  v4 = reshape(v2, [1, 2, 128, 64])
+  out = attention(q, k4, v4)
+  output k2
+  output v2
+  output out
+}

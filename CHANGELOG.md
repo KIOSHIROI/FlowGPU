@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.65.0
+
+- Add DecodeSession and a 32-step token-generation benchmark: 105.53 us per
+  token, 9,475.8 tokens/s on a shared H100; functional cache copy is the next
+  optimization target.
+
 ## 0.64.0
 
 - Add head-major cache_write_hsd and a 4-query/2-KV-head GQA decode with

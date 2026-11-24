@@ -41,6 +41,7 @@ nav:
   - Python API: api.md
   - Python integration: integration.md
   - Prepared deployment: deployment.md
+  - Token generation: token-generation.md
   - Container image: container.md
   - Backends: backends.md
   - FAQ: faq.md
