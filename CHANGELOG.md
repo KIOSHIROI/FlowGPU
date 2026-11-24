@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.92.0
+
+- Add DynamicBatch: fixed-capacity request slots, padded steps and active-only
+  outputs over a compiled fixed-shape decode step.
+
 ## 0.91.0
 
 - Add BlockTable: request -> blocks mapping, per-token append, flat locations

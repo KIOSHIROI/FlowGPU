@@ -45,6 +45,7 @@ nav:
   - Continuous batching: continuous-batching.md
   - Prefill + decode: prefill-decode.md
   - Paged KV cache: paged-cache.md
+  - Dynamic batching: dynamic-batching.md
   - Cached decode block: decode-block.md
   - Cached prefill block: prefill-block.md
   - MLP performance: mlp-performance.md
