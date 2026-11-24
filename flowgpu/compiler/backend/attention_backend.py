@@ -24,10 +24,11 @@ def _pow2(value):
 def attention_triton_kernel(graph, group, memory, name, config):
     from flowgpu.compiler.backend.triton_backend import DTYPE_TO_TRITON, TritonKernel, _pointer
     anchor = group.anchor
-    if anchor.op not in {"attention", "causal_attention"}:
+    if anchor.op not in {"attention", "causal_attention", "window_attention"}:
         raise ValueError("not an attention anchor")
     operands, results = group_operands(graph, group), group_results(graph, group)
-    q, k, v = operands
+    windowed = anchor.op == "window_attention"
+    q, k, v = operands[:3]
     (out,) = results
     q_shape = graph.values[q].shape
     k_shape = graph.values[k].shape
@@ -56,6 +57,8 @@ def attention_triton_kernel(graph, group, memory, name, config):
     rows = batch * heads * length
     names = Names(graph)
     pairs = [(_pointer(value), Argument("tensor", value)) for value in (q, k, v, out)]
+    if windowed:
+        pairs.append((_pointer(operands[3]), Argument("tensor", operands[3])))
     for hint, value in (("BS", block_s), ("BD", block_d), ("BV", block_v)):
         symbol = names.fresh(hint)
         pairs.append((f"{symbol}: tl.constexpr", Argument("value", str(value))))
@@ -80,7 +83,11 @@ def attention_triton_kernel(graph, group, memory, name, config):
     scale = f"{float(q_depth) ** 0.5:.17g}"
     causal = anchor.op == "causal_attention"
     window = f"({i} + {keys} - {length})" if causal else f"({keys} - 1)"
-    valid = f"({js} <= {window})" if causal else f"({js} < {keys})"
+    keep = f"({js} <= {window})" if causal else f"({js} < {keys})"
+    vlen = names.fresh("vlen") if windowed else None
+    vlen_index = b_ if rank == 4 else "0"
+    if windowed:
+        keep = f"({js} < {vlen})"
     lines = [
         f"    {row} = tl.program_id(0)",
         f"    {b_} = {row} // ({heads} * {length})",
@@ -89,11 +96,12 @@ def attention_triton_kernel(graph, group, memory, name, config):
         f"    {js} = tl.arange(0, BS)",
         f"    {d} = tl.arange(0, BD)",
         f"    {c} = tl.arange(0, BV)",
+        (f"    {vlen} = tl.load({_pointer(operands[3])} + {vlen_index})" if windowed else ""),
         f"    {qt} = tl.load({_pointer(q)} + {qbase} + {d}, mask={d} < {q_depth}, other=0.0).to(tl.float32)",
         f"    {kt} = tl.load({_pointer(k)} + {kbase} + {js}[:, None] * {k_depth} + {d}[None, :],",
         f"                  mask=({js}[:, None] < {keys}) & ({d}[None, :] < {k_depth}), other=0.0).to(tl.float32)",
         f"    {scores} = tl.sum({kt} * {qt}[None, :], axis=1) / {scale}",
-        f"    {mask} = ({valid}) & ({js} < {keys})",
+        f"    {mask} = ({keep}) & ({js} < {keys})",
         f"    {scores} = tl.where({mask}, {scores}, -float(\"inf\"))",
         f"    {weights} = tl.exp({scores} - tl.max({scores}))",
         f"    {total} = tl.sum({weights})",
@@ -107,6 +115,7 @@ def attention_triton_kernel(graph, group, memory, name, config):
 @triton.jit
 def {name}({", ".join(parameter for parameter, _ in pairs)}):
 """ + "\n".join(lines) + "\n"
+    lines = [line for line in lines if line]
     return TritonKernel(name, "attention", (anchor.op,), operands, results,
                         tuple(parameter for parameter, _ in pairs),
                         tuple(argument for _, argument in pairs), f"({rows},)", source,

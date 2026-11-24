@@ -73,6 +73,23 @@ written. This is the minimal end-to-end host chain; sampling and request
 eviction are still separate.
 
 
+
+## Masked GQA
+
+`window_attention(q, k, v, valid)` is a language operator that masks key
+positions `>= valid`. The valid count is `[B]` for batched attention and `[1]`
+for 2D/3D attention.
+
+`examples/llama3_decode_block_gqa_masked.fgpu` uses it:
+
+- batch 2, 4 query heads, 2 KV heads;
+- `valid [2]` carries each request's written-slot count;
+- unused cache slots are masked before the softmax.
+
+H100 check: filling unused slots with arbitrary values leaves `out`
+**bit-identical** (max diff 0.0), and the output is finite. The dynamic
+batching loop now uses this masked block.
+
 ## Dynamic batching loop
 
 `examples/decode_loop_batched.py` combines all three host pieces over the GQA

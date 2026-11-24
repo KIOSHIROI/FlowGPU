@@ -73,7 +73,7 @@ def test_every_operator_states_a_position():
 
 def test_the_reductions_that_accumulate_are_named():
     """21.6 names exactly these three: matmul's K, softmax's sum, mean(x^2)."""
-    assert declared(OPERATORS) == ("rms_norm", "rmsnorm_hf", "matmul", "softmax", "attention", "causal_attention", "cumsum", "cumsum_totals", "cummin_last", "cummax_last", "segmented_cumsum", "segmented_matmul", "segmented_lora_matmul", "linear_decode_forward", "sum_last", "max_last", "mean_last", "layer_norm", "batch_norm", "conv2d", "conv2d_same", "conv2d_stride2", "conv2d_stride2_same", "conv2d_ex", "sum_axis", "max_axis", "cumsum_axis", "softmax_axis", "rms_norm_axis", "gated_delta_recurrence")
+    assert declared(OPERATORS) == ("rms_norm", "rmsnorm_hf", "matmul", "softmax", "attention", "causal_attention", "window_attention", "cumsum", "cumsum_totals", "cummin_last", "cummax_last", "segmented_cumsum", "segmented_matmul", "segmented_lora_matmul", "linear_decode_forward", "sum_last", "max_last", "mean_last", "layer_norm", "batch_norm", "conv2d", "conv2d_same", "conv2d_stride2", "conv2d_stride2_same", "conv2d_ex", "sum_axis", "max_axis", "cumsum_axis", "softmax_axis", "rms_norm_axis", "gated_delta_recurrence")
 
 
 def test_the_anchor_that_accumulates_nothing_is_named():
@@ -207,6 +207,7 @@ def test_the_json_carries_the_contract(capsys):
         "softmax": "fp32",
         "attention": "fp32",
         "causal_attention": "fp32",
+        "window_attention": "fp32",
         "cumsum": "fp32",
         "cumsum_totals": "fp32",
         "cummin_last": "fp32",

@@ -434,6 +434,30 @@ def infer_causal_attention(args):
     return infer_attention(args)
 
 
+def infer_window_attention(args):
+    """Attention limited to a per-batch valid-key count.
+
+    q/k/v follow ``attention`` shapes. ``valid`` is int32 ``[B]`` for rank-4
+    operands, or int32 ``[1]`` for rank-2/3. Scores for key positions
+    ``>= valid`` are masked before the softmax.
+    """
+    if len(args) != 4:
+        raise reject(DiagnosticKind.TYPE, "window_attention takes q, k, v, valid")
+    out = infer_attention(args[:3])
+    valid = args[3]
+    if len(valid.shape) != 1 or valid.dtype not in {"int32", "int64"}:
+        raise reject(DiagnosticKind.TYPE, "window_attention valid must be a 1-D integer tensor")
+    rank = len(args[0].shape)
+    if rank == 4:
+        expected = args[0].shape[0]
+    else:
+        expected = "1"
+    if valid.shape[0] != expected:
+        raise reject(DiagnosticKind.SHAPE,
+                     "window_attention valid must be [B] for 4-D attention, [1] otherwise")
+    return out
+
+
 def split_part_symbol(dimension, count):
     """The derived shape symbol for one part of a symbolic split.
 
@@ -627,6 +651,7 @@ register_operator("transpose", 1, infer_transpose, pointwise=False, acc=None)
 register_operator("rope", 3, infer_rope, pointwise=False, acc=None)
 register_operator("attention", 3, infer_attention, pointwise=False, acc="fp32")
 register_operator("causal_attention", 3, infer_causal_attention, pointwise=False, acc="fp32")
+register_operator("window_attention", 4, infer_window_attention, pointwise=False, acc="fp32")
 
 # v0.2: the three formerly-reserved operators, now with signatures their
 # v0.1 refusals named the missing pieces of. split produces several values,

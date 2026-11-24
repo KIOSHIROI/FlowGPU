@@ -1048,11 +1048,12 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
     assert len(group.members) == 1
     anchor = group.anchor
     causal = anchor.op == "causal_attention"
+    windowed = anchor.op == "window_attention"
     operands, results = group_operands(graph, group), group_results(graph, group)
     names = Names(graph)
     variables = {v: names.fresh(identifier(v)) for v in operands + results}
     pairs = [(variables[v], Argument("tensor", v)) for v in operands + results]
-    q, k, v = anchor.inputs
+    q, k, v = anchor.inputs[:3]
 
     rank = len(graph.values[q].shape)
     if rank == 2:
@@ -1076,7 +1077,7 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
         # and head_ratio's host-side expression is written with it.
         _dimension_parameters(names, pairs, (batch, heads, length, q_depth, k_keys, v_width, groups))
 
-    qv, kv, vv = (variables[x] for x in anchor.inputs)
+    qv, kv, vv = (variables[x] for x in anchor.inputs[:3])
     out = variables[anchor.output]
     b, h, i, j, d, c = [names.fresh(x) for x in ("b", "h", "i", "j", "d", "c")]
     scores, largest, weights, total = [names.fresh(x) for x in
@@ -1120,6 +1121,8 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
         # a cache it is the S - L prefix. S < L has no causal meaning, and
         # the run-time check says so instead of computing nonsense.
         window = f"{i} + {k_keys} - {length} + 1"
+    elif windowed:
+        window = f"{variables[anchor.inputs[3]]}[{b}]" if rank == 4 else f"{variables[anchor.inputs[3]]}[0]"
     else:
         window = k_keys
 

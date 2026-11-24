@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.97.0
+
+- Add window_attention: native masked attention with a per-batch valid-key
+  count (4-D) or a scalar count (2-D/3-D).
+- Add llama3_decode_block_gqa_masked.fgpu; invalid slots no longer contribute
+  (bit-identical output in the H100 smoke test). The batched loop uses it.
+
 ## 0.96.0
 
 - Add llama3_decode_block_masked.fgpu: explicit masked attention with host

@@ -23,8 +23,8 @@ class Request:
 
 
 def main() -> None:
-    source = (ROOT / "examples/llama3_decode_block_gqa.fgpu").read_text()
-    run = compile_pipeline(source, pipeline="llama3_decode_block_gqa",
+    source = (ROOT / "examples/llama3_decode_block_gqa_masked.fgpu").read_text()
+    run = compile_pipeline(source, pipeline="llama3_decode_block_gqa_masked",
                            cache_dir=str(ROOT / ".decode-loop-gqa-cache"))
     bf = lambda *shape: torch.randn(*shape, device="cuda", dtype=torch.bfloat16)
     weights = [bf(D), bf(D, QH * D), bf(D, KVH * D), bf(D, KVH * D),
@@ -45,12 +45,14 @@ def main() -> None:
         k = torch.zeros(B, KVH, SLOTS, D, device="cuda", dtype=torch.bfloat16)
         v = torch.zeros_like(k)
         locs = torch.zeros(B, device="cuda", dtype=torch.int32)
+        valids = torch.ones(B, device="cuda", dtype=torch.int32)
         for request_id, slot in batch.active.items():
             state = requests[request_id]
             locs[slot] = state.table.append(request_id)
+            valids[slot] = locs[slot] + 1
             k[slot] = state.cache.k.permute(1, 0, 2)
             v[slot] = state.cache.v.permute(1, 0, 2)
-        out = run(torch.stack(rows), *weights, k, v, locs)
+        out = run(torch.stack(rows), *weights, k, v, locs, valids)
         for request_id, slot in batch.active.items():
             state = requests[request_id]
             state.cache.k.copy_(out["k_out"][slot].permute(1, 0, 2))
