@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.57.1
+
+- Align the competitive summary with the 21-case matrix and the measured
+  FlagOS/FlagGems baseline; record TVM/TensorRT as external blockers.
+
 ## 0.57.0
 
 - Add the FlagOS/FlagGems baseline backend and publish a 10-case comparison.
