@@ -776,3 +776,17 @@ python benchmarks/competitive/device_runner.py \
 
 `flowgpu_prepared` performs offline preparation; its `compile_ms` includes that
 cost.
+
+## 30-case regression after the device policy
+
+After switching the default and prepared paths to `resolve_device_platform()`,
+the full M2 matrix was re-run on H100 GPU1 with `flowgpu`, `flowgpu_prepared`,
+`flowgpu_graph` and `eager`:
+
+- 30 cases;
+- **0 correctness failures**;
+- no case errored in the three FlowGPU backends;
+- 10 iterations, 3 warmup, shared device.
+
+This is a regression check, not a new performance table. Raw data:
+[`m2-h100-gpu1-30case-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-30case-20261124.json).

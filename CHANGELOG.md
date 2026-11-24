@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.85.0
+
+- Re-run the full 30-case M2 matrix after the device-aware GEMM policy:
+  0 correctness failures across flowgpu, prepared, graph and eager.
+
 ## 0.84.0
 
 - Add LayerStack(residual=True): host-level residual add outside the compiled

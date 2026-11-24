@@ -1,0 +1,1487 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 3,
+    "iterations": 10,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "add_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.4000000208616257,
+          "full_us": 2.44159996509552,
+          "compile_ms": 117.23212338984013,
+          "peak_bytes": 43520
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.3135999217629433,
+          "full_us": 2.4512000381946564,
+          "compile_ms": 492.1129662543535,
+          "peak_bytes": 41472
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": null,
+          "full_us": 2.316799946129322,
+          "compile_ms": 54.2468186467886,
+          "peak_bytes": 41472
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.014261718750000001
+          },
+          "graph_us": 2.44159996509552,
+          "full_us": 2.4800000712275505,
+          "compile_ms": 0.0,
+          "peak_bytes": 43520
+        }
+      }
+    },
+    {
+      "name": "vectoradd_symbolic",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.3135999217629433,
+          "full_us": 2.377600036561489,
+          "compile_ms": 14.741840772330761,
+          "peak_bytes": 688640
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.4159999564290047,
+          "full_us": 2.5087999179959297,
+          "compile_ms": 62.92604561895132,
+          "peak_bytes": 655872
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": null,
+          "full_us": 2.4224000051617622,
+          "compile_ms": 48.17669279873371,
+          "peak_bytes": 655872
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001953125,
+            "tolerance": 0.01487890625
+          },
+          "graph_us": 2.5439999997615814,
+          "full_us": 2.3679999634623528,
+          "compile_ms": 0.0,
+          "peak_bytes": 688640
+        }
+      }
+    },
+    {
+      "name": "matmul_symbolic",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.340800106525421,
+          "full_us": 3.484800085425377,
+          "compile_ms": 15.198412351310253,
+          "peak_bytes": 188928
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.3663999289274216,
+          "full_us": 3.436800092458725,
+          "compile_ms": 397.906631231308,
+          "peak_bytes": 180736
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": null,
+          "full_us": 3.2607998698949814,
+          "compile_ms": 54.02369610965252,
+          "peak_bytes": 180736
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.014992881566286087,
+            "tolerance": 1.074641379453242
+          },
+          "graph_us": 3.79519984126091,
+          "full_us": 3.7280000746250153,
+          "compile_ms": 0.0,
+          "peak_bytes": 33743360
+        }
+      }
+    },
+    {
+      "name": "softmax_wide",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 2.860799990594387,
+          "full_us": 2.8991999104619026,
+          "compile_ms": 91.10794961452484,
+          "peak_bytes": 393728
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 2.90559995919466,
+          "full_us": 105.12640476226807,
+          "compile_ms": 57.992737740278244,
+          "peak_bytes": 360960
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.013129815625625e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": null,
+          "full_us": 2.8863999992609024,
+          "compile_ms": 50.48467684537172,
+          "peak_bytes": 360960
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.2982926811687676e-09,
+            "tolerance": 0.0001031888129625258
+          },
+          "graph_us": 5.500800162553787,
+          "full_us": 5.648000165820122,
+          "compile_ms": 0.0,
+          "peak_bytes": 393728
+        }
+      }
+    },
+    {
+      "name": "residual_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.630399912595749,
+          "full_us": 2.5567999109625816,
+          "compile_ms": 17.534875310957432,
+          "peak_bytes": 173568
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 2.6399999856948853,
+          "full_us": 2.627200074493885,
+          "compile_ms": 67.02866870909929,
+          "peak_bytes": 165376
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": null,
+          "full_us": 2.662399969995022,
+          "compile_ms": 52.21790727227926,
+          "peak_bytes": 165376
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.026259143008084962,
+            "tolerance": 0.09954532569971448
+          },
+          "graph_us": 22.73920029401779,
+          "full_us": 129.08799648284912,
+          "compile_ms": 0.0,
+          "peak_bytes": 173568
+        }
+      }
+    },
+    {
+      "name": "mapping_pointwise",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 2.457600086927414,
+          "full_us": 2.4064000695943832,
+          "compile_ms": 13.993706554174423,
+          "peak_bytes": 57344
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 2.4512000381946564,
+          "full_us": 2.393599972128868,
+          "compile_ms": 70.91642916202545,
+          "peak_bytes": 53248
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": null,
+          "full_us": 2.4800000712275505,
+          "compile_ms": 51.7965042963624,
+          "peak_bytes": 53248
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "exact": true
+          },
+          "graph_us": 3.9103999733924866,
+          "full_us": 4.601600021123886,
+          "compile_ms": 0.0,
+          "peak_bytes": 57344
+        }
+      }
+    },
+    {
+      "name": "neg_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.4768000468611717,
+          "full_us": 2.2624000906944275,
+          "compile_ms": 12.997401878237724,
+          "peak_bytes": 41472
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.454400062561035,
+          "full_us": 2.3520000278949738,
+          "compile_ms": 85.96507087349892,
+          "peak_bytes": 39424
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": null,
+          "full_us": 35.35360097885132,
+          "compile_ms": 52.03705467283726,
+          "peak_bytes": 39424
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.010203125
+          },
+          "graph_us": 2.3711999878287315,
+          "full_us": 2.502400055527687,
+          "compile_ms": 0.0,
+          "peak_bytes": 41472
+        }
+      }
+    },
+    {
+      "name": "pow_literal",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.824000060558319,
+          "full_us": 3.87520007789135,
+          "compile_ms": 14.416159130632877,
+          "peak_bytes": 43520
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.907199949026108,
+          "full_us": 3.936000168323517,
+          "compile_ms": 203.7466960027814,
+          "peak_bytes": 41472
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": null,
+          "full_us": 3.932800143957138,
+          "compile_ms": 48.45953453332186,
+          "peak_bytes": 41472
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004878309864602137,
+            "tolerance": 0.056380426089978855
+          },
+          "graph_us": 3.7248000502586365,
+          "full_us": 251.23519897460938,
+          "compile_ms": 0.0,
+          "peak_bytes": 43520
+        }
+      }
+    },
+    {
+      "name": "mean_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 2.364799939095974,
+          "full_us": 2.489599958062172,
+          "compile_ms": 11.212240904569626,
+          "peak_bytes": 5120
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 2.42880005389452,
+          "full_us": 2.4831999093294144,
+          "compile_ms": 90.39740450680256,
+          "peak_bytes": 4608
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": null,
+          "full_us": 2.425600029528141,
+          "compile_ms": 44.571795500814915,
+          "peak_bytes": 4608
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.00011157989501953125,
+            "tolerance": 0.028452224731445312
+          },
+          "graph_us": 3.4752000123262405,
+          "full_us": 148.854398727417,
+          "compile_ms": 0.0,
+          "peak_bytes": 5120
+        }
+      }
+    },
+    {
+      "name": "sort_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 2.3679999634623528,
+          "full_us": 2.44159996509552,
+          "compile_ms": 11.724763549864292,
+          "peak_bytes": 4608
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 2.4224000051617622,
+          "full_us": 2.521600015461445,
+          "compile_ms": 177.60969325900078,
+          "peak_bytes": 4096
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": null,
+          "full_us": 2.473600022494793,
+          "compile_ms": 46.99794761836529,
+          "peak_bytes": 4096
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.0623046875
+          },
+          "graph_us": 10.751999914646149,
+          "full_us": 14.259199798107147,
+          "compile_ms": 0.0,
+          "peak_bytes": 4608
+        }
+      }
+    },
+    {
+      "name": "layer_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 2.6976000517606735,
+          "full_us": 2.646400034427643,
+          "compile_ms": 12.759730219841003,
+          "peak_bytes": 22016
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 2.6688000187277794,
+          "full_us": 2.646400034427643,
+          "compile_ms": 125.83470903337002,
+          "peak_bytes": 20992
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": null,
+          "full_us": 2.611199952661991,
+          "compile_ms": 52.10171639919281,
+          "peak_bytes": 20992
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001905233409143392,
+            "tolerance": 0.19546821644946102
+          },
+          "graph_us": 23.100799322128296,
+          "full_us": 37.07199990749359,
+          "compile_ms": 0.0,
+          "peak_bytes": 22016
+        }
+      }
+    },
+    {
+      "name": "batch_norm",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 2.409599907696247,
+          "full_us": 2.566399984061718,
+          "compile_ms": 26.973368600010872,
+          "peak_bytes": 23040
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 2.4224000051617622,
+          "full_us": 2.598400041460991,
+          "compile_ms": 158.04335661232471,
+          "peak_bytes": 22016
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": null,
+          "full_us": 2.4064000695943832,
+          "compile_ms": 64.90031536668539,
+          "peak_bytes": 22016
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0019483036494420958,
+            "tolerance": 0.2253462779915267
+          },
+          "graph_us": 18.828800320625305,
+          "full_us": 30.326399207115173,
+          "compile_ms": 0.0,
+          "peak_bytes": 23040
+        }
+      }
+    },
+    {
+      "name": "conv2d_1x1",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.6335999369621277,
+          "full_us": 2.5248000398278236,
+          "compile_ms": 13.555465266108513,
+          "peak_bytes": 21504
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 2.630399912595749,
+          "full_us": 2.54720002412796,
+          "compile_ms": 63.69774881750345,
+          "peak_bytes": 20480
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": null,
+          "full_us": 2.611199952661991,
+          "compile_ms": 50.993749871850014,
+          "peak_bytes": 20480
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0030588358640670776,
+            "tolerance": 0.29825041532516483
+          },
+          "graph_us": 11.296000331640244,
+          "full_us": 52.28480100631714,
+          "compile_ms": 0.0,
+          "peak_bytes": 33575936
+        }
+      }
+    },
+    {
+      "name": "conv2d_3x3",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.028800129890442,
+          "full_us": 4.112000018358231,
+          "compile_ms": 16.450880095362663,
+          "peak_bytes": 28672
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.176000133156776,
+          "full_us": 4.259200021624565,
+          "compile_ms": 83.82544945925474,
+          "peak_bytes": 27648
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 4.185599833726883,
+          "compile_ms": 57.56976455450058,
+          "peak_bytes": 27648
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.609600722789764,
+          "full_us": 23.603199422359467,
+          "compile_ms": 0.0,
+          "peak_bytes": 28672
+        }
+      }
+    },
+    {
+      "name": "conv2d_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.150399938225746,
+          "full_us": 4.057599976658821,
+          "compile_ms": 20.14963049441576,
+          "peak_bytes": 58880
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 4.153599962592125,
+          "full_us": 105.95200061798096,
+          "compile_ms": 97.96639624983072,
+          "peak_bytes": 56320
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": null,
+          "full_us": 3.996799886226654,
+          "compile_ms": 147.79136050492525,
+          "peak_bytes": 56320
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007741319015622139,
+            "tolerance": 0.647746319398284
+          },
+          "graph_us": 17.839999496936798,
+          "full_us": 23.756800591945648,
+          "compile_ms": 0.0,
+          "peak_bytes": 58880
+        }
+      }
+    },
+    {
+      "name": "conv2d_stride2",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 4.047999903559685,
+          "full_us": 3.951999917626381,
+          "compile_ms": 15.980556607246399,
+          "peak_bytes": 21504
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 4.143999889492989,
+          "full_us": 4.057599976658821,
+          "compile_ms": 87.67255023121834,
+          "peak_bytes": 20480
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": null,
+          "full_us": 4.131200164556503,
+          "compile_ms": 60.06554886698723,
+          "peak_bytes": 20480
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007578745484352112,
+            "tolerance": 0.6159260190697388
+          },
+          "graph_us": 17.126399278640747,
+          "full_us": 59.990400075912476,
+          "compile_ms": 0.0,
+          "peak_bytes": 26112
+        }
+      }
+    },
+    {
+      "name": "conv2d_stride2_same",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.996799886226654,
+          "full_us": 3.932800143957138,
+          "compile_ms": 17.81210768967867,
+          "peak_bytes": 29184
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 3.8656000047922134,
+          "full_us": 3.951999917626381,
+          "compile_ms": 109.49449986219406,
+          "peak_bytes": 28160
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": null,
+          "full_us": 3.8688000291585922,
+          "compile_ms": 64.9463264271617,
+          "peak_bytes": 28160
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007722964626736939,
+            "tolerance": 0.5497080103307963
+          },
+          "graph_us": 17.44000017642975,
+          "full_us": 23.17119985818863,
+          "compile_ms": 0.0,
+          "peak_bytes": 29184
+        }
+      }
+    },
+    {
+      "name": "moe_router_topk",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 10.00320017337799,
+          "full_us": 14.585599303245544,
+          "compile_ms": 30.06442543119192,
+          "peak_bytes": 10752
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 10.012800246477127,
+          "full_us": 14.563199877738953,
+          "compile_ms": 1438.8444786891341,
+          "peak_bytes": 9216
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.4541922855059184e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": null,
+          "full_us": 10.24319976568222,
+          "compile_ms": 77.81247608363628,
+          "peak_bytes": 9216
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.558936629259989e-08,
+            "tolerance": 0.024710448778461826
+          },
+          "graph_us": 22.601599991321564,
+          "full_us": 29.875200986862183,
+          "compile_ms": 0.0,
+          "peak_bytes": 33565184
+        }
+      }
+    },
+    {
+      "name": "topk_last",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 4.8287998884916306,
+          "full_us": 4.678399860858917,
+          "compile_ms": 12.243427336215973,
+          "peak_bytes": 40448
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 4.835199937224388,
+          "full_us": 4.809600114822388,
+          "compile_ms": 143.15687399357557,
+          "peak_bytes": 39424
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": null,
+          "full_us": 4.780799895524979,
+          "compile_ms": 55.523973889648914,
+          "peak_bytes": 39424
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0,
+            "tolerance": 0.10203125
+          },
+          "graph_us": 17.788800597190857,
+          "full_us": 18.39359998703003,
+          "compile_ms": 0.0,
+          "peak_bytes": 39936
+        }
+      }
+    },
+    {
+      "name": "qk_transform",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 6.6784001886844635,
+          "full_us": 9.10080000758171,
+          "compile_ms": 29.391471296548843,
+          "peak_bytes": 58880
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 6.595200300216675,
+          "full_us": 9.206400066614151,
+          "compile_ms": 425.08795764297247,
+          "peak_bytes": 54784
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.017466462802118166,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": null,
+          "full_us": 6.780800223350525,
+          "compile_ms": 83.61486718058586,
+          "peak_bytes": 54784
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 7.611380956618063e-07,
+            "tolerance": 0.2198720484319055
+          },
+          "graph_us": 37.57759928703308,
+          "full_us": 341.51039123535156,
+          "compile_ms": 0.0,
+          "peak_bytes": 59904
+        }
+      }
+    },
+    {
+      "name": "moe_router_topk_large",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 16.307200491428375,
+          "full_us": 20.812800526618958,
+          "compile_ms": 28.91323808580637,
+          "peak_bytes": 209408
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 16.089600324630737,
+          "full_us": 20.54399996995926,
+          "compile_ms": 1980.25852907449,
+          "peak_bytes": 160768
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 5.480176965000361e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": null,
+          "full_us": 16.15999937057495,
+          "compile_ms": 71.96073327213526,
+          "peak_bytes": 160768
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 3.317207668274147e-09,
+            "tolerance": 0.020759978522035708
+          },
+          "graph_us": 28.937599062919617,
+          "full_us": 36.160001158714294,
+          "compile_ms": 0.0,
+          "peak_bytes": 33738240
+        }
+      }
+    },
+    {
+      "name": "llama3_decoder_layer",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 24.054400622844696,
+          "full_us": 37.049600481987,
+          "compile_ms": 86.02602127939463,
+          "peak_bytes": 104960
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 24.12479966878891,
+          "full_us": 37.12320029735565,
+          "compile_ms": 4021.3240878656507,
+          "peak_bytes": 104448
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 6.464878541440925,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": null,
+          "full_us": 24.028800427913666,
+          "compile_ms": 154.27690278738737,
+          "peak_bytes": 104448
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 1.9660554532954393,
+            "tolerance": 37.518463859656016
+          },
+          "graph_us": 125.61919689178467,
+          "full_us": 477.67038345336914,
+          "compile_ms": 0.0,
+          "peak_bytes": 33696768
+        }
+      }
+    },
+    {
+      "name": "decode_attention",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004745913779768407,
+            "tolerance": 0.027454315967795868
+          },
+          "graph_us": 3.8143999874591827,
+          "full_us": 153.48800420761108,
+          "compile_ms": 13.300132937729359,
+          "peak_bytes": 37376
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004745913779768407,
+            "tolerance": 0.027454315967795868
+          },
+          "graph_us": 3.6191999912261963,
+          "full_us": 3.545600175857544,
+          "compile_ms": 218.00134237855673,
+          "peak_bytes": 36864
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0004745913779768407,
+            "tolerance": 0.027454315967795868
+          },
+          "graph_us": null,
+          "full_us": 3.8336001336574554,
+          "compile_ms": 56.662329472601414,
+          "peak_bytes": 36864
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.001333073735194007,
+            "tolerance": 0.027454315967795868
+          },
+          "graph_us": 9.228800237178802,
+          "full_us": 11.686400324106216,
+          "compile_ms": 0.0,
+          "peak_bytes": 33591808
+        }
+      }
+    },
+    {
+      "name": "causal_attention_gqa",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 2.9920000582933426,
+          "full_us": 3.0112000182271004,
+          "compile_ms": 13.870925642549992,
+          "peak_bytes": 172544
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 2.988800033926964,
+          "full_us": 153.25440168380737,
+          "compile_ms": 169.09800469875336,
+          "peak_bytes": 164352
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": null,
+          "full_us": 2.9791999608278275,
+          "compile_ms": 54.63374964892864,
+          "peak_bytes": 164352
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.007376829095334436,
+            "tolerance": 0.18125000000000002
+          },
+          "graph_us": 31.516799330711365,
+          "full_us": 45.948800444602966,
+          "compile_ms": 0.0,
+          "peak_bytes": 33726976
+        }
+      }
+    },
+    {
+      "name": "decode_with_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": 9.004800021648407,
+          "full_us": 12.608000636100769,
+          "compile_ms": 17.707986757159233,
+          "peak_bytes": 241664
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": 9.142400324344635,
+          "full_us": 12.63359934091568,
+          "compile_ms": 312.1758569031954,
+          "peak_bytes": 169472
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 9.07839983701706,
+          "compile_ms": 64.38224203884602,
+          "peak_bytes": 169472
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 2449.929618835449,
+          "compile_ms": 0.0,
+          "peak_bytes": 33820672
+        }
+      }
+    },
+    {
+      "name": "decode_gqa_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 9.014400094747543,
+          "full_us": 47.999998927116394,
+          "compile_ms": 17.898048274219036,
+          "peak_bytes": 464896
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 9.148799628019333,
+          "full_us": 12.73919939994812,
+          "compile_ms": 316.89336244016886,
+          "peak_bytes": 339456
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 9.359999746084213,
+          "compile_ms": 159.72904302179813,
+          "peak_bytes": 339456
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 3954.684829711914,
+          "compile_ms": 0.0,
+          "peak_bytes": 34286080
+        }
+      }
+    },
+    {
+      "name": "decode_batch_gqa",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0016743574009653317,
+            "tolerance": 0.08945311703853794
+          },
+          "graph_us": 7.718399912118912,
+          "full_us": 9.667199850082397,
+          "compile_ms": 16.29467960447073,
+          "peak_bytes": 1069568
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0016743574009653317,
+            "tolerance": 0.08945311703853794
+          },
+          "graph_us": 7.734400033950806,
+          "full_us": 9.603200107812881,
+          "compile_ms": 314.858790487051,
+          "peak_bytes": 828416
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0016743574009653317,
+            "tolerance": 0.08945311703853794
+          },
+          "graph_us": null,
+          "full_us": 7.552000135183334,
+          "compile_ms": 64.2502112314105,
+          "peak_bytes": 828416
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0016743574009653317,
+            "tolerance": 0.08945311703853794
+          },
+          "graph_us": null,
+          "full_us": 12594.572448730469,
+          "compile_ms": 0.0,
+          "peak_bytes": 35953152
+        }
+      }
+    },
+    {
+      "name": "decode_gqa_nocopy",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 7.372800260782242,
+          "full_us": 8.595199882984161,
+          "compile_ms": 15.820835717022419,
+          "peak_bytes": 269824
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": 7.40479975938797,
+          "full_us": 8.419200032949448,
+          "compile_ms": 309.4319822266698,
+          "peak_bytes": 208384
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 7.276800274848938,
+          "compile_ms": 58.378228917717934,
+          "peak_bytes": 208384
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 3161.4240646362305,
+          "compile_ms": 0.0,
+          "peak_bytes": 34155008
+        }
+      }
+    },
+    {
+      "name": "prefill_gqa_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.006941791022143651,
+            "tolerance": 0.18128768468493156
+          },
+          "graph_us": 6.220800057053566,
+          "full_us": 7.7504001557827,
+          "compile_ms": 16.562889330089092,
+          "peak_bytes": 435200
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.006941791022143651,
+            "tolerance": 0.18128768468493156
+          },
+          "graph_us": 6.224000081419945,
+          "full_us": 7.734400033950806,
+          "compile_ms": 286.5840969607234,
+          "peak_bytes": 361472
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.006941791022143651,
+            "tolerance": 0.18128768468493156
+          },
+          "graph_us": null,
+          "full_us": 6.220800057053566,
+          "compile_ms": 79.01750225573778,
+          "peak_bytes": 361472
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.006941791022143651,
+            "tolerance": 0.18128768468493156
+          },
+          "graph_us": 30.982398986816406,
+          "full_us": 190.9343957901001,
+          "compile_ms": 0.0,
+          "peak_bytes": 33924096
+        }
+      }
+    },
+    {
+      "name": "mlp",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.966979363138762,
+            "tolerance": 60.252531397509976
+          },
+          "graph_us": 8.236800134181976,
+          "full_us": 8.928000181913376,
+          "compile_ms": 20.761904306709766,
+          "peak_bytes": 1311232
+        },
+        "flowgpu_prepared": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.966979363138762,
+            "tolerance": 60.252531397509976
+          },
+          "graph_us": 8.374399691820145,
+          "full_us": 9.113600105047226,
+          "compile_ms": 980.1849164068699,
+          "peak_bytes": 1278464
+        },
+        "flowgpu_graph": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.966979363138762,
+            "tolerance": 60.252531397509976
+          },
+          "graph_us": null,
+          "full_us": 8.22720006108284,
+          "compile_ms": 66.24133232980967,
+          "peak_bytes": 1278464
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 2.966979363138762,
+            "tolerance": 60.252531397509976
+          },
+          "graph_us": 27.273601293563843,
+          "full_us": 35.260799527168274,
+          "compile_ms": 0.0,
+          "peak_bytes": 35192832
+        }
+      }
+    }
+  ]
+}
