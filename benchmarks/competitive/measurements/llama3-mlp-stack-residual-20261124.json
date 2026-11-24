@@ -1,0 +1,14 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "layers": 32,
+  "tokens": 1,
+  "residual": true,
+  "protocol": "LayerStack(residual=True): host residual add outside the compiled MLP; two alternating buffer sets; p50, 10 iterations, 2 repeats",
+  "relative_error": null,
+  "flowgpu_us": 15561.007196083665,
+  "eager_us": 15717.018628492951,
+  "flowgpu_over_eager": 0.9901,
+  "note": "The synthetic 32-layer bf16 stack produced non-finite values, so no correctness number is claimed. Timing is an exploratory host-schedule observation."
+}

@@ -11,10 +11,11 @@ from __future__ import annotations
 class LayerStack:
     """Run one prepared plan across a sequence of per-layer argument tuples."""
 
-    def __init__(self, plan, layers, *, output_name="y"):
+    def __init__(self, plan, layers, *, output_name="y", residual=False):
         self._plan = plan
         self._layers = tuple(tuple(layer) for layer in layers)
         self._output_name = output_name
+        self._residual = residual
         # Two output buffer sets: layer i writes set i % 2, layer i+1 reads it
         # as input while writing the other set. No overlap, no copy.
         self._buffers = (plan.allocate_buffers(), plan.allocate_buffers())
@@ -29,7 +30,10 @@ class LayerStack:
         for layer in self._layers:
             result = self._plan.run_into(current, *layer,
                                          buffers=self._buffers[target])
-            current = result[self._output_name]
+            output = result[self._output_name]
+            # Residual keeps the transformer stream's scale; it is a host add
+            # outside the compiled subgraph, not part of the MLP kernel.
+            current = current + output if self._residual else output
             target ^= 1
         return current
 

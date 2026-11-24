@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.84.0
+
+- Add LayerStack(residual=True): host-level residual add outside the compiled
+  MLP, with the two alternating buffer sets. 32-layer timing 0.99x eager in
+  one session; no correctness claim because the synthetic bf16 stack goes
+  non-finite.
+
 ## 0.83.0
 
 - Add LayerStack: one prepared plan reused across layers with two alternating

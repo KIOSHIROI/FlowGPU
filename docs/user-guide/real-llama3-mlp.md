@@ -120,8 +120,11 @@ weight tensors change. A static CUDA Graph is not suitable here because its
 weight pointers are fixed per layer; prepared/custom-op calls are the reuse
 path.
 
-A 32-layer synthetic run measured about 1.03x eager but was noisy, and its
-scaled bf16 stack underflowed, so no 32-layer correctness number is claimed.
+A 32-layer run with `LayerStack(..., residual=True)` measured about 0.99x
+eager in one session, but the synthetic bf16 stack produced non-finite values,
+so no 32-layer correctness number is claimed. The residual add is a host op
+outside the compiled MLP; it keeps the stream scale but is not part of the
+subgraph kernel.
 
 This is the host-integration lesson for a real model: **reuse code, pass
 weights, ping-pong buffers.**

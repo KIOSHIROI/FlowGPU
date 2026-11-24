@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flowgpu"
-version = "0.83.0"
+version = "0.84.0"
 description = "A dataflow DSL compiler for GPU operator pipelines targeting Triton and a portable reference backend"
 authors = [{name = "The FlowGPU Authors"}]
 keywords = ["compiler", "triton", "dataflow", "dsl", "gpu", "llm"]

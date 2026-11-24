@@ -29,6 +29,7 @@ def main(argv=None) -> int:
     parser.add_argument("--iterations", type=int, default=15)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--weight-scale", type=float, default=0.005)
+    parser.add_argument("--residual", action="store_true")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     import torch
@@ -49,7 +50,7 @@ def main(argv=None) -> int:
         cache_dir=str(ROOT / ".competitive-cache/llama3-mlp-stack"),
         validator=lambda result: True,
         shape_bindings={"T": T, "H": H, "I": I})
-    stack = LayerStack(plan, layers)
+    stack = LayerStack(plan, layers, residual=args.residual)
 
     def flowgpu_stack():
         return stack(x)
@@ -68,7 +69,7 @@ def main(argv=None) -> int:
         relative = None
     fg = [ _p50(flowgpu_stack, args.iterations) for _ in range(args.repeats)]
     eg = [ _p50(eager_stack, args.iterations) for _ in range(args.repeats)]
-    payload = {"environment": "H100 PCIe, shared", "layers": args.layers,
+    payload = {"environment": "H100 PCIe, shared", "layers": args.layers, "residual": args.residual,
                "tokens": T, "relative_error": relative,
                "flowgpu_us": statistics.median(fg), "eager_us": statistics.median(eg),
                "flowgpu_over_eager": statistics.median(fg) / statistics.median(eg)}
