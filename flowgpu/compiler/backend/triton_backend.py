@@ -234,6 +234,11 @@ class TritonKernel:
     grid: str
     source: str
     launch_options: tuple = ()
+    #: Per-kernel matmul tile override ``(BLOCK_M, BLOCK_N, BLOCK_K)``. The
+    #: source still spells the constexpr names; the host substitutes these
+    #: numbers in the grid and launch, so a small-M matmul can use a smaller
+    #: tile without changing the module-wide GEMM policy for large GEMMs.
+    tile: tuple | None = None
     autotune_family: str = ''
     #: The program-index dtype this lowering *certified*. 'int32' only with
     #: ``index_bound`` set: never emit a 32-bit program index whose address
@@ -455,6 +460,16 @@ def _undefined_names(source: str, preamble=()):
         collect(function, False)
         verify(function, False)
     return sorted(set(problems))
+
+
+def _kernel_grid(kernel) -> str:
+    """The kernel's grid with a per-kernel matmul tile substituted."""
+    grid = kernel.grid
+    tile = getattr(kernel, "tile", None)
+    if tile:
+        for block, value in zip(("BLOCK_M", "BLOCK_N", "BLOCK_K"), tile):
+            grid = grid.replace(block, str(value))
+    return grid
 
 
 def _make_kernel(name, kind, group, pairs, lines, grid, graph, *, launch_options=(),
@@ -1886,6 +1901,20 @@ def _matmul_kernel(graph, group, memory, name, platform: PlatformConfig | None =
     # existing emitted module stays byte-identical.
     matmul_warps = (platform.matmul_num_warps or platform.num_warps)
     matmul_stages = (platform.matmul_num_stages or platform.num_stages)
+    # Small-M GEMMs have too few row tiles to fill the device at the measured
+    # 128-row default: 64x512 is four CTAs on a 132-SM H100 and each tile
+    # wastes half its rows. A 16-row tile trades reuse for occupancy; the
+    # source still spells BLOCK_M/N/K and the host substitutes these numbers,
+    # so the module-wide policy for large GEMMs is unchanged.
+    tile = None
+    dims = (rows, depth, columns)
+    if not autotune and all(str(dim).isdigit() for dim in dims):
+        row_extent, depth_extent, column_extent = (int(dim) for dim in dims)
+        if (platform.name == "cuda" and row_extent <= 64 and depth_extent >= 64
+                and column_extent >= 128 and (platform.matmul_block_m or 0) >= 64):
+            block_n = 64 if column_extent >= 64 else 32
+            tile = (16, block_n, 64)
+            matmul_warps, matmul_stages = 4, 3
     kernel = _make_kernel(
         name,
         "matmul",
@@ -1896,6 +1925,8 @@ def _matmul_kernel(graph, group, memory, name, platform: PlatformConfig | None =
         graph,
         launch_options=(("num_warps", matmul_warps), ("num_stages", matmul_stages)),
     )
+    if tile is not None:
+        kernel = replace(kernel, tile=tile)
     if autotune:
         from flowgpu.compiler.backend.autotune import render_configs
         table = f"{name}_configs"
@@ -2930,7 +2961,7 @@ def _fast_launch_lines(kernel, arguments, graph, names, device, indent):
 
     tensors, scalars, metadata = groups
     options = [f"{key}={value}" for key, value in kernel.launch_options]
-    plain = f"{kernel.name}[{kernel.grid}]({', '.join(arguments + options)})"
+    plain = f"{kernel.name}[{_kernel_grid(kernel)}]({', '.join(arguments + options)})"
 
     grid = names.fresh("_fg_grid")
     grid3 = names.fresh("_fg_grid3")
@@ -2977,7 +3008,7 @@ def _fast_launch_lines(kernel, arguments, graph, names, device, indent):
         f"{indent}{entry} = _LAUNCH_CACHE.get({kernel.name})",
         f"{indent}{launch} = None",
         f"{indent}if {entry} is not False:",
-        f"{indent}    {grid} = {kernel.grid}",
+        f"{indent}    {grid} = {_kernel_grid(kernel)}",
         f"{indent}    {grid3} = ({grid} + (1, 1))[:3]",
         f"{indent}    {tensor_tuple} = {_tuple_source(tensor_expressions)}",
         f"{indent}    {metadata_tuple} = {_tuple_source([arguments[index] for index in metadata])}",
@@ -3562,6 +3593,9 @@ def _host(pipeline, graph, memory, kernels, skipped=(), *, attention_impl="math"
             # The host variable itself: a plain Python number, never a tensor
             # or an allocation. The kernel formal takes it positionally.
             return variable(argument.text)
+        if (kernel.tile and argument.kind == "value"
+                and argument.text in {"BLOCK_M", "BLOCK_N", "BLOCK_K"}):
+            return str(kernel.tile[("BLOCK_M", "BLOCK_N", "BLOCK_K").index(argument.text)])
         if argument.kind == "value" and argument.text in {'page_size', 'BLOCK_SIZE'}:
             return argument.text
         if argument.kind == "contiguous":
@@ -3619,7 +3653,7 @@ def _host(pipeline, graph, memory, kernels, skipped=(), *, attention_impl="math"
         ) if launch_cache and not launch_guard else None)
         host_only_layout = kernel.kind == "layout" and not kernel.grid
         call = (kernel.name if kernel.kind.startswith("library_") or host_only_layout
-                else f"{kernel.name}[{kernel.grid}]")
+                else f"{kernel.name}[{_kernel_grid(kernel)}]")
         options = [f"{key}={value}" for key, value in kernel.launch_options]
         launch = f"{call}({', '.join(arguments + options)})"
         if overlap:

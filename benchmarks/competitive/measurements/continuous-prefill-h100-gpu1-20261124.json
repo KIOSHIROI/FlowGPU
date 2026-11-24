@@ -1,0 +1,11 @@
+{
+  "environment": "H100 GPU1, shared",
+  "requests": 16,
+  "prompt_tokens": 256,
+  "decode_tokens": 128,
+  "capacity": 4,
+  "inplace": true,
+  "total_ms": 5.537120625376701,
+  "per_decode_us": 43.25875488575548,
+  "decode_tokens_per_s": 23116.707881236
+}

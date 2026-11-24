@@ -1,0 +1,13 @@
+{
+  "environment": "H100 PCIe, shared",
+  "case": "mlp",
+  "shape": {"B": 64, "D": 256, "H": 512},
+  "flowgpu": 24.024319648742676,
+  "flowgpu_prepared": 18.035199642181396,
+  "flowgpu_graph": 6.772480010986328,
+  "eager": 34.90943908691406,
+  "inductor": 54.148478507995605,
+  "kernel_us_before": {"gemm1_silu": 5.87, "gemm2": 5.94},
+  "kernel_us_after": {"gemm1_silu": 2.42, "gemm2": 3.03},
+  "per_call_sync_us": {"old_tile": 63.9, "new_tile": 39.1, "graph": 11.9, "eager": 31.3}
+}

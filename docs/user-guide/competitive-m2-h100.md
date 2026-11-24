@@ -210,6 +210,22 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 
 
 
+
+## MLP: `64 x 256 @ 256 x 512` then `64 x 512 @ 512 x 256`
+
+The MLP case exposes the small-M GEMM and host-path costs separately.
+
+| flowgpu | prepared | graph | eager | inductor |
+|---:|---:|---:|---:|---:|
+| 24.02 | 18.04 | **6.77** | 34.91 | 54.15 |
+
+With per-call synchronization, the guarded default is 39.1 µs (after the
+small-M tile; 63.9 µs before), eager bf16 is 31.3 µs and graph replay is
+11.9 µs. The analysis and the graph API are in
+[MLP performance](mlp-performance.md). The matrix is now 30 cases.
+
+Raw data: [`m2-h100-gpu1-mlp-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-mlp-20261124.json).
+
 ## Prompt prefill with a KV-cache run write
 
 `prefill_gqa_cache` computes causal GQA attention over a 16-token prompt and

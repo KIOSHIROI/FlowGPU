@@ -11,12 +11,12 @@ def test_device_matrix_validates_without_torch_or_cuda():
         [sys.executable, "benchmarks/competitive/device_runner.py", "--check"],
         cwd=ROOT, capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "29 cases" in result.stdout
+    assert "30 cases" in result.stdout
 
 
 def test_device_cases_have_outputs_and_tolerances():
     import json
     payload = json.loads((ROOT / "benchmarks/competitive/cases.json").read_text())
     for case in payload["cases"]:
-        assert case["output"] in {"out", "q", "z", "qr", "weights", "values", "attn"}
+        assert case["output"] in {"out", "q", "z", "qr", "weights", "values", "attn", "y"}
         assert case["atol"] >= 0 and case["rtol"] >= 0

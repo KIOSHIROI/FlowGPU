@@ -19,6 +19,35 @@ out = session.step({7: (q, k_new, v_new)})
   iteration;
 - the in-place path writes each request's row into its own `[B,H,S,D]` cache.
 
+
+## Prefill-aware admission
+
+A request can carry a prompt; on admission its KV rows are written into the
+freed slot before decoding starts:
+
+```python
+session.admit(RequestState(
+    request_id=7, max_tokens=24, prompt_length=16,
+    prompt_k=prompt_k, prompt_v=prompt_v))
+```
+
+### Measured (H100 GPU1, shared)
+
+16 requests, 16-token prompt, 8 decode tokens, capacity 4:
+
+| metric | value |
+|---|---:|
+| prompt tokens | 256 |
+| decode tokens | 128 |
+| total schedule | 5.537 ms |
+| per decode token | **43.26 µs** |
+| decode throughput | **23,116.7 tokens/s** |
+
+The prompt copy is a runtime row copy, not the compiled prefill pipeline, so the
+merged schedule is slower per decode token than the 30,998 tok/s decode-only
+schedule. It is the admission/prefill scheduling primitive; compiled prefill and
+graph capture are the next steps.
+
 ## Measured schedule (H100 GPU1, shared)
 
 16 requests × 8 tokens, capacity 4:

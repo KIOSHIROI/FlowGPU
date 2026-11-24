@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.72.0
+
+- Add a small-M wide-N matmul tile: M=64 MLP kernels drop from 11.81 us to
+  5.45 us on H100, and a graph path measures 11.9 us per call vs eager 31.3.
+- Add the MLP case to the M2 matrix (30 cases).
+- Add prefill-aware continuous batching (0.71.0 entry below).
+
+## 0.71.0
+
+- Add prefill-aware continuous-batch admission: 16 requests with 16-token
+  prompts schedule at 43.26 us/decode token, 23,116.7 tokens/s.
+
 ## 0.70.0
 
 - Add cache_write_hsd_range and a prefill pipeline: graph 6.42 us vs Inductor

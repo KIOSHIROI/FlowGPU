@@ -15,6 +15,9 @@ class RequestState:
     request_id: int
     position: int = 0
     max_tokens: int = 8
+    prompt_length: int = 0
+    prompt_k: object = None
+    prompt_v: object = None
     finished: bool = False
 
 
@@ -60,10 +63,17 @@ class ContinuousBatchSession:
         for index, slot in enumerate(self.slots):
             if slot is None:
                 self.slots[index] = request
-                self._pos[index] = 0
                 if self._k is not None:
                     self._k[index].zero_()
                     self._v[index].zero_()
+                length = request.prompt_length
+                if length and self._k is not None:
+                    if request.prompt_k is None or request.prompt_v is None:
+                        raise ValueError("prompt_length requires prompt_k and prompt_v")
+                    self._k[index, :, :length].copy_(request.prompt_k)
+                    self._v[index, :, :length].copy_(request.prompt_v)
+                request.position = length
+                self._pos[index] = length
                 return True
         return False
 

@@ -9,6 +9,9 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "mlp":
+        x, w1, w2 = args
+        return {"y": (torch.nn.functional.silu(x.float() @ w1.float()) @ w2.float()).to(x.dtype)}
     if case_name == "prefill_gqa_cache":
         q, k_new, v_new, k_cache, v_cache, loc = args
         kk = k_new.float().repeat_interleave(2, dim=0)
@@ -176,6 +179,9 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "mlp":
+        x, w1, w2 = args
+        return {"y": torch.nn.functional.silu(x.double() @ w1.double()) @ w2.double()}
     if case_name == "prefill_gqa_cache":
         q, k_new, v_new, k_cache, v_cache, loc = args
         kk = k_new.double().repeat_interleave(2, dim=0)

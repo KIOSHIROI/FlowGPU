@@ -1216,6 +1216,46 @@
       "atol": 0.05,
       "rtol": 0.05,
       "oracle": "prefill_gqa_cache"
+    },
+    {
+      "name": "mlp",
+      "source": "examples/mlp.fgpu",
+      "pipeline": "mlp",
+      "bindings": {
+        "B": 64,
+        "D": 256,
+        "H": 512
+      },
+      "inputs": [
+        [
+          "x",
+          [
+            64,
+            256
+          ],
+          "bf16"
+        ],
+        [
+          "w1",
+          [
+            256,
+            512
+          ],
+          "bf16"
+        ],
+        [
+          "w2",
+          [
+            512,
+            256
+          ],
+          "bf16"
+        ]
+      ],
+      "output": "y",
+      "atol": 0.2,
+      "rtol": 0.05,
+      "oracle": "mlp"
     }
   ]
 }
