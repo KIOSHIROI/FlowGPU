@@ -14,6 +14,24 @@ The pipeline must expose `k2`, `v2` and `out` (see
 `examples/quickstart/decode_gqa_step.fgpu`). Each step writes one KV row,
 reshapes the head-major cache and runs native attention.
 
+
+## Token selection
+
+The host owns the model's logits; FlowGPU provides inference-only sampler
+helpers for the last axis:
+
+```python
+from flowgpu.compiler.runtime.sampling import greedy, sample
+
+token = greedy(logits)                         # [batch] int64
+token = sample(logits, temperature=0.8, top_k=50)
+```
+
+`temperature <= 0` is greedy. `top_k` must be positive and no larger than the
+vocabulary. These helpers do not own a model, a tokenizer or a stopping
+criterion; they only turn logits into token ids for the caller's generation
+loop.
+
 ## Measured loop (H100 GPU1, shared)
 
 32 steps, 4 warmup, tokens precomputed **outside** the timed loop (a real model

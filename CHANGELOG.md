@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.86.0
+
+- Add inference-only token selection helpers: greedy and temperature/top-k
+  sampling over the last axis.
+
 ## 0.85.0
 
 - Re-run the full 30-case M2 matrix after the device-aware GEMM policy:
