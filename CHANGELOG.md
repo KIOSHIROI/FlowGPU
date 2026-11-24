@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.75.0
+
+- Add resolve_device_platform()/large_n_matmul_policy(): H100-class devices
+  opt into 128x256x64 for GEMM; L4-class devices keep the safe 128x128 tile.
+- Real Llama 3 MLP with the opt-in tile: 1.01x eager on both decode and
+  prefill (parity, not a win). Add --device-tile to the benchmark.
+
 ## 0.74.0
 
 - Add the real Llama 3 8B SwiGLU MLP example and benchmark. Three kernels;

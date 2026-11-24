@@ -35,12 +35,16 @@ def main(argv=None) -> int:
     parser.add_argument("--iterations", type=int, default=30)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--device-tile", action="store_true",
+                        help="use resolve_device_platform() for the GEMM tile")
     args = parser.parse_args(argv)
     import torch
     from flowgpu.compiler.runtime.graph import GraphRunner
     from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
     from flowgpu.compiler.runtime.runtime import compile_pipeline
+    from flowgpu.compiler.backend.platform_configs import resolve_device_platform
 
+    options = {"platform_config": resolve_device_platform()} if args.device_tile else {}
     source = (ROOT / "examples/llama3_mlp_swiglu.fgpu").read_text()
     payload = {"environment": "H100 PCIe, shared", "dtype": "bf16",
                "hidden": H, "intermediate": I, "cases": []}
@@ -51,7 +55,7 @@ def main(argv=None) -> int:
         wd = torch.randn(I, H, device="cuda", dtype=torch.bfloat16)
         bindings = {"T": tokens, "H": H, "I": I}
         run = compile_pipeline(source, pipeline="llama3_mlp_swiglu", shape_bindings=bindings,
-                               cache_dir=str(ROOT / ".competitive-cache/llama3-mlp"))
+                               cache_dir=str(ROOT / ".competitive-cache/llama3-mlp"), **options)
         out = run(x, wg, wu, wd)["y"]
         eager = lambda: (torch.nn.functional.silu(x @ wg) * (x @ wu)) @ wd
         want = eager()
@@ -60,7 +64,7 @@ def main(argv=None) -> int:
         plan = prepare_execution_plan(
             source, pipeline="llama3_mlp_swiglu", args=(x, wg, wu, wd),
             cache_dir=str(ROOT / ".competitive-cache/llama3-mlp"),
-            validator=lambda result: True, shape_bindings=bindings)
+            validator=lambda result: True, shape_bindings=bindings, **options)
         graph = GraphRunner(plan, (x, wg, wu, wd), copy_inputs=False)
         medians = {"flowgpu": [], "graph": [], "eager": []}
         for _ in range(args.repeats):

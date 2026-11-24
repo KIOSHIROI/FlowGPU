@@ -1,0 +1,14 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "hidden": 4096,
+  "intermediate": 14336,
+  "device_policy": {"shared_memory_per_block_optin": 232448, "matmul_block_n": 256, "matmul_num_stages": 3, "matmul_num_warps": 8},
+  "protocol": "p50 per call, per-call sync, 20 iterations, 2 repeats; compile/warmup excluded",
+  "cases": [
+    {"tokens": 1, "relative_error": 0.002685546875, "flowgpu_over_eager": 1.0130, "graph_over_eager": 1.0141},
+    {"tokens": 2048, "relative_error": 0.0, "flowgpu_over_eager": 1.0098, "graph_over_eager": 1.0076}
+  ],
+  "note": "Opt-in H100 tile policy; default stays L4-safe 128x128x64. Shared-GPU ratios are the signal, not absolute microseconds."
+}

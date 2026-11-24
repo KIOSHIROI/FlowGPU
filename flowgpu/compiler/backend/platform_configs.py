@@ -675,6 +675,30 @@ def resolve_platform(name="cuda", *, mapping_strategy=None, block_size=None,
     return replace(PLATFORMS[name], **changes)
 
 
+def large_n_matmul_policy(shared_memory_bytes):
+    """The larger-N GEMM tile when the device can hold its 3-stage tiles.
+
+    ``128x256x64`` with 3 stages needs about 144 KiB of shared memory per
+    block. The measured 128x256x64 H100 tile does not fit L4-class devices
+    (about 100 KiB), so this is a device policy rather than a new default.
+    """
+    if shared_memory_bytes >= 150 * 1024:
+        return {"matmul_block_n": 256, "matmul_num_warps": 8,
+                "matmul_num_stages": 3}
+    return {}
+
+
+def resolve_device_platform(device_index=None):
+    """Resolve the CUDA GEMM policy for the actual device, when one exists."""
+    import torch
+    if not torch.cuda.is_available():
+        return resolve_platform("cuda")
+    properties = torch.cuda.get_device_properties(0 if device_index is None else device_index)
+    shared = (getattr(properties, "shared_memory_per_block_optin", None)
+              or getattr(properties, "shared_memory_per_block", 0) or 0)
+    return resolve_platform("cuda", **large_n_matmul_policy(shared))
+
+
 def emitted_index_dtype(config, *, proven):
     """The program-index dtype a lowering may emit: ``'int32'`` or ``'int64'``.
 

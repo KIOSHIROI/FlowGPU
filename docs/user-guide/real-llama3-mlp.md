@@ -49,6 +49,23 @@ at parity, not ahead.
 The graph path is slower here because this workload is compute-bound; CUDA
 Graph removes launch overhead, not GEMM time.
 
+
+## Opt-in H100 tile policy
+
+`resolve_device_platform()` selects `128x256x64, 3 stages, 8 warps` when the
+device exposes at least 150 KiB of opt-in shared memory (H100 class). The
+default stays at the L4-safe 128x128x64 policy; the large tile needs about
+144 KiB and is not safe on L4-class devices.
+
+```python
+from flowgpu.compiler.backend.platform_configs import resolve_device_platform
+run = compile_pipeline(..., platform_config=resolve_device_platform())
+```
+
+On H100 the large tile brings prefill to about 1.00–1.02x eager, versus
+1.05x for the default tile in the same session. This is a device policy, not a
+new global default: L4 and other 100 KiB-class devices keep the safe tile.
+
 ## Why this task matters
 
 It exposes the real boundary of the current implementation:
@@ -57,4 +74,4 @@ It exposes the real boundary of the current implementation:
 - the remaining gap is GEMM tile/scheduling quality, not the language;
 - next steps are tile/autotune, split-K for decode, and gate/up packing.
 
-Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json).
+Raw ratio data: [`llama3-mlp-h100-gpu1-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-20261124.json), [`device-tile`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/llama3-mlp-h100-gpu1-device-tile-20261124.json).
