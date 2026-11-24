@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.55.1
+
+- Validate all 21 cases: every backend passes, median compile 11.3 ms.
+- Small MoE is within noise of eager; large MoE graph clears both competitors.
+
 ## 0.55.0
 
 - Add a larger MoE router case ([32,128], 64 experts, k=8); graph 27.98 us

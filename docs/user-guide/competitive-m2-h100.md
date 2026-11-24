@@ -213,6 +213,22 @@ Raw data: [`m2-h100-gpu1-topk-20261123.json`](https://github.com/KIOSHIROI/FlowG
 
 
 
+
+## 21-case validation run
+
+All 21 cases pass in every backend. Median `compile_ms` is **11.3 ms** on this run.
+
+| case | FlowGPU | graphs | eager | inductor |
+|---|---:|---:|---:|---:|
+| moe_router_topk (small) | 49.32 (graph) | 52.97 | 56.19 | 85.95 |
+| moe_router_topk_large | 29.18 (graph) | 33.84 | 57.14 | 87.89 |
+
+The small router is now within measurement noise of eager in this run; the large
+router clears both eager and Inductor. The earlier 48-vs-29 small-case gap is
+still recorded, since shared-GPU samples move.
+
+Raw data: [`m2-h100-gpu1-21case-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-21case-20261124.json).
+
 ## 20-case validation run
 
 All 20 cases pass correctness in every backend. Median `compile_ms` is **15.6 ms**.
