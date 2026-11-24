@@ -1048,7 +1048,8 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
     assert len(group.members) == 1
     anchor = group.anchor
     causal = anchor.op == "causal_attention"
-    windowed = anchor.op == "window_attention"
+    windowed = anchor.op in {"window_attention", "cached_attention"}
+    cached = anchor.op == "cached_attention"
     operands, results = group_operands(graph, group), group_results(graph, group)
     names = Names(graph)
     variables = {v: names.fresh(identifier(v)) for v in operands + results}
@@ -1121,6 +1122,12 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
         # a cache it is the S - L prefix. S < L has no causal meaning, and
         # the run-time check says so instead of computing nonsense.
         window = f"{i} + {k_keys} - {length} + 1"
+    elif cached:
+        valid_var = variables[anchor.inputs[3]]
+        prefix_var = variables[anchor.inputs[4]]
+        valid_ref = f"{valid_var}[{b}]" if rank == 4 else f"{valid_var}[0]"
+        prefix_ref = f"{prefix_var}[{b}]" if rank == 4 else f"{prefix_var}[0]"
+        window = f"min({valid_ref}, {prefix_ref} + {i} + 1)"
     elif windowed:
         window = f"{variables[anchor.inputs[3]]}[{b}]" if rank == 4 else f"{variables[anchor.inputs[3]]}[0]"
     else:

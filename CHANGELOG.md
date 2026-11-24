@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.98.0
+
+- Add cached_attention: causal attention over a cached prefix plus the new
+  query block, with valid/prefix counts.
+- Add llama3_prefill_block_cached.fgpu; invalid future slots do not contribute
+  (bit-identical output in the H100 smoke test).
+
 ## 0.97.0
 
 - Add window_attention: native masked attention with a per-batch valid-key

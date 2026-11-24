@@ -458,6 +458,28 @@ def infer_window_attention(args):
     return out
 
 
+def infer_cached_attention(args):
+    """Causal attention over a cached prefix plus the new query block.
+
+    q/k/v follow ``attention``. ``valid`` is the written-key count and
+    ``prefix`` is the number of cached keys before the query block; query i
+    sees keys ``j < valid`` and ``j <= prefix + i``. Both counts are int32
+    ``[B]`` for rank-4 operands, or int32 ``[1]`` otherwise.
+    """
+    if len(args) != 5:
+        raise reject(DiagnosticKind.TYPE, "cached_attention takes q, k, v, valid, prefix")
+    out = infer_attention(args[:3])
+    rank = len(args[0].shape)
+    expected = args[0].shape[0] if rank == 4 else "1"
+    for name, tensor in (("valid", args[3]), ("prefix", args[4])):
+        if len(tensor.shape) != 1 or tensor.dtype not in {"int32", "int64"}:
+            raise reject(DiagnosticKind.TYPE, f"cached_attention {name} must be a 1-D integer tensor")
+        if tensor.shape[0] != expected:
+            raise reject(DiagnosticKind.SHAPE,
+                         f"cached_attention {name} must be [B] for 4-D attention, [1] otherwise")
+    return out
+
+
 def split_part_symbol(dimension, count):
     """The derived shape symbol for one part of a symbolic split.
 
@@ -652,6 +674,7 @@ register_operator("rope", 3, infer_rope, pointwise=False, acc=None)
 register_operator("attention", 3, infer_attention, pointwise=False, acc="fp32")
 register_operator("causal_attention", 3, infer_causal_attention, pointwise=False, acc="fp32")
 register_operator("window_attention", 4, infer_window_attention, pointwise=False, acc="fp32")
+register_operator("cached_attention", 5, infer_cached_attention, pointwise=False, acc="fp32")
 
 # v0.2: the three formerly-reserved operators, now with signatures their
 # v0.1 refusals named the missing pieces of. split produces several values,

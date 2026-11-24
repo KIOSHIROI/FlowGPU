@@ -43,7 +43,7 @@ class LibraryDispatch:
     @property
     def opaque_anchors(self):
         # Native attention is refused, and must not absorb pointwise work.
-        return tuple(dict.fromkeys(("attention", "causal_attention", "window_attention") + self.always))
+        return tuple(dict.fromkeys(("attention", "causal_attention", "window_attention", "cached_attention") + self.always))
 
     def uses_library(self, group, *, pipeline=None):
         op = group.anchor.op if group.anchor is not None else None
@@ -66,7 +66,7 @@ def library_dispatch(gpu_backend="triton", library_matmul="unfused"):
         if library_matmul != "unfused":
             raise ValueError("library_matmul only applies to gpu_backend='hybrid'")
         return LibraryDispatch()
-    always = ("attention", "causal_attention", "window_attention", "rms_norm")
+    always = ("attention", "causal_attention", "window_attention", "cached_attention", "rms_norm")
     if library_matmul == "all":
         return LibraryDispatch(always + ("matmul",))
     return LibraryDispatch(always, ("matmul",))
@@ -99,7 +99,7 @@ KERNELS = {
     "matmul": TILED,
     "transpose": PERMUTING,
     "rope": ("rope",),
-    "attention": ("attention", "causal_attention", "window_attention"),
+    "attention": ("attention", "causal_attention", "window_attention", "cached_attention"),
     # Layout operators move elements rather than compute them, so neither
     # backend emits a device kernel for them: the lowering is host-side
     # (torch slicing/cat/reshape into the slot the plan already allocated).

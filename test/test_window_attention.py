@@ -15,3 +15,19 @@ def test_window_attention_compiles_with_valid_count():
     """
     program = compile_source(source).pipelines[0]
     assert program.triton.kernels[0].kind == "attention"
+
+
+def test_cached_attention_compiles_with_valid_and_prefix():
+    source = """
+    pipeline p {
+      input q: bf16[1,1,8,64]
+      input k: bf16[1,1,32,64]
+      input v: bf16[1,1,32,64]
+      input valid: int32[1]
+      input prefix: int32[1]
+      out = cached_attention(q, k, v, valid, prefix)
+      output out
+    }
+    """
+    program = compile_source(source).pipelines[0]
+    assert program.triton.kernels[0].kind == "attention"

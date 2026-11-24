@@ -13,6 +13,21 @@ the full MLP/residual block.
 It compiles to 20 kernels. H100 smoke test: all outputs finite; slots
 `loc..loc+7` are written; slots before and after the range stay zero.
 
+
+## Cached-prefix variant
+
+`examples/llama3_prefill_block_cached.fgpu` attends to the cached prefix plus
+the new prompt block. It uses `cached_attention(q, k, v, valid, prefix)`:
+
+- `valid = loc + 8` is the written-key count;
+- `prefix = loc` is the cached-token count before the block;
+- query i sees keys `j < valid` and `j <= prefix + i`.
+
+H100 check: with `loc=4`, filling slots 12..31 with arbitrary values leaves
+`out` bit-identical (max diff 0.0); outputs `(8,64)`, `(1,32,64)`,
+`(1,32,64)` are finite. The plain prefill example only attends to the new
+tokens; this variant is the one that matches a real cached prefill.
+
 ## Scope
 
 Single-head, batch 1, fixed 8-token prompt and 32 slots. The causal attention

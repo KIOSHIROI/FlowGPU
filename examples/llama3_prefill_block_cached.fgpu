@@ -1,0 +1,55 @@
+# One prefill block: RMSNorm, QKV, RoPE, causal attention, a contiguous
+# range write into the KV cache, output projection, residual, SwiGLU MLP.
+#
+# Single-head, T=8 prompt tokens, 32 cache slots; the caller supplies the
+# RoPE table for the prompt positions and the first cache slot.
+pipeline llama3_prefill_block_cached {
+    input x        : bf16[8,64]
+    input norm1_w  : bf16[64]
+    input w_q      : bf16[64,64]
+    input w_k      : bf16[64,64]
+    input w_v      : bf16[64,64]
+    input w_o      : bf16[64,64]
+    input norm2_w  : bf16[64]
+    input w_gate   : bf16[64,128]
+    input w_up     : bf16[64,128]
+    input w_down   : bf16[128,64]
+    input rope_cos : bf16[8,64]
+    input rope_sin : bf16[8,64]
+    input k_cache  : bf16[1,32,64]
+    input v_cache  : bf16[1,32,64]
+    input loc      : int32[1]
+    input valid    : int32[1]
+    input prefix   : int32[1]
+
+    x_norm1 = rms_norm(x, norm1_w)
+    q = rope(matmul(x_norm1, w_q), rope_cos, rope_sin)
+    k_new = rope(matmul(x_norm1, w_k), rope_cos, rope_sin)
+    v_new = matmul(x_norm1, w_v)
+
+    q4 = reshape(q, [1,1,8,64])
+    k3 = reshape(k_new, [1,8,64])
+    v3 = reshape(v_new, [1,8,64])
+    k4 = reshape(k_new, [1,1,8,64])
+    v4 = reshape(v_new, [1,1,8,64])
+    k_out = cache_write_hsd_range(k_cache, k3, loc)
+    v_out = cache_write_hsd_range(v_cache, v3, loc)
+    k_cache4 = reshape(k_out, [1,1,32,64])
+    v_cache4 = reshape(v_out, [1,1,32,64])
+    attn4 = cached_attention(q4, k_cache4, v_cache4, valid, prefix)
+    attn = reshape(attn4, [8,64])
+    attn_proj = matmul(attn, w_o)
+    x_mid = add(x, attn_proj)
+
+    x_norm2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(x_norm2, w_gate)
+    up = matmul(x_norm2, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+    output k_out
+    output v_out
+}

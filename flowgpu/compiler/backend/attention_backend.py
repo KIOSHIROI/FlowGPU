@@ -24,10 +24,11 @@ def _pow2(value):
 def attention_triton_kernel(graph, group, memory, name, config):
     from flowgpu.compiler.backend.triton_backend import DTYPE_TO_TRITON, TritonKernel, _pointer
     anchor = group.anchor
-    if anchor.op not in {"attention", "causal_attention", "window_attention"}:
+    if anchor.op not in {"attention", "causal_attention", "window_attention", "cached_attention"}:
         raise ValueError("not an attention anchor")
     operands, results = group_operands(graph, group), group_results(graph, group)
-    windowed = anchor.op == "window_attention"
+    windowed = anchor.op in {"window_attention", "cached_attention"}
+    cached = anchor.op == "cached_attention"
     q, k, v = operands[:3]
     (out,) = results
     q_shape = graph.values[q].shape
@@ -59,6 +60,8 @@ def attention_triton_kernel(graph, group, memory, name, config):
     pairs = [(_pointer(value), Argument("tensor", value)) for value in (q, k, v, out)]
     if windowed:
         pairs.append((_pointer(operands[3]), Argument("tensor", operands[3])))
+    if cached:
+        pairs.append((_pointer(operands[4]), Argument("tensor", operands[4])))
     for hint, value in (("BS", block_s), ("BD", block_d), ("BV", block_v)):
         symbol = names.fresh(hint)
         pairs.append((f"{symbol}: tl.constexpr", Argument("value", str(value))))
@@ -85,8 +88,11 @@ def attention_triton_kernel(graph, group, memory, name, config):
     window = f"({i} + {keys} - {length})" if causal else f"({keys} - 1)"
     keep = f"({js} <= {window})" if causal else f"({js} < {keys})"
     vlen = names.fresh("vlen") if windowed else None
+    plen = names.fresh("plen") if cached else None
     vlen_index = b_ if rank == 4 else "0"
-    if windowed:
+    if cached:
+        keep = f"({js} < {vlen}) & ({js} <= {plen} + {i})"
+    elif windowed:
         keep = f"({js} < {vlen})"
     lines = [
         f"    {row} = tl.program_id(0)",
@@ -97,6 +103,7 @@ def attention_triton_kernel(graph, group, memory, name, config):
         f"    {d} = tl.arange(0, BD)",
         f"    {c} = tl.arange(0, BV)",
         (f"    {vlen} = tl.load({_pointer(operands[3])} + {vlen_index})" if windowed else ""),
+        (f"    {plen} = tl.load({_pointer(operands[4])} + {vlen_index})" if cached else ""),
         f"    {qt} = tl.load({_pointer(q)} + {qbase} + {d}, mask={d} < {q_depth}, other=0.0).to(tl.float32)",
         f"    {kt} = tl.load({_pointer(k)} + {kbase} + {js}[:, None] * {k_depth} + {d}[None, :],",
         f"                  mask=({js}[:, None] < {keys}) & ({d}[None, :] < {k_depth}), other=0.0).to(tl.float32)",
