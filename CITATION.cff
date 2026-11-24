@@ -4,4 +4,4 @@ type: software
 authors:
   - name: The FlowGPU Authors
 license: MIT
-version: 0.67.0
+version: 0.68.0

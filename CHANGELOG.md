@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.68.0
+
+- Add rank-3 attention and a no-copy GQA decode: graph 7.09 us vs 9.04 us
+  with the reshape copy.
+
 ## 0.67.0
 
 - Add cache_write_hsd_batch and a 4-request batched GQA decode: graph 7.61 us

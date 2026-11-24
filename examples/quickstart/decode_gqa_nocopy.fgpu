@@ -1,0 +1,13 @@
+# Single-request GQA decode over a head-major cache with no reshape copy.
+pipeline quickstart_decode_gqa_nocopy {
+  input q:bf16[4, 1, 64]
+  input k_cache:bf16[2, 128, 64]
+  input v_cache:bf16[2, 128, 64]
+  input k_new:bf16[2, 64]
+  input v_new:bf16[2, 64]
+  input loc:int32[1]
+  k2 = cache_write_hsd(k_cache, k_new, loc)
+  v2 = cache_write_hsd(v_cache, v_new, loc)
+  out = attention(q, k2, v2)
+  output out
+}

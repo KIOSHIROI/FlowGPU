@@ -1090,6 +1090,68 @@
       "atol": 0.05,
       "rtol": 0.05,
       "oracle": "decode_batch_gqa"
+    },
+    {
+      "name": "decode_gqa_nocopy",
+      "source": "examples/quickstart/decode_gqa_nocopy.fgpu",
+      "pipeline": "quickstart_decode_gqa_nocopy",
+      "bindings": {},
+      "inputs": [
+        [
+          "q",
+          [
+            4,
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_cache",
+          [
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_cache",
+          [
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_new",
+          [
+            2,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_new",
+          [
+            2,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "loc",
+          [
+            1
+          ],
+          "int32"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.05,
+      "rtol": 0.05,
+      "oracle": "decode_gqa_nocopy"
     }
   ]
 }

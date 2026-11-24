@@ -1,0 +1,49 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "decode_gqa_nocopy",
+      "backend": {
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 367.46881008148193,
+          "compile_ms": 0.0,
+          "peak_bytes": 34022912
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009350203626038445,
+            "tolerance": 0.07228330369588137
+          },
+          "graph_us": null,
+          "full_us": 1811.1888885498047,
+          "compile_ms": 3870.3702846542,
+          "peak_bytes": 67444224
+        }
+      },
+      "flowgpu_error": "CompileError: shape error in pipeline 'quickstart_decode_gqa_nocopy' at line 11, column 9: attention supports 2D or 4D operands, not rank 3",
+      "flowgpu_prepared_error": "CompileError: shape error in pipeline 'quickstart_decode_gqa_nocopy' at line 10, column 9: attention supports 2D or 4D operands, not rank 3",
+      "flowgpu_prepared_graph_error": "CompileError: shape error in pipeline 'quickstart_decode_gqa_nocopy' at line 10, column 9: attention supports 2D or 4D operands, not rank 3",
+      "flowgpu_graph_error": "CompileError: shape error in pipeline 'quickstart_decode_gqa_nocopy' at line 10, column 9: attention supports 2D or 4D operands, not rank 3",
+      "triton_error": "ValueError: no Triton baseline for decode_gqa_nocopy"
+    }
+  ]
+}

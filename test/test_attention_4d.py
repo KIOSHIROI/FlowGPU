@@ -72,7 +72,7 @@ def test_2d_keeps_the_v01_contract():
 
 
 def test_mixed_ranks_are_rejected():
-    with pytest.raises(CompileError, match='olumn 17: attention operands must share one rank: 2D \\[L,D\\] or 4D \\[B,H,L,D\\]') as caught:
+    with pytest.raises(CompileError, match='olumn 17: attention operands must share one rank: 2D \\[L,D\\], 3D \\[H,L,D\\] or 4D \\[B,H,L,D\\]') as caught:
         compile_source("""
         pipeline bad {
             input q : bf16[L, D]

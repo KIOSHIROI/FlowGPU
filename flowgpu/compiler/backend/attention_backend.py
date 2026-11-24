@@ -32,11 +32,17 @@ def attention_triton_kernel(graph, group, memory, name, config):
     q_shape = graph.values[q].shape
     k_shape = graph.values[k].shape
     v_shape = graph.values[v].shape
-    if len(q_shape) == 2:
+    rank = len(q_shape)
+    if rank == 2:
         batch = heads = groups = 1
         length, q_depth = _literal(q_shape, 0, "attention"), _literal(q_shape, 1, "attention")
         keys, k_depth = _literal(k_shape, 0, "attention"), _literal(k_shape, 1, "attention")
         width = _literal(v_shape, 1, "attention")
+    elif rank == 3:
+        batch = 1
+        heads, length, q_depth = (_literal(q_shape, axis, "attention") for axis in range(3))
+        groups, keys, k_depth = (_literal(k_shape, axis, "attention") for axis in range(3))
+        width = _literal(v_shape, 2, "attention")
     else:
         batch, heads, length, q_depth = (_literal(q_shape, axis, "attention") for axis in range(4))
         groups, keys, k_depth = (_literal(k_shape, axis, "attention") for axis in (1, 2, 3))
@@ -56,14 +62,21 @@ def attention_triton_kernel(graph, group, memory, name, config):
     (row, b_, h_, i, js, d, c, qt, kt, vt, scores, mask, weights, total) = (
         names.fresh(hint) for hint in
         ("row", "b", "h", "i", "js", "d", "c", "qt", "kt", "vt", "scores", "mask", "weights", "total"))
-    kbase = (f"{b_} * {groups} * {keys} * {k_depth} + ({h_} // {ratio}) * {keys} * {k_depth}"
-             if len(q_shape) == 4 else "0")
-    vbase = (f"{b_} * {groups} * {keys} * {width} + ({h_} // {ratio}) * {keys} * {width}"
-             if len(q_shape) == 4 else "0")
-    qbase = (f"{b_} * {heads} * {length} * {q_depth} + {h_} * {length} * {q_depth} + {i} * {q_depth}"
-             if len(q_shape) == 4 else f"{i} * {q_depth}")
-    obase = (f"{b_} * {heads} * {length} * {width} + {h_} * {length} * {width} + {i} * {width}"
-             if len(q_shape) == 4 else f"{i} * {width}")
+    if rank == 4:
+        kbase = f"{b_} * {groups} * {keys} * {k_depth} + ({h_} // {ratio}) * {keys} * {k_depth}"
+        vbase = f"{b_} * {groups} * {keys} * {width} + ({h_} // {ratio}) * {keys} * {width}"
+        qbase = f"{b_} * {heads} * {length} * {q_depth} + {h_} * {length} * {q_depth} + {i} * {q_depth}"
+        obase = f"{b_} * {heads} * {length} * {width} + {h_} * {length} * {width} + {i} * {width}"
+    elif rank == 3:
+        kbase = f"({h_} // {ratio}) * {keys} * {k_depth}"
+        vbase = f"({h_} // {ratio}) * {keys} * {width}"
+        qbase = f"{h_} * {length} * {q_depth} + {i} * {q_depth}"
+        obase = f"{h_} * {length} * {width} + {i} * {width}"
+    else:
+        kbase = "0"
+        vbase = "0"
+        qbase = f"{i} * {q_depth}"
+        obase = f"{i} * {width}"
     scale = f"{float(q_depth) ** 0.5:.17g}"
     causal = anchor.op == "causal_attention"
     window = f"({i} + {keys} - {length})" if causal else f"({keys} - 1)"

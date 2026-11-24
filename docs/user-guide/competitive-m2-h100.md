@@ -208,6 +208,22 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 
 
 
+
+## No-copy GQA decode (3D attention)
+
+`decode_gqa_nocopy` gives the attention op a rank-3 `[H,L,D]` query and reads
+the head-major cache directly; there is no `[H,S,D] -> [1,H,S,D]` reshape copy
+on the hot path:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 8.57 | 8.46 | 19.68 | **7.09** | 2371.09 | 467.03 |
+
+Graph improves from 9.04 to 7.09 us for the same GQA cache-write decode step.
+Correctness matches a float64 oracle. The matrix is now 28 cases.
+
+Raw data: [`m2-h100-gpu1-decode-nocopy2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-nocopy2-20261124.json).
+
 ## Batched GQA decode (4 requests)
 
 `decode_batch_gqa` batches 4 requests, each with 4 query heads and 2 KV heads.

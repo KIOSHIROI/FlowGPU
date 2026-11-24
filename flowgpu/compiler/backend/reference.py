@@ -1054,13 +1054,20 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
     pairs = [(variables[v], Argument("tensor", v)) for v in operands + results]
     q, k, v = anchor.inputs
 
-    if len(graph.values[q].shape) == 2:
+    rank = len(graph.values[q].shape)
+    if rank == 2:
         q_rows, q_depth = map(str, graph.values[q].shape)
         k_keys, k_depth = map(str, graph.values[k].shape)
         v_keys, v_width = map(str, graph.values[v].shape)
         batch = heads = groups = "1"
         length = q_rows
         _dimension_parameters(names, pairs, (q_rows, q_depth, k_keys, v_width))
+    elif rank == 3:
+        heads, length, q_depth = map(str, graph.values[q].shape)
+        groups, k_keys, k_depth = map(str, graph.values[k].shape)
+        v_groups, v_keys, v_width = map(str, graph.values[v].shape)
+        batch = "1"
+        _dimension_parameters(names, pairs, (heads, length, q_depth, k_keys, v_width, groups))
     else:
         batch, heads, length, q_depth = map(str, graph.values[q].shape)
         k_batch, groups, k_keys, k_depth = map(str, graph.values[k].shape)
@@ -1077,13 +1084,14 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
 
     # 2D is the 4D shape with the outer three loops bound to literal 1, so
     # the index expressions drop the terms the loops would contribute.
-    is_4d = len(graph.values[q].shape) == 4
+    is_4d = rank == 4
+    is_3d = rank == 3
     # GQA head mapping: query head h belongs to key/value group h // ratio.
     # A literal ratio folds to an integer; a symbolic one is a parameter the
     # host passes as the expression itself, and its divisibility is checked
     # at run time because the checker cannot divide two names.
     if heads == groups:
-        group_of_head = f"{h}" if is_4d else ""
+        group_of_head = f"{h}" if (is_4d or is_3d) else ""
         ratio = "1"
     else:
         ratio = f"({heads} // {groups})" if heads.isdigit() and groups.isdigit() else "head_ratio"
@@ -1095,7 +1103,7 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
     # loop contribute a term, so the 2D program indexes like the old 2D
     # kernel did and the 4D one adds the batch/head strides in front.
     q_base = (f"{b} * {heads} * {length} * {q_depth} + " if is_4d else "") + \
-             (f"{h} * {length} * {q_depth} + " if is_4d else "") + f"{i} * {q_depth}"
+             (f"{h} * {length} * {q_depth} + " if (is_4d or is_3d) else "") + f"{i} * {q_depth}"
     kv_base = (f"{b} * {groups} * {k_keys} * {k_depth} + " if is_4d else "") + \
               (f"{group_of_head} * {k_keys} * {k_depth} + " if group_of_head else "") + \
               f"{j} * {k_depth}"
@@ -1103,7 +1111,7 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
              (f"{group_of_head} * {v_keys} * {v_width} + " if group_of_head else "") + \
              f"{j} * {v_width}"
     out_base = (f"{b} * {heads} * {length} * {v_width} + " if is_4d else "") + \
-               (f"{h} * {length} * {v_width} + " if is_4d else "") + \
+               (f"{h} * {length} * {v_width} + " if (is_4d or is_3d) else "") + \
                f"{i} * {v_width}"
 
     if causal:
@@ -1120,6 +1128,9 @@ def _attention_kernel(graph, group, memory, name) -> ReferenceKernel:
         lines.append(f"    for {b} in range({batch}):")
         lines.append(f"        for {h} in range({heads}):")
         indent = "            "
+    elif is_3d:
+        lines.append(f"    for {h} in range({heads}):")
+        indent = "        "
     else:
         indent = "    "
 

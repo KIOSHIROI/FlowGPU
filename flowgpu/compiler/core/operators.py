@@ -388,15 +388,27 @@ def infer_attention(args):
     if len(ranks) != 1:
         raise reject(
             DiagnosticKind.SHAPE,
-            "attention operands must share one rank: 2D [L,D] or 4D [B,H,L,D]",
+            "attention operands must share one rank: 2D [L,D], 3D [H,L,D] or 4D [B,H,L,D]",
         )
     (rank,) = ranks
     if rank == 2:
         if query.shape[1] != key.shape[1] or key.shape[0] != value.shape[0]:
             raise reject(DiagnosticKind.SHAPE, "attention requires q:[L,D], k:[S,D], v:[S,V]")
         return TensorType(query.dtype, [query.shape[0], value.shape[1]])
+    if rank == 3:
+        h, l, d = query.shape
+        g, s, kd = key.shape
+        vg, vs, width = value.shape
+        if g != vg or s != vs or d != kd:
+            raise reject(DiagnosticKind.SHAPE,
+                         "3D attention requires q:[H,L,D], k:[G,S,D], v:[G,S,V]")
+        if h != g and h.isdigit() and g.isdigit() and int(h) % int(g):
+            raise reject(DiagnosticKind.SHAPE,
+                         f"GQA requires the key head count {g} to divide the query head count {h}")
+        return TensorType(query.dtype, [h, l, width])
     if rank != 4:
-        raise reject(DiagnosticKind.SHAPE, "attention supports 2D or 4D operands, not rank %d" % rank)
+        raise reject(DiagnosticKind.SHAPE,
+                     "attention supports 2D, 3D or 4D operands, not rank %d" % rank)
     b, h, l, d = query.shape
     kb, g, s, kd = key.shape
     vb, vg, vs, v_width = value.shape

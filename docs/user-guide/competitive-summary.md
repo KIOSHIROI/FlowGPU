@@ -11,7 +11,7 @@ public probes; no private fixture is used.
 | dynamic shapes | symbolic one-module, literal rewrite, automatic fallback | [Prepared deployment](deployment.md) |
 | fixed-shape deployment | prepared → copy+graph → zero-copy graph | [M2 H100 report](competitive-m2-h100.md) |
 | tuning | measured conv tile selection with a cache | [M2 H100 report](competitive-m2-h100.md#conv-tile-tuning) |
-| correctness | **27 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#21-case-validation-run) |
+| correctness | **28 cases × 6 backends**, one full-matrix run | [M2 H100 report](competitive-m2-h100.md#21-case-validation-run) |
 | compile time | 21-case distribution, median 11.3 ms | [M2 H100 report](competitive-m2-h100.md#compile-time-19-case-matrix) |
 | memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
 | token generation | functional 105.53 / in-place 72.11 µs per token | [Token generation](token-generation.md) |
