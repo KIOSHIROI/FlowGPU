@@ -1152,6 +1152,70 @@
       "atol": 0.05,
       "rtol": 0.05,
       "oracle": "decode_gqa_nocopy"
+    },
+    {
+      "name": "prefill_gqa_cache",
+      "source": "examples/quickstart/prefill_gqa_cache.fgpu",
+      "pipeline": "quickstart_prefill_gqa_cache",
+      "bindings": {},
+      "inputs": [
+        [
+          "q",
+          [
+            4,
+            16,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_new",
+          [
+            2,
+            16,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_new",
+          [
+            2,
+            16,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_cache",
+          [
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_cache",
+          [
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "loc",
+          [
+            1
+          ],
+          "int32"
+        ]
+      ],
+      "output": "attn",
+      "atol": 0.05,
+      "rtol": 0.05,
+      "oracle": "prefill_gqa_cache"
     }
   ]
 }

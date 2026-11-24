@@ -110,6 +110,7 @@ KERNELS = {
     "cache_write": ("cache_write",),
     "cache_write_hsd": ("cache_write_hsd",),
     "cache_write_hsd_batch": ("cache_write_hsd_batch",),
+    "cache_write_hsd_range": ("cache_write_hsd_range",),
     "pad_cat": ("pad_cat",),
     # The scan kind holds the whole carried-state family: a prefix sum
     # carries one fp32 total, a prefix min/max carries (value, index).

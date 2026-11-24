@@ -1,0 +1,11 @@
+{
+  "environment": "H100 GPU1, shared",
+  "prompt_tokens": 16,
+  "decode_tokens": 32,
+  "prefill_ms": 0.5644513294100761,
+  "per_token_us": 83.71105650439858,
+  "tokens_per_s": 11945.853292957247,
+  "warmup": true,
+  "prefill_pipeline": "examples/quickstart/prefill_gqa_cache.fgpu",
+  "decode_pipeline": "examples/quickstart/decode_gqa_attention_nocopy.fgpu"
+}

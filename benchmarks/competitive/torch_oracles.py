@@ -9,6 +9,14 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "prefill_gqa_cache":
+        q, k_new, v_new, k_cache, v_cache, loc = args
+        kk = k_new.float().repeat_interleave(2, dim=0)
+        vv = v_new.float().repeat_interleave(2, dim=0)
+        scores = q.float() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        mask = torch.ones(q.shape[-2], k_new.shape[-2], device=q.device, dtype=torch.bool).tril()
+        scores = scores.masked_fill(~mask, float("-inf"))
+        return {"attn": (torch.softmax(scores, dim=-1) @ vv).to(q.dtype)}
     if case_name == "decode_gqa_nocopy":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.float().clone(); vc = v_cache.float().clone()
@@ -168,6 +176,14 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "prefill_gqa_cache":
+        q, k_new, v_new, k_cache, v_cache, loc = args
+        kk = k_new.double().repeat_interleave(2, dim=0)
+        vv = v_new.double().repeat_interleave(2, dim=0)
+        scores = q.double() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        mask = torch.ones(q.shape[-2], k_new.shape[-2], device=q.device, dtype=torch.bool).tril()
+        scores = scores.masked_fill(~mask, float("-inf"))
+        return {"attn": torch.softmax(scores, dim=-1) @ vv}
     if case_name == "decode_gqa_nocopy":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.double().clone(); vc = v_cache.double().clone()

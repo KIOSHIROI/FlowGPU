@@ -1374,6 +1374,22 @@ def infer_cache_write_hsd_batch(args):
 
 
 register_operator('cache_write_hsd_batch', 3, infer_cache_write_hsd_batch, pointwise=False, acc=None)
+
+
+def infer_cache_write_hsd_range(args):
+    cache, new, loc = args
+    for value in (cache, new):
+        require_float(value, 'cache_write_hsd_range')
+    if len(cache.shape) != 3 or len(new.shape) != 3:
+        raise reject(DiagnosticKind.SHAPE, 'cache_write_hsd_range operands must be [H,S,D]')
+    if cache.shape[0] != new.shape[0] or cache.shape[2] != new.shape[2]:
+        raise reject(DiagnosticKind.SHAPE, 'cache_write_hsd_range head/depth mismatch')
+    if loc.shape != ['1'] and loc.shape != [1] or loc.dtype not in {'int32', 'int64'}:
+        raise reject(DiagnosticKind.SHAPE, 'cache_write_hsd_range loc must be an integer [1]')
+    return TensorType(cache.dtype, cache.shape.copy())
+
+
+register_operator('cache_write_hsd_range', 3, infer_cache_write_hsd_range, pointwise=False, acc=None)
 register_operator('linear_decode_forward', 7, infer_linear_decode_forward, pointwise=False, acc='fp32', multi=True)
 def infer_div(args):
     for x in args:

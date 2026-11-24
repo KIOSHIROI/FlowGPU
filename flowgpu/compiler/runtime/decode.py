@@ -46,6 +46,13 @@ class DecodeSession:
         self._v = None
         self._next_buffer = 0
 
+    def seed(self, k_cache, v_cache, position: int) -> None:
+        """Install a prefill-produced cache before decoding."""
+        self._k = k_cache
+        self._v = v_cache
+        self._pos = position
+        self._device = k_cache.device
+
     def _ensure(self, q):
         import torch
         if self._k is None:

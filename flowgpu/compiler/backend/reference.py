@@ -1250,6 +1250,7 @@ from flowgpu.compiler.backend.cache_store_backend import reference_kernel as _ca
 from flowgpu.compiler.backend.cache_write_backend import cache_write_reference_kernel as _cache_write_reference_kernel
 from flowgpu.compiler.backend.cache_write_hsd_backend import cache_write_hsd_reference_kernel as _cache_write_hsd_reference_kernel
 from flowgpu.compiler.backend.cache_write_batch_backend import cache_write_batch_reference_kernel as _cache_write_batch_reference_kernel
+from flowgpu.compiler.backend.cache_write_range_backend import cache_write_range_reference_kernel as _cache_write_range_reference_kernel
 from flowgpu.compiler.backend.pad_cat_backend import reference_kernel as _pad_cat_reference_kernel
 from flowgpu.compiler.backend.scan_backend import reference_kernel as _scan_reference_kernel
 from flowgpu.compiler.backend.patchify_backend import reference_kernel as _patchify_reference_kernel
@@ -1305,6 +1306,7 @@ EMITTERS = {
     "cache_write": _cache_write_reference_kernel,
     "cache_write_hsd": _cache_write_hsd_reference_kernel,
     "cache_write_hsd_batch": _cache_write_batch_reference_kernel,
+    "cache_write_hsd_range": _cache_write_range_reference_kernel,
     "linear_decode": _linear_decode_reference_kernel,
     "pad_cat": _pad_cat_reference_kernel,
     "scan": _scan_reference_kernel,

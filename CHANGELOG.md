@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.70.0
+
+- Add cache_write_hsd_range and a prefill pipeline: graph 6.42 us vs Inductor
+  73.28 us; prefill+decode path: 0.564 ms for 16 prompt tokens and 83.71
+  us/token decode.
+
 ## 0.69.0
 
 - Add ContinuousBatchSession with dynamic admission/retirement and an in-place

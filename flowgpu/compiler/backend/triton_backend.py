@@ -2360,6 +2360,7 @@ from flowgpu.compiler.backend.cache_store_backend import triton_kernel as _cache
 from flowgpu.compiler.backend.cache_write_backend import cache_write_triton_kernel as _cache_write_kernel
 from flowgpu.compiler.backend.cache_write_hsd_backend import cache_write_hsd_triton_kernel as _cache_write_hsd_kernel
 from flowgpu.compiler.backend.cache_write_batch_backend import cache_write_batch_triton_kernel as _cache_write_batch_kernel
+from flowgpu.compiler.backend.cache_write_range_backend import cache_write_range_triton_kernel as _cache_write_range_kernel
 from flowgpu.compiler.backend.linear_decode_backend import triton_kernel as _linear_decode_kernel
 from flowgpu.compiler.backend.pad_cat_backend import triton_kernel as _pad_cat_kernel
 from flowgpu.compiler.backend.scan_backend import triton_kernel as _scan_kernel
@@ -2395,6 +2396,7 @@ EMITTERS = {
     "cache_write": _cache_write_kernel,
     "cache_write_hsd": _cache_write_hsd_kernel,
     "cache_write_hsd_batch": _cache_write_batch_kernel,
+    "cache_write_hsd_range": _cache_write_range_kernel,
     "linear_decode": _linear_decode_kernel,
     "pad_cat": _pad_cat_kernel,
     "scan": _scan_kernel,
@@ -2674,7 +2676,7 @@ def lower(pipeline, graph, fusion, memory, *, gpu_backend="triton", library_matm
             kernels.append(emitter(graph, group, memory, name, config, autotune_fold=True))
         elif emitter is _layout_kernel and config.layout_on_device:
             kernels.append(_layout_device_kernel(graph, group, memory, name, config))
-        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _cache_write_kernel, _cache_write_hsd_kernel, _cache_write_batch_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _conv2d_ex_kernel, _native_attention_kernel, _gather_last_kernel,
+        elif emitter in (_pointwise_kernel, _matmul_kernel, _transpose_kernel, _rowwise_kernel, _rope_kernel, _primitive_kernel, _cache_store_kernel, _cache_write_kernel, _cache_write_hsd_kernel, _cache_write_batch_kernel, _cache_write_range_kernel, _linear_decode_kernel, _pad_cat_kernel, _scan_kernel, _patchify_kernel, _segmented_kernel, _scatter_kernel, _store_at_kernel, _topk_kernel, _sort_kernel, _mean_kernel, _layer_norm_kernel, _conv2d_kernel, _conv2d_same_kernel, _conv2d_stride2_kernel, _conv2d_stride2_same_kernel, _conv2d_ex_kernel, _native_attention_kernel, _gather_last_kernel,
                                         _segment_rank_kernel, _recurrence_kernel,
                                         _reduce_with_index_kernel):
             try:

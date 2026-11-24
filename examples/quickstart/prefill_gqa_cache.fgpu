@@ -1,0 +1,15 @@
+# Prompt prefill: causal GQA attention plus a contiguous KV-cache run write.
+pipeline quickstart_prefill_gqa_cache {
+  input q:bf16[4, 16, 64]
+  input k_new:bf16[2, 16, 64]
+  input v_new:bf16[2, 16, 64]
+  input k_cache:bf16[2, 128, 64]
+  input v_cache:bf16[2, 128, 64]
+  input loc:int32[1]
+  k2 = cache_write_hsd_range(k_cache, k_new, loc)
+  v2 = cache_write_hsd_range(v_cache, v_new, loc)
+  attn = causal_attention(q, k_new, v_new)
+  output k2
+  output v2
+  output attn
+}

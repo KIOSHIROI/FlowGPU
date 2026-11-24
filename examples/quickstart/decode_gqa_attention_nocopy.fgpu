@@ -1,0 +1,8 @@
+# Decode attention over a head-major cache that the runtime updates in place.
+pipeline quickstart_decode_gqa_attention_nocopy {
+  input q:bf16[4, 1, 64]
+  input k_cache:bf16[2, 128, 64]
+  input v_cache:bf16[2, 128, 64]
+  out = attention(q, k_cache, v_cache)
+  output out
+}

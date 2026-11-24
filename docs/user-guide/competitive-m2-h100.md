@@ -209,6 +209,21 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 
 
 
+
+## Prompt prefill with a KV-cache run write
+
+`prefill_gqa_cache` computes causal GQA attention over a 16-token prompt and
+writes the prompt's KV rows into a head-major cache:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 32.72 | 26.11 | 19.21 | **6.42** | 150.51 | 73.28 |
+
+Graph is 11x faster than Inductor. Correctness matches a float64 causal-GQA
+oracle. The matrix is now 29 cases.
+
+Raw data: [`m2-h100-gpu1-prefill-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-prefill-20261124.json).
+
 ## No-copy GQA decode (3D attention)
 
 `decode_gqa_nocopy` gives the attention op a rank-3 `[H,L,D]` query and reads
