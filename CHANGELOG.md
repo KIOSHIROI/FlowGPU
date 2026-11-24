@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.90.0
+
+- Add llama3_prefill_block.fgpu: 8-token causal prefill with contiguous KV
+  range write and the full MLP/residual block (single-head, batch 1).
+- H100 smoke test writes slots loc..loc+7 and leaves the rest zero.
+
 ## 0.89.0
 
 - Add llama3_decode_block_gqa.fgpu: batch 2, 4 query heads, 2 KV heads,

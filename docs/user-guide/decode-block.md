@@ -21,6 +21,8 @@ The caller supplies:
 - the previous `k_cache/v_cache`.
 
 
+The prefill counterpart is in [Cached prefill block](prefill-block.md).
+
 ## Batched GQA variant
 
 `examples/llama3_decode_block_gqa.fgpu` is the serving-shaped variant:

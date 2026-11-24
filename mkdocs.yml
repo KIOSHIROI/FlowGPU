@@ -46,6 +46,7 @@ nav:
   - Prefill + decode: prefill-decode.md
   - Paged KV cache: paged-cache.md
   - Cached decode block: decode-block.md
+  - Cached prefill block: prefill-block.md
   - MLP performance: mlp-performance.md
   - Real Llama 3 MLP: real-llama3-mlp.md
   - PyTorch custom op: torch-integration.md
