@@ -21,6 +21,8 @@ Host pieces used:
 H100 run: 8 decode steps, cache locations `[0..7]`, tokens
 `[3, 103, 107, 63, 62, 118, 61, 81, 56]`, all inside the 128-token vocabulary.
 
+The full prefill + decode + sampling chain is in [Closed loop](closed-loop.md).
+
 ## Scope
 
 This is an integration demo with random, scaled weights: the token sequence

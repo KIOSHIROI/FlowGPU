@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- Add examples/prefill_decode_generate.py: prompt -> cached prefill -> LM head ->
+  greedy sampling -> masked decode -> next token, on one paged cache.
+- H100 run: prompt [0..7], decode locations [8..11], generated ids inside the
+  vocabulary. This is the integration milestone, not a full serving engine or
+  a trained model.
+
 ## 0.99.0
 
 - Add examples/prefill_decode_loop.py: one 32-slot PagedKVCache written by
