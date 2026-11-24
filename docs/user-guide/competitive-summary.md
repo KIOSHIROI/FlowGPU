@@ -16,6 +16,7 @@ public probes; no private fixture is used.
 | memory | 19-case peak-allocated metric | [M2 H100 report](competitive-m2-h100.md#peak-memory-all-19-cases) |
 | prefill + decode | 16-token prefill 0.564 ms; decode 83.71 µs/token | [Prefill + decode](prefill-decode.md) |
 | continuous batching | in-place 4-slot: 32.26 µs/token, 30,997.9 tok/s | [Continuous batching](continuous-batching.md) |
+| real Llama 3 MLP | FlowGPU/eager 1.02x (latest); graph not faster; not a speed claim | [Real Llama 3 MLP](real-llama3-mlp.md) |
 | token generation | compiled 38.76 / graph 20.83 µs per token | [Token generation](token-generation.md) |
 | FlagOS/FlagGems | 10-case baseline measured; matmul/add excluded by Triton-3.8 incompatibility | [FlagOS baseline](competitive-flagos.md) |
 | TVM/Relax | **blocked**: PyPI wheel is CPU-only (`cuda` disabled) | [FlagOS baseline](competitive-flagos.md#tvm) |

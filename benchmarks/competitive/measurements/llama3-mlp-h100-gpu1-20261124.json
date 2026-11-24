@@ -1,0 +1,13 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "hidden": 4096,
+  "intermediate": 14336,
+  "protocol": "p50 per call, per-call sync, 20 iterations, 3 repeats; compile and warmup excluded",
+  "cases": [
+    {"tokens": 1, "relative_error": 0.0032196044921875, "flowgpu_over_eager": 1.0172, "graph_over_eager": 1.1957},
+    {"tokens": 2048, "relative_error": 0.0, "flowgpu_over_eager": 1.0247, "graph_over_eager": 1.0489}
+  ],
+  "note": "Absolute microseconds vary with shared-GPU load; earlier sessions measured FlowGPU/eager 1.08-1.18x. Ratios are the stable signal; this is not a speed claim."
+}

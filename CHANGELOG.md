@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.0
+
+- Add the real Llama 3 8B SwiGLU MLP example and benchmark. Three kernels;
+  latest 3-repeat ratio is 1.02x eager (parity, not a win); graph is slower on
+  this compute-bound subgraph.
+
 ## 0.73.0
 
 - Add CUDA Graph replay to DecodeSession: 20.83 us/token, 48,002.3 tokens/s

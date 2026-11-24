@@ -1,0 +1,18 @@
+# Llama 3 8B SwiGLU MLP: one real hot subgraph of a decoder layer.
+#
+# The host keeps attention, KV cache, batching and sampling; FlowGPU compiles
+# only this MLP block. H = 4096 and I = 14336 in Llama 3 8B.
+pipeline llama3_mlp_swiglu {
+    input x: bf16[T,H]
+    input w_gate: bf16[H,I]
+    input w_up: bf16[H,I]
+    input w_down: bf16[I,H]
+
+    gate = matmul(x, w_gate)
+    up = matmul(x, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    y = matmul(hidden, w_down)
+
+    output y
+}
