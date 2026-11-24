@@ -1313,6 +1313,23 @@ register_operator('move_first_last', 1, infer_move_first_last, pointwise=False, 
 register_operator('gather_row_offset', 2, infer_gather_row_offset, pointwise=False, acc=None)
 register_operator('gather_rows', 2, infer_gather_rows, pointwise=False, acc=None)
 register_operator('store_cache_4d', 6, infer_store_cache_4d, pointwise=False, acc=None, multi=True)
+
+
+def infer_cache_write(args):
+    cache, token, loc = args
+    for value in (cache, token):
+        require_float(value, 'cache_write')
+    if len(cache.shape) != 3:
+        from flowgpu.compiler.core.diagnostic import reject
+        raise reject(DiagnosticKind.SHAPE, 'cache_write cache must be [S,H,D]')
+    if cache.shape[1:] != token.shape:
+        raise reject(DiagnosticKind.SHAPE, 'cache_write token must be [H,D]')
+    if loc.shape != ['1'] and loc.shape != [1] or loc.dtype not in {'int32', 'int64'}:
+        raise reject(DiagnosticKind.SHAPE, 'cache_write loc must be an integer [1]')
+    return TensorType(cache.dtype, cache.shape.copy())
+
+
+register_operator('cache_write', 3, infer_cache_write, pointwise=False, acc=None)
 register_operator('linear_decode_forward', 7, infer_linear_decode_forward, pointwise=False, acc='fp32', multi=True)
 def infer_div(args):
     for x in args:

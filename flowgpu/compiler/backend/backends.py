@@ -107,6 +107,7 @@ KERNELS = {
     # node and the platform gate must be able to name what it allows.
     "layout": LAYOUT_OPS,
     "cache_store": ("store_cache_4d",),
+    "cache_write": ("cache_write",),
     "pad_cat": ("pad_cat",),
     # The scan kind holds the whole carried-state family: a prefix sum
     # carries one fp32 total, a prefix min/max carries (value, index).

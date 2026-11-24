@@ -9,6 +9,14 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "decode_with_cache":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.float().clone()
+        vc = v_cache.float().clone()
+        kc[loc[0], 0] = k_new[0].float()
+        vc[loc[0], 0] = v_new[0].float()
+        scores = q.float() @ kc[:, 0].t() / (q.shape[-1] ** 0.5)
+        return {"out": (torch.softmax(scores, dim=-1) @ vc[:, 0]).to(q.dtype)}
     if case_name == "causal_attention_gqa":
         q, k, v = args
         h, g = q.shape[1], k.shape[1]
@@ -136,6 +144,14 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "decode_with_cache":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.double().clone()
+        vc = v_cache.double().clone()
+        kc[loc[0], 0] = k_new[0].double()
+        vc[loc[0], 0] = v_new[0].double()
+        scores = q.double() @ kc[:, 0].t() / (q.shape[-1] ** 0.5)
+        return {"out": torch.softmax(scores, dim=-1) @ vc[:, 0]}
     if case_name == "causal_attention_gqa":
         q, k, v = args
         h, g = q.shape[1], k.shape[1]

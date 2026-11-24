@@ -1,0 +1,49 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "decode_with_cache",
+      "backend": {
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 128.03360223770142,
+          "compile_ms": 0.0,
+          "peak_bytes": 33754624
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 201.7184019088745,
+          "compile_ms": 2356.6243574023247,
+          "peak_bytes": 67277312
+        }
+      },
+      "flowgpu_error": "AttributeError: module '_flowgpu_fac4818b6f040eba4299a85046c3917539e53364c7bc898754f6d1f10c6ce7d4' has no attribute 'run_quickstart_decode_cache'",
+      "flowgpu_prepared_error": "ValueError: preparation requires exactly one tensor-only named pipeline",
+      "flowgpu_prepared_graph_error": "ValueError: preparation requires exactly one tensor-only named pipeline",
+      "flowgpu_graph_error": "ValueError: preparation requires exactly one tensor-only named pipeline",
+      "triton_error": "ValueError: no Triton baseline for decode_with_cache"
+    }
+  ]
+}

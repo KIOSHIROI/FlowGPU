@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.62.0
+
+- Add cache_write and a decode-with-cache-write pipeline: 62.23 us vs eager
+  121.56 / Inductor 202.49; prepared/graph blocked on a layout host call.
+
 ## 0.61.1
 
 - Use the native attention kernel for fixed-cache decode; graph improves from

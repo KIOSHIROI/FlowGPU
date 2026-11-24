@@ -1,0 +1,59 @@
+{
+  "schema": "flowgpu.competitive.device/1",
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA H100 PCIe"
+  },
+  "protocol": {
+    "warmup": 8,
+    "iterations": 20,
+    "graph": "CUDA Graph replay; excludes host guards/allocation/dispatch",
+    "full_call": "guarded host call including allocation and dispatch",
+    "oracle": "float64 torch oracle; per-case atol/rtol"
+  },
+  "cases": [
+    {
+      "name": "decode_with_cache",
+      "backend": {
+        "flowgpu": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": 8.873599767684937,
+          "full_us": 62.23040223121643,
+          "compile_ms": 115.91415479779243,
+          "peak_bytes": 33656320
+        },
+        "eager": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 121.561598777771,
+          "compile_ms": 0.0,
+          "peak_bytes": 33688576
+        },
+        "inductor": {
+          "correctness": {
+            "passed": true,
+            "max_abs": 0.0009423504941551974,
+            "tolerance": 0.06827451136239093
+          },
+          "graph_us": null,
+          "full_us": 202.4928092956543,
+          "compile_ms": 2506.864712573588,
+          "peak_bytes": 67211264
+        }
+      },
+      "flowgpu_prepared_error": "ValueError: unsupported host operation in execution plan: quickstart_decode_cache_k2",
+      "flowgpu_prepared_graph_error": "ValueError: unsupported host operation in execution plan: quickstart_decode_cache_k2",
+      "flowgpu_graph_error": "ValueError: unsupported host operation in execution plan: quickstart_decode_cache_k2",
+      "triton_error": "ValueError: no Triton baseline for decode_with_cache"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-DTYPES = {"fp16": "float16", "bf16": "bfloat16", "fp32": "float32", "int32": "int32"}
+DTYPES = {"fp16": "float16", "bf16": "bfloat16", "fp32": "float32", "int32": "int32", "int64": "int64"}
 
 
 @dataclass(frozen=True)
@@ -81,6 +81,9 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
     tensors = []
     for name, shape, dtype in case.inputs:
         torch_dtype = getattr(torch, DTYPES[dtype])
+        if case.name == "decode_with_cache" and name == "loc":
+            tensors.append(torch.randint(0, 128, shape, generator=generator, dtype=torch.int32).cuda())
+            continue
         if case.name == "llama3_decoder_layer" and name in {"rope_cos", "rope_sin"}:
             angles = torch.rand(shape, generator=generator) * 0.1
             tensor = (torch.cos(angles) if name == "rope_cos" else torch.sin(angles)).to(torch_dtype)

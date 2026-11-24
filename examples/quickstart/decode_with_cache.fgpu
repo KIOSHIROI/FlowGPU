@@ -1,0 +1,15 @@
+# Decode step: functional KV-cache row write, then attention over the cache.
+pipeline quickstart_decode_cache {
+  input q:bf16[1, 64]
+  input k_cache:bf16[128, 1, 64]
+  input v_cache:bf16[128, 1, 64]
+  input k_new:bf16[1, 64]
+  input v_new:bf16[1, 64]
+  input loc:int32[1]
+  k2 = cache_write(k_cache, k_new, loc)
+  v2 = cache_write(v_cache, v_new, loc)
+  k_flat = reshape(k2, [128, 64])
+  v_flat = reshape(v2, [128, 64])
+  out = attention(q, k_flat, v_flat)
+  output out
+}

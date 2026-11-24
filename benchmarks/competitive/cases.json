@@ -899,6 +899,67 @@
       "rtol": 0.05,
       "oracle": "causal_attention_gqa",
       "compile_options": {}
+    },
+    {
+      "name": "decode_with_cache",
+      "source": "examples/quickstart/decode_with_cache.fgpu",
+      "pipeline": "quickstart_decode_cache",
+      "bindings": {},
+      "inputs": [
+        [
+          "q",
+          [
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_cache",
+          [
+            128,
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_cache",
+          [
+            128,
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_new",
+          [
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_new",
+          [
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "loc",
+          [
+            1
+          ],
+          "int32"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.05,
+      "rtol": 0.05,
+      "oracle": "decode_with_cache"
     }
   ]
 }

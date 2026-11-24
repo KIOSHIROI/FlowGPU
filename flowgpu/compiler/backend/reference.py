@@ -1236,6 +1236,7 @@ def _layout_kernel(graph, group, memory, name) -> ReferenceKernel:
 
 from flowgpu.compiler.backend.primitives import reference_kernel as _primitive_kernel
 from flowgpu.compiler.backend.cache_store_backend import reference_kernel as _cache_store_reference_kernel
+from flowgpu.compiler.backend.cache_write_backend import cache_write_reference_kernel as _cache_write_reference_kernel
 from flowgpu.compiler.backend.pad_cat_backend import reference_kernel as _pad_cat_reference_kernel
 from flowgpu.compiler.backend.scan_backend import reference_kernel as _scan_reference_kernel
 from flowgpu.compiler.backend.patchify_backend import reference_kernel as _patchify_reference_kernel
@@ -1288,6 +1289,7 @@ EMITTERS = {
     "attention": _attention_kernel,
     "layout": _layout_kernel,
     "cache_store": _cache_store_reference_kernel,
+    "cache_write": _cache_write_reference_kernel,
     "linear_decode": _linear_decode_reference_kernel,
     "pad_cat": _pad_cat_reference_kernel,
     "scan": _scan_reference_kernel,

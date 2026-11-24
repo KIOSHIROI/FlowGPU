@@ -205,6 +205,24 @@ remains available via `gpu_backend='hybrid'`.
 The matrix is now 24 cases.
 Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-causal-native2-20261124.json).
 
+
+## Decode with a functional KV-cache write
+
+`decode_with_cache` writes one new K/V row with `cache_write`, reshapes the
+128-token cache and runs native attention:
+
+| flowgpu | prepared | graph | eager | inductor |
+|---:|---:|---:|---:|---:|
+| 62.23 | unsupported | unsupported | 121.56 | 202.49 |
+
+The default path is 2.0x faster than eager and 3.3x faster than Inductor, and
+correctness matches a float64 oracle. Prepared/graph still fail because the
+cache-write host includes a layout call that the execution plan cannot freeze;
+that is the next execution-plan gap.
+
+The matrix is now 25 cases.
+Raw data: [`m2-h100-gpu1-decode-cache2-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-cache2-20261124.json).
+
 ## Decode-step attention over a KV cache
 
 The decode-phase case: `q [1,64]` attends over a 128-token single-head K/V
