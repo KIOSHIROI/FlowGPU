@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.57.0
+
+- Add the FlagOS/FlagGems baseline backend and publish a 10-case comparison.
+- Document TVM: the PyPI wheel is CPU-only, so no GPU-comparable baseline.
+
 ## 0.56.0
 
 - Declaration-only shape detection: literal-only operators (sort/topk/conv)

@@ -6,6 +6,7 @@ the case matrix without importing torch; CI therefore runs that form.
 
 Backends:
 * ``flowgpu``  -- FlowGPU-generated Triton host;
+* ``flagos`` -- FlagGems (FlagOS) operator baseline where supported;
 * ``flowgpu_tuned`` -- conv tile autotuning, default lowering elsewhere;
 * ``flowgpu_prepared`` -- offline prepared plan with caller-owned buffers;
 * ``flowgpu_prepared_graph`` -- prepared plan + copy-into-static graph replay;
@@ -180,6 +181,37 @@ def _flowgpu_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     return call, compile_ms
 
 
+def _flagos_runner(case: DeviceCase, args):
+    """FlagOS/FlagGems baseline for the operators it supports on this stack."""
+    import flag_gems as fg
+    # FlagGems 5.0.2 + Triton 3.8 aborts in the matmul specialization
+    # (make_tensordesc argument assertion), so it is intentionally excluded.
+    if case.name == "softmax_wide":
+        return lambda: {"q": fg.softmax(args[0], dim=-1)}
+    if case.name == "sort_last":
+        return lambda: {"out": fg.sort(args[0], dim=-1)[0]}
+    if case.name == "topk_last":
+        return lambda: {"values": fg.topk(args[0], 8, dim=-1)[0]}
+    if case.name == "mean_last":
+        return lambda: {"out": fg.mean_dim(args[0], dim=-1, keepdim=True)}
+    if case.name == "layer_norm":
+        x, weight, bias, eps = args
+        return lambda: {"out": fg.layer_norm(x, (x.shape[-1],), weight, bias, eps)[0]}
+    if case.name in {"conv2d_1x1", "conv2d_3x3", "conv2d_same",
+                     "conv2d_stride2", "conv2d_stride2_same"}:
+        x, weight, bias = args
+        if weight.ndim == 2:
+            weight = weight.unsqueeze(-1).unsqueeze(-1)
+        padding = 1 if case.name in {"conv2d_same", "conv2d_stride2_same"} else 0
+        stride = 2 if case.name in {"conv2d_stride2", "conv2d_stride2_same"} else 1
+        def call():
+            out = fg.conv2d(x.permute(0, 3, 1, 2), weight, bias,
+                            stride=stride, padding=padding)
+            return {"out": out.permute(0, 2, 3, 1)}
+        return call
+    raise ValueError("FlagGems baseline unavailable for " + case.name)
+
+
 def _flowgpu_tuned_runner(case: DeviceCase, args, *, cache_dir: pathlib.Path):
     """Measure conv tile candidates on this shape; other cases use the default."""
     if not case.name.startswith("conv2d"):
@@ -324,6 +356,11 @@ def main(argv=None) -> int:
                     case, tensors, cache_dir=cache_dir / "prepared_graph")
             except Exception as error:
                 entry["flowgpu_prepared_graph_error"] = type(error).__name__ + ": " + str(error)
+        if "flagos" in backends:
+            try:
+                runners["flagos"] = (_flagos_runner(case, tensors), 0.0)
+            except Exception as error:
+                entry["flagos_error"] = type(error).__name__ + ": " + str(error)
         if "flowgpu_tuned" in backends:
             try:
                 runners["flowgpu_tuned"] = _flowgpu_tuned_runner(

@@ -51,6 +51,7 @@ nav:
   - Roadmap: roadmap.md
   - Competitive roadmap: competitive-roadmap.md
   - Competitive summary: competitive-summary.md
+  - FlagOS/FlagGems baseline: competitive-flagos.md
   - Competitive M2 H100 result: competitive-m2-h100.md
   - Operator coverage: operator-coverage.md
   - Stability and versioning: stability.md
