@@ -1,0 +1,12 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "protocol": "prepared execution plan auto-selects resolve_device_platform(); p50 per call, 15 iterations, 3 repeats; shared GPU",
+  "device_policy": {"matmul_block_n": 256, "matmul_num_stages": 3, "matmul_num_warps": 8},
+  "cases": [
+    {"tokens": 1, "prepared_over_eager": 1.041, "graph_over_eager": 1.051, "default_over_eager": 1.032},
+    {"tokens": 2048, "prepared_over_eager": 0.940, "graph_over_eager": 0.968, "default_over_eager": 1.114}
+  ],
+  "note": "One 3-repeat session on a shared device. Prepared prefill reused buffers and the H100 large tile; absolute times moved with load. This is a deployment-path observation, not a universal speed claim."
+}

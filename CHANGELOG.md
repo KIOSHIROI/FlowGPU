@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.0
+
+- Prepared execution plans auto-select resolve_device_platform(): H100 uses
+  128x256, L4 keeps 128x128. In one session prefill prepared/eager was 0.94x
+  (decode 1.04x); shared-device observation, not a universal claim.
+
 ## 0.75.0
 
 - Add resolve_device_platform()/large_n_matmul_policy(): H100-class devices

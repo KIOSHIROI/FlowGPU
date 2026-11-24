@@ -260,6 +260,17 @@ def prepare_execution_plan(source, *, pipeline, args, cache_dir, validator, **op
     from pathlib import Path
     from flowgpu.compiler.runtime.preparation import prepare_pipeline, select_pipeline_source
     from flowgpu.compiler.runtime.runtime import _load_generated_module
+    options = dict(options)
+    if "platform_config" not in options:
+        # Prepared plans are a deployment path: use the device's shared-memory
+        # policy instead of pinning the L4-safe GEMM tile on an H100.
+        try:
+            first = next(value for value in args if isinstance(value, torch.Tensor))
+            if first.is_cuda:
+                from flowgpu.compiler.backend.platform_configs import resolve_device_platform
+                options["platform_config"] = resolve_device_platform(first.device.index)
+        except (StopIteration, RuntimeError):
+            pass
     source=select_pipeline_source(source,pipeline)
     _,record=prepare_pipeline(source,pipeline=pipeline,args=args,cache_dir=cache_dir,validator=validator,**options)
     code=Path(record['source_path']).read_text()

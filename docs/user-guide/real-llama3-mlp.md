@@ -66,6 +66,24 @@ On H100 the large tile brings prefill to about 1.00–1.02x eager, versus
 1.05x for the default tile in the same session. This is a device policy, not a
 new global default: L4 and other 100 KiB-class devices keep the safe tile.
 
+
+## Prepared plans select the device tile automatically
+
+`prepare_execution_plan()` now resolves the GEMM policy from the actual device
+when no `platform_config` is passed. Prepared plans therefore use the H100
+128x256 tile and keep the L4-safe 128x128 tile elsewhere.
+
+In one 3-repeat session on a shared H100, the prepared plan measured:
+
+| tokens | prepared / eager | graph / eager | default / eager |
+|---:|---:|---:|---:|
+| 1 | 1.04x | 1.05x | 1.03x |
+| 2048 | **0.94x** | 0.97x | 1.11x |
+
+The prefill prepared path reused output buffers and the larger tile; decode is
+still about 4% slower. Shared-device load moved absolute times, so treat this
+as a deployment-path observation, not a universal speed claim.
+
 ## Why this task matters
 
 It exposes the real boundary of the current implementation:
