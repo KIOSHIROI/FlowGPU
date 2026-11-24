@@ -56,6 +56,25 @@ H100 run: locations `[0..7]`, output `(1,64)` finite, all 8 cache slots
 written. This is the minimal end-to-end host chain; sampling and request
 eviction are still separate.
 
+
+## Dynamic batching loop
+
+`examples/decode_loop_batched.py` combines all three host pieces over the GQA
+block (batch 2, 4 query heads, 2 KV heads, 8 slots):
+
+- `DynamicBatch(capacity=2)` packs active requests and pads empty rows;
+- each request owns a `PagedKVCache` and a `BlockTable`;
+- each step appends one cache location per active request, stacks the per-row
+  caches into the block's `[2,2,8,64]` input, runs, and copies the updated
+  rows back.
+
+H100 run: after 3 steps both requests are at locations `[0,1,2]`; after
+removing `r0` and adding `r2`, the next step gives `r1=[0,1,2,3]`,
+`r2=[0]`, and all outputs are finite.
+
+This is a scheduling demo, not a continuous-batching policy: there is no
+priority, preemption or KV eviction.
+
 ## Scope
 
 This is a single-head, batch-1 decode block with a fixed 8-slot cache. It is

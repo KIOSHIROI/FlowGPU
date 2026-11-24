@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.94.0
+
+- Add examples/decode_loop_batched.py: DynamicBatch + per-request PagedKVCache
+  and BlockTable over the batched GQA decode block; add/remove requests and
+  finite outputs verified on H100.
+
 ## 0.93.0
 
 - Add examples/decode_loop.py: BlockTable + PagedKVCache driving the cached
