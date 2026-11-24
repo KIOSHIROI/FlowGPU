@@ -1023,6 +1023,73 @@
       "atol": 0.05,
       "rtol": 0.05,
       "oracle": "decode_gqa_cache"
+    },
+    {
+      "name": "decode_batch_gqa",
+      "source": "examples/quickstart/decode_batch_gqa.fgpu",
+      "pipeline": "quickstart_decode_batch_gqa",
+      "bindings": {},
+      "inputs": [
+        [
+          "q",
+          [
+            4,
+            4,
+            1,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_cache",
+          [
+            4,
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_cache",
+          [
+            4,
+            2,
+            128,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "k_new",
+          [
+            4,
+            2,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "v_new",
+          [
+            4,
+            2,
+            64
+          ],
+          "bf16"
+        ],
+        [
+          "loc",
+          [
+            4
+          ],
+          "int32"
+        ]
+      ],
+      "output": "out",
+      "atol": 0.05,
+      "rtol": 0.05,
+      "oracle": "decode_batch_gqa"
     }
   ]
 }

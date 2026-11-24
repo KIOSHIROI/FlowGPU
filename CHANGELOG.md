@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.67.0
+
+- Add cache_write_hsd_batch and a 4-request batched GQA decode: graph 7.61 us
+  vs eager 316.11 us / Inductor 1213.24 us.
+
 ## 0.66.0
 
 - Add an in-place decode session path: 72.11 us/token and 13,867.4 tokens/s

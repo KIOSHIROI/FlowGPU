@@ -85,7 +85,7 @@ def test_the_anchor_that_accumulates_nothing_is_named():
     operators (reshape/split/concat) accumulate nothing either -- they move
     elements, they do not combine them.
     """
-    assert declined(OPERATORS) == ("transpose", "rope", "reshape", "split", "concat", "pad_cat", "patchify", "scatter_by_index") + ("exp", "exp2", "log", "log2", "neg_inf_like", "ones_like", "zeros_like", "to_fp32", "isfinite", "where", "broadcast_like", "cast_like", "cast_to", "move_first_last", "gather_row_offset", "gather_rows", "store_cache_4d", "cache_write", "cache_write_hsd", "div", "sort_last") + VALUE_LAYER_NAMES + ("topk_last", "gather_last", "argmax_last", "argmin_last", "segment_rank", "interleave")
+    assert declined(OPERATORS) == ("transpose", "rope", "reshape", "split", "concat", "pad_cat", "patchify", "scatter_by_index") + ("exp", "exp2", "log", "log2", "neg_inf_like", "ones_like", "zeros_like", "to_fp32", "isfinite", "where", "broadcast_like", "cast_like", "cast_to", "move_first_last", "gather_row_offset", "gather_rows", "store_cache_4d", "cache_write", "cache_write_hsd", "cache_write_hsd_batch", "div", "sort_last") + VALUE_LAYER_NAMES + ("topk_last", "gather_last", "argmax_last", "argmin_last", "segment_rank", "interleave")
 
 
 @pytest.mark.parametrize("name", ["rms_norm", "matmul", "softmax"])
@@ -232,7 +232,7 @@ def test_the_json_carries_the_contract(capsys):
         "rms_norm_axis": "fp32",
         "gated_delta_recurrence": "fp32",
     }
-    assert precision["declined"] == list(("transpose", "rope", "reshape", "split", "concat", "pad_cat", "patchify", "scatter_by_index") + ("exp", "exp2", "log", "log2", "neg_inf_like", "ones_like", "zeros_like", "to_fp32", "isfinite", "where", "broadcast_like", "cast_like", "cast_to", "move_first_last", "gather_row_offset", "gather_rows", "store_cache_4d", "cache_write", "cache_write_hsd", "div", "sort_last") + VALUE_LAYER_NAMES + ("topk_last", "gather_last", "argmax_last", "argmin_last", "segment_rank", "interleave"))
+    assert precision["declined"] == list(("transpose", "rope", "reshape", "split", "concat", "pad_cat", "patchify", "scatter_by_index") + ("exp", "exp2", "log", "log2", "neg_inf_like", "ones_like", "zeros_like", "to_fp32", "isfinite", "where", "broadcast_like", "cast_like", "cast_to", "move_first_last", "gather_row_offset", "gather_rows", "store_cache_4d", "cache_write", "cache_write_hsd", "cache_write_hsd_batch", "div", "sort_last") + VALUE_LAYER_NAMES + ("topk_last", "gather_last", "argmax_last", "argmin_last", "segment_rank", "interleave"))
 
     stores = {entry["value"]: entry["store"] for entry in precision["values"]}
     accs = {entry["value"]: entry["acc"] for entry in precision["values"]}

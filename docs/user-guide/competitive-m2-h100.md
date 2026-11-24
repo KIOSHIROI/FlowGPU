@@ -207,6 +207,24 @@ Raw data: [`m2-h100-gpu1-causal-native2-20261124.json`](https://github.com/KIOSH
 
 
 
+
+## Batched GQA decode (4 requests)
+
+`decode_batch_gqa` batches 4 requests, each with 4 query heads and 2 KV heads.
+One kernel writes one row per (batch, KV head), then native 4D GQA attention runs
+over all four request caches:
+
+| flowgpu | prepared | prepared+graph | graph | eager | inductor |
+|---:|---:|---:|---:|---:|---:|
+| 45.19 | 9.64 | 20.36 | **7.61** | 316.11 | 1213.24 |
+
+Graph is 41x faster than eager and 159x faster than Inductor on this batch, and
+correctness matches a float64 batched-GQA oracle. Prepared+graph is noisier on
+the shared GPU; the zero-copy graph number is the stable one.
+
+The matrix is now 27 cases.
+Raw data: [`m2-h100-gpu1-decode-batch-20261124.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/m2-h100-gpu1-decode-batch-20261124.json).
+
 ## Multi-head GQA decode with cache write
 
 `decode_gqa_cache` writes 2 KV heads in a **head-major [H,S,D]** cache, reshapes

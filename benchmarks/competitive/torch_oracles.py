@@ -9,6 +9,15 @@ from __future__ import annotations
 
 def eager(case_name: str, args):
     import torch
+    if case_name == "decode_batch_gqa":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.float().clone(); vc = v_cache.float().clone()
+        for b in range(kc.shape[0]):
+            kc[b, :, loc[b]] = k_new[b].float()
+            vc[b, :, loc[b]] = v_new[b].float()
+        kk = kc.repeat_interleave(2, dim=1); vv = vc.repeat_interleave(2, dim=1)
+        scores = q.float() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        return {"out": (torch.softmax(scores, dim=-1) @ vv).to(q.dtype)}
     if case_name == "decode_gqa_cache":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.float().clone(); vc = v_cache.float().clone()
@@ -152,6 +161,15 @@ def eager(case_name: str, args):
 
 def oracle(case_name: str, args):
     import torch
+    if case_name == "decode_batch_gqa":
+        q, k_cache, v_cache, k_new, v_new, loc = args
+        kc = k_cache.double().clone(); vc = v_cache.double().clone()
+        for b in range(kc.shape[0]):
+            kc[b, :, loc[b]] = k_new[b].double()
+            vc[b, :, loc[b]] = v_new[b].double()
+        kk = kc.repeat_interleave(2, dim=1); vv = vc.repeat_interleave(2, dim=1)
+        scores = q.double() @ kk.transpose(-1, -2) / (q.shape[-1] ** 0.5)
+        return {"out": torch.softmax(scores, dim=-1) @ vv}
     if case_name == "decode_gqa_cache":
         q, k_cache, v_cache, k_new, v_new, loc = args
         kc = k_cache.double().clone(); vc = v_cache.double().clone()

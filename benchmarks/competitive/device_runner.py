@@ -81,7 +81,7 @@ def make_inputs(case: DeviceCase, *, seed: int = 0):
     tensors = []
     for name, shape, dtype in case.inputs:
         torch_dtype = getattr(torch, DTYPES[dtype])
-        if case.name in {"decode_with_cache", "decode_gqa_cache"} and name == "loc":
+        if case.name in {"decode_with_cache", "decode_gqa_cache", "decode_batch_gqa"} and name == "loc":
             tensors.append(torch.randint(0, 128, shape, generator=generator, dtype=torch.int32).cuda())
             continue
         if case.name == "llama3_decoder_layer" and name in {"rope_cos", "rope_sin"}:
