@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import pathlib
 import statistics
 import time
@@ -27,18 +28,20 @@ def main(argv=None) -> int:
     parser.add_argument("--tokens", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=15)
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--weight-scale", type=float, default=0.005)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     import torch
     from flowgpu.compiler.runtime.execution_plan import prepare_execution_plan
+    from flowgpu.compiler.runtime.layers import LayerStack
 
     T = args.tokens
     source = (ROOT / "examples/llama3_mlp_swiglu.fgpu").read_text()
     x = torch.randn(T, H, device="cuda", dtype=torch.bfloat16)
     layers = [
-        (torch.randn(H, I, device="cuda", dtype=torch.bfloat16) * 0.02,
-         torch.randn(H, I, device="cuda", dtype=torch.bfloat16) * 0.02,
-         torch.randn(I, H, device="cuda", dtype=torch.bfloat16) * 0.02)
+        (torch.randn(H, I, device="cuda", dtype=torch.bfloat16) * args.weight_scale,
+         torch.randn(H, I, device="cuda", dtype=torch.bfloat16) * args.weight_scale,
+         torch.randn(I, H, device="cuda", dtype=torch.bfloat16) * args.weight_scale)
         for _ in range(args.layers)
     ]
     plan = prepare_execution_plan(
@@ -46,17 +49,10 @@ def main(argv=None) -> int:
         cache_dir=str(ROOT / ".competitive-cache/llama3-mlp-stack"),
         validator=lambda result: True,
         shape_bindings={"T": T, "H": H, "I": I})
-    buffers = plan.allocate_buffers()
-    x_in = x.clone()
+    stack = LayerStack(plan, layers)
 
     def flowgpu_stack():
-        current = x_in
-        for wg, wu, wd in layers:
-            result = plan.run_into(current, wg, wu, wd, buffers=buffers)
-            if (wg, wu, wd) is not layers[-1]:
-                x_in.copy_(result["y"])
-                current = x_in
-        return result["y"]
+        return stack(x)
 
     def eager_stack():
         current = x
@@ -66,6 +62,10 @@ def main(argv=None) -> int:
 
     got = flowgpu_stack().clone(); want = eager_stack(); torch.cuda.synchronize()
     relative = ((got - want).abs().max() / want.abs().max()).item()
+    if not math.isfinite(relative):
+        # Deep synthetic stacks can underflow/overflow bf16; the timing is still
+        # useful, but there is no honest numeric comparison to report.
+        relative = None
     fg = [ _p50(flowgpu_stack, args.iterations) for _ in range(args.repeats)]
     eg = [ _p50(eager_stack, args.iterations) for _ in range(args.repeats)]
     payload = {"environment": "H100 PCIe, shared", "layers": args.layers,

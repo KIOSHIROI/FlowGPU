@@ -106,11 +106,22 @@ The input must be copied from the previous output buffer before the next layer:
 the prepared plan's output buffer cannot alias its input. That copy is tiny for
 decode (one row) and is the host's responsibility.
 
-Four stacked layers with distinct weights, T=1, measured **1.007x eager** on a
-shared H100 (relative error 8.8e-3). The compiled artifact is reused; only the
+`LayerStack` implements the alternating-buffer pattern:
+
+```python
+from flowgpu.compiler.runtime.layers import LayerStack
+stack = LayerStack(plan, layers)   # two buffer sets allocated once
+y = stack(x)
+```
+
+Four stacked layers with distinct weights, T=1, measured **0.995x eager** on a
+shared H100 (relative error 8.0e-3). The compiled artifact is reused; only the
 weight tensors change. A static CUDA Graph is not suitable here because its
 weight pointers are fixed per layer; prepared/custom-op calls are the reuse
 path.
+
+A 32-layer synthetic run measured about 1.03x eager but was noisy, and its
+scaled bf16 stack underflowed, so no 32-layer correctness number is claimed.
 
 This is the host-integration lesson for a real model: **reuse code, pass
 weights, ping-pong buffers.**

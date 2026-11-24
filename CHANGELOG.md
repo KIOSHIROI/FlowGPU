@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.83.0
+
+- Add LayerStack: one prepared plan reused across layers with two alternating
+  buffer sets and no per-layer copy. 4-layer real MLP: 0.995x eager.
+- 32-layer synthetic timing is noisy and its scaled bf16 stack underflows; no
+  32-layer correctness is claimed.
+
 ## 0.82.0
 
 - Add a stacked-MLP benchmark: one prepared plan reused across 4 layer weight

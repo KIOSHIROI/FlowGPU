@@ -4,10 +4,10 @@
   "model": "Llama 3 8B SwiGLU MLP",
   "layers": 4,
   "tokens": 1,
-  "protocol": "one prepared plan reused across 4 layer weight sets; output copied into the input buffer between layers; p50, 15 iterations, 3 repeats",
-  "relative_error": 0.0087890625,
-  "flowgpu_us": 3339.1648903489113,
-  "eager_us": 3316.175192594528,
-  "flowgpu_over_eager": 1.0069,
-  "note": "Stacked random weights are scaled by 0.02 to stay in bf16 range; this measures host reuse, not model quality."
+  "protocol": "LayerStack with two alternating prepared-plan buffer sets; one plan reused across 4 weight sets; p50, 10 iterations, 2 repeats",
+  "relative_error": 0.00799560546875,
+  "flowgpu_us": 3294.2963298410177,
+  "eager_us": 3310.573985800147,
+  "flowgpu_over_eager": 0.9951,
+  "note": "Four layers; 32-layer timing was about 1.03x but too noisy and its synthetic bf16 stack underflowed, so no 32-layer correctness number is claimed."
 }
