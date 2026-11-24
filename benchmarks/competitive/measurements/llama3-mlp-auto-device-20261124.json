@@ -1,0 +1,12 @@
+{
+  "environment": "H100 PCIe, shared",
+  "dtype": "bf16",
+  "model": "Llama 3 8B SwiGLU MLP",
+  "protocol": "compile_pipeline and prepare_execution_plan both auto-resolve the device policy; p50, 15 iterations, 3 repeats",
+  "device_policy": {"large_n": 256, "small_m_tile": "32x64x128", "warps": 8, "stages": 4},
+  "cases": [
+    {"tokens": 1, "prepared_over_eager": 0.988, "graph_over_eager": 0.984, "default_over_eager": 0.988},
+    {"tokens": 2048, "prepared_over_eager": 0.969, "graph_over_eager": 0.990, "default_over_eager": 0.976}
+  ],
+  "note": "One shared-device session. Both default and prepared paths now use the H100 tile; the default path is within 1-2% faster than eager here. Absolute times moved with load."
+}

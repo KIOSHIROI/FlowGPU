@@ -28,6 +28,21 @@ def tune_strategy_pipeline(source, **kwargs):
 
 
 def compile_pipeline(source, *, pipeline, cache_dir, **options):
+    """Compile and load a pipeline; use the local device's GEMM policy.
+
+    The default target is CUDA/Triton. When a local CUDA device is visible and
+    the caller did not pin a platform policy, resolve the device tile policy so
+    an H100 does not silently use the L4-safe 128x128 tile.
+    """
+    options = dict(options)
+    if "platform_config" not in options:
+        try:
+            import torch
+            if torch.cuda.is_available():
+                from flowgpu.compiler.backend.platform_configs import resolve_device_platform
+                options["platform_config"] = resolve_device_platform()
+        except ImportError:
+            pass
     code, hit, key = cached_module(source, cache_dir=cache_dir, **options)
     loaded = _load_generated_module(code, cache_dir=cache_dir, key=key)
     run = getattr(loaded, 'run_' + pipeline)

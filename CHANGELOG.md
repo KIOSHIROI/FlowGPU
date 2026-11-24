@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.80.0
+
+- compile_pipeline() auto-resolves the device GEMM policy like prepared plans.
+- Real Llama 3 MLP default path: decode 0.99x eager, prefill 0.98x; prepared
+  decode 0.99x, prefill 0.97x in one shared session.
+
 ## 0.79.0
 
 - H100 small-M tile uses 32x64x128 / 8 warps / 4 stages: prepared real
