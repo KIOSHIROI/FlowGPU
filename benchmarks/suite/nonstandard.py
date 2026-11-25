@@ -78,6 +78,18 @@ def _p50(fn, iterations):
     return statistics.median(samples)
 
 
+def _gpu_time(fn, iterations):
+    """Per-call GPU-timeline microseconds, excluding host round trips."""
+    fn(); torch.cuda.synchronize()
+    start = torch.cuda.Event(enable_timing=True)
+    end = torch.cuda.Event(enable_timing=True)
+    start.record()
+    for _ in range(iterations):
+        fn()
+    end.record(); torch.cuda.synchronize()
+    return start.elapsed_time(end) * 1000.0 / iterations
+
+
 def _rope_tables(positions, width):
     half = width // 2
     frequency = torch.exp(-math.log(10000.0) * torch.arange(half, device="cuda") / half)
@@ -238,6 +250,7 @@ def main(argv=None) -> int:
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--warmup-ms", type=float, default=300.0)
+    parser.add_argument("--gpu-events", action="store_true")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     payload = {"environment": "H100 PCIe, shared", "cases": []}
@@ -285,7 +298,7 @@ def main(argv=None) -> int:
         for _ in range(args.rounds):
             order = list(paths); rng.shuffle(order)
             for key in order:
-                samples[key].append(_p50(paths[key], args.iterations))
+                samples[key].append((_gpu_time if args.gpu_events else _p50)(paths[key], args.iterations))
         medians = {key: statistics.median(values) for key, values in samples.items()}
         ratios = {
             f"flowgpu_over_{key}": [a / b for a, b in zip(samples["flowgpu"], samples[key])]

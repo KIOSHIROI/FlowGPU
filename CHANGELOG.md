@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.17.0
+
+- Add CUDA-event timing to the suite; absolute times improve but ratios still
+  vary by up to an order of magnitude on large launch-bound cases.
+- Record the negative result: no timing mode tested replaces clock locking and
+  isolation; correctness remains the stable signal.
+
 ## 1.16.0
 
 - Fix the MoE reference to a stable descending argsort, honoring the

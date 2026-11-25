@@ -38,6 +38,28 @@ warm-up kernel did not remove the variance.
 clock-locked, isolated run with longer repetitions; until then these ratios are
 diagnostic only.
 
+## GPU-event timing is not a cure
+
+A second protocol measures per-call GPU-timeline time with CUDA events
+(`--gpu-events`), still on idle GPU0 with a 500 ms warm-up. Absolute times
+become more plausible, but ratios still vary across rounds:
+
+| case | FlowGPU / eager median | range across 3 rounds |
+|---|---:|---:|
+| `residual_norm` | 0.26x | 0.256–0.258 |
+| `moe_router_topk` | 0.78x | 0.774–0.778 |
+| `routed_silu` | 0.10x | 0.104–0.108 |
+| `gqa_decode_masked` | 0.13x | 0.077–0.126 |
+| `gqa_decode_large` | 0.38x | 0.053–0.486 |
+| `mla_latent_attention` | 0.23x | 0.070–0.386 |
+
+For large launch-bound cases the range is still an order of magnitude. GPU-event
+timing removes host round-trip noise, not clock/occupancy state.
+
+**Conclusion:** no timing mode tested here replaces clock locking and an
+isolated container. Until then, the suite publishes correctness and explicitly
+labels all timing as diagnostic.
+
 ## MoE tie contract
 
 FlowGPU's `topk_last` contract is explicit: **lower column wins on a tie**.

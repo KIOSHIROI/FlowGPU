@@ -1,0 +1,253 @@
+{
+  "environment": "H100 PCIe, shared",
+  "cases": [
+    {
+      "name": "residual_norm",
+      "max_abs_error": 0.001953125,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 28.125866254170734,
+      "eager_us": 109.65759754180908,
+      "compiled_us": 29.198932647705078,
+      "flowgpu_over_eager": 0.2564880763820054,
+      "flowgpu_over_compiled": 0.9632498075706654,
+      "samples": {
+        "flowgpu": [
+          28.3242662747701,
+          28.104533751805622,
+          28.125866254170734
+        ],
+        "eager": [
+          109.65759754180908,
+          109.7215970357259,
+          109.6511999766032
+        ],
+        "compiled": [
+          29.198932647705078,
+          29.380265871683758,
+          29.179733991622925
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.25614404557613796,
+          0.25829734473227833
+        ],
+        "flowgpu_over_compiled": [
+          0.956578605331558,
+          0.9700445771943749
+        ]
+      }
+    },
+    {
+      "name": "moe_router_topk",
+      "max_abs_error": 1.4901161193847656e-08,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": "ids",
+      "ids_equal": true,
+      "flowgpu_us": 54.15680011113485,
+      "eager_us": 69.71733570098877,
+      "compiled_us": 47.20640182495117,
+      "flowgpu_over_eager": 0.7768053607700727,
+      "flowgpu_over_compiled": 1.147234231322202,
+      "samples": {
+        "flowgpu": [
+          54.22720114390055,
+          53.94560098648071,
+          54.15680011113485
+        ],
+        "eager": [
+          69.65973377227783,
+          69.73226865132649,
+          69.71733570098877
+        ],
+        "compiled": [
+          47.20640182495117,
+          47.10186719894409,
+          54.09919818242391
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.7736102959193559,
+          0.7784583461253638
+        ],
+        "flowgpu_over_compiled": [
+          1.0010647464407274,
+          1.148725576352623
+        ]
+      }
+    },
+    {
+      "name": "routed_silu",
+      "max_abs_error": 1.9073486328125e-06,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 97.38240242004395,
+      "eager_us": 933.0432256062826,
+      "compiled_us": 97.56373564402263,
+      "flowgpu_over_eager": 0.10437072983062043,
+      "flowgpu_over_compiled": 0.9981413870350321,
+      "samples": {
+        "flowgpu": [
+          100.54186979929607,
+          97.38240242004395,
+          97.12639649709065
+        ],
+        "eager": [
+          933.0432256062826,
+          932.4736277262369,
+          938.2634480794271
+        ],
+        "compiled": [
+          118.4874693552653,
+          97.56373564402263,
+          97.44853178660075
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.10351719092958696,
+          0.10775692598160704
+        ],
+        "flowgpu_over_compiled": [
+          0.8485443257956478,
+          0.9981413870350321
+        ]
+      }
+    },
+    {
+      "name": "gqa_decode_masked",
+      "max_abs_error": 6.103515625e-05,
+      "tolerance": 0.03,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 241.10506375630698,
+      "eager_us": 1917.5467173258464,
+      "compiled_us": 1791.812260945638,
+      "flowgpu_over_eager": 0.1257362136618736,
+      "flowgpu_over_compiled": 0.13455933359282995,
+      "samples": {
+        "flowgpu": [
+          197.1776008605957,
+          246.47040367126465,
+          241.10506375630698
+        ],
+        "eager": [
+          1828.5376230875652,
+          3197.3546346028647,
+          1917.5467173258464
+        ],
+        "compiled": [
+          899.5221455891927,
+          2990.5258178710938,
+          1791.812260945638
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.07708572611992355,
+          0.1257362136618736
+        ],
+        "flowgpu_over_compiled": [
+          0.0824170793638969,
+          0.21920260866000482
+        ]
+      }
+    },
+    {
+      "name": "gqa_decode_large",
+      "max_abs_error": 0.0001220703125,
+      "tolerance": 0.03,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 230.61973253885904,
+      "eager_us": 605.9818903605143,
+      "compiled_us": 767.6202774047852,
+      "flowgpu_over_eager": 0.3805719877233582,
+      "flowgpu_over_compiled": 0.30043465412163356,
+      "samples": {
+        "flowgpu": [
+          291.69918696085614,
+          230.61973253885904,
+          223.86773427327475
+        ],
+        "eager": [
+          600.4735946655273,
+          605.9818903605143,
+          4254.453277587891
+        ],
+        "compiled": [
+          767.6202774047852,
+          745.5957412719727,
+          2509.9370320638022
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.05261962458316126,
+          0.48578187209603596
+        ],
+        "flowgpu_over_compiled": [
+          0.08919256993837767,
+          0.38000453550686486
+        ]
+      }
+    },
+    {
+      "name": "awq_dequantize",
+      "max_abs_error": 0.0,
+      "tolerance": 0.02,
+      "passed": true,
+      "timing": false
+    },
+    {
+      "name": "mla_latent_attention",
+      "max_abs_error": 0.0001220703125,
+      "tolerance": 0.03,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 233.81759325663248,
+      "eager_us": 1009.0431849161783,
+      "compiled_us": 847.4133173624674,
+      "flowgpu_over_eager": 0.2317220875695779,
+      "flowgpu_over_compiled": 0.2759191866188489,
+      "samples": {
+        "flowgpu": [
+          220.94292640686035,
+          233.81759325663248,
+          254.13759549458823
+        ],
+        "eager": [
+          572.1109390258789,
+          1009.0431849161783,
+          3608.7702433268228
+        ],
+        "compiled": [
+          1134.9653879801433,
+          716.313616434733,
+          847.4133173624674
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.07042221542491606,
+          0.38618895625917443
+        ],
+        "flowgpu_over_compiled": [
+          0.19466930775753827,
+          0.32641790954693767
+        ]
+      }
+    }
+  ],
+  "note": "Seven-case suite on dedicated GPU0 with 500 ms warm-up and CUDA-event timing; 3 randomized rounds x 15 iterations. GPU-timeline timing reduces host round-trip noise but host-bound cases still include scheduling gaps."
+}

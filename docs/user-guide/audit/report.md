@@ -76,6 +76,9 @@ clock-locked, isolated run is required before any performance ranking.
    sessions. Dedicated measurement is required for a ranking.
 3. MoE top-k tie order is not a specified contract; weights and ids must be
    reported separately.
+4. CUDA-event timing reduces host round-trip noise but does not remove
+   clock/occupancy variance: large GQA ratios ranged 0.05x–0.49x across
+   rounds. Clock locking + isolation is still required.
 
 ## Phase 2b: what do the guards cost?
 
