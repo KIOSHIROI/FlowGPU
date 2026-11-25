@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0
+
+- Add a serving-shaped GQA decode case (batch 4, 32q/8kv, depth 128,
+  256 slots) to the Phase-3 suite; correctness passes.
+- Mark shared-device ratios as indicative: ordering changed between runs, so
+  compiler ranking needs a dedicated-GPU rerun.
+
 ## 1.6.0
 
 - Add the masked GQA decode block to the Phase-3 suite (correctness/contract

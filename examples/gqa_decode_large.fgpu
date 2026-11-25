@@ -1,0 +1,43 @@
+# Serving-shaped GQA decode subgraph: batch 4, 32 query heads, 8 KV heads,
+# depth 128, 256 cache slots. Masked window attention plus SwiGLU MLP.
+pipeline gqa_decode_large {
+    input x        : bf16[4,128]
+    input norm1_w  : bf16[128]
+    input w_q      : bf16[128,4096]
+    input w_k      : bf16[128,1024]
+    input w_v      : bf16[128,1024]
+    input w_o      : bf16[4096,128]
+    input norm2_w  : bf16[128]
+    input w_gate   : bf16[128,14336]
+    input w_up     : bf16[128,14336]
+    input w_down   : bf16[14336,128]
+    input k_cache  : bf16[4,8,256,128]
+    input v_cache  : bf16[4,8,256,128]
+    input loc      : int32[4]
+    input valid    : int32[4]
+
+    h = rms_norm(x, norm1_w)
+    q_flat = matmul(h, w_q)
+    k_flat = matmul(h, w_k)
+    v_flat = matmul(h, w_v)
+    q4 = reshape(q_flat, [4,32,1,128])
+    k3 = reshape(k_flat, [4,8,128])
+    v3 = reshape(v_flat, [4,8,128])
+    k_out = cache_write_hsd_batch(k_cache, k3, loc)
+    v_out = cache_write_hsd_batch(v_cache, v3, loc)
+    attn4 = window_attention(q4, k_out, v_out, valid)
+    attn = reshape(attn4, [4,4096])
+    attn_proj = matmul(attn, w_o)
+    x_mid = add(x, attn_proj)
+    n2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(n2, w_gate)
+    up = matmul(n2, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+    output k_out
+    output v_out
+}

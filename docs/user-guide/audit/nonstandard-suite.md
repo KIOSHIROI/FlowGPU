@@ -9,13 +9,16 @@ small and reproducible before expanding to GQA/MLA/MoE variants.
 | `moe_router_topk` | 4x16, 8 experts | tanh cap + global softmax + top-k gather | 0.99x | 1.00x |
 | `routed_silu` | 2048x14336 | fp16 SiLU*mul + fp32 per-row weight + cast | **0.78x** | **1.00x** |
 | `gqa_decode_masked` | batch 2, 4q/2kv, 8 slots | masked GQA + cached decode | correctness only* | correctness only* |
+| `gqa_decode_large` | batch 4, 32q/8kv, depth 128, 256 slots | serving-shaped masked GQA + SwiGLU | indicative only* | indicative only* |
 
-All four pass the tolerance (max abs error <= 3e-2). Ratios are from one
+All five pass the tolerance (max abs error <= 3e-2). Ratios are from one
 shared-H100 session, 10 iterations, 2 repeats; absolute times moved with load.
 
-\* The GQA case uses a tiny shape, so its absolute time is launch/load
-dominated. It is included for **correctness/contract coverage**, not as a
-performance claim.
+\* The GQA cases are included for **correctness/contract coverage**. The
+large case has meaningful shapes but the shared device made the measured
+ratios unstable: in different runs `residual_norm`/`routed_silu` were faster
+than compiled in one session and slower in another. **Do not rank compilers
+from this shared-device data; a dedicated GPU rerun is required.**
 
 ## What the suite already exposed
 
@@ -28,6 +31,11 @@ The GQA baseline itself exposed the second methodology issue: a per-batch/per-he
 Python loop made eager look ~9x slower than FlowGPU. Replacing it with a
 vectorized einsum baseline removed that artifact. **Baseline implementation is
 part of the result.**
+
+A second methodology lesson: the five-case run produced different ordering of
+FlowGPU vs `torch.compile` than the previous run, on the same shared device.
+That is a measurement problem, not a compiler result. The suite now labels
+ratios "indicative" and keeps correctness as the stable signal.
 
 This is the kind of issue a "fastest kernel" benchmark would miss:
 

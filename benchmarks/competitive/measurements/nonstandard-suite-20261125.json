@@ -8,24 +8,24 @@
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2469.045575708151,
-      "eager_us": 2563.1526950746775,
-      "flowgpu_over_eager": 0.9632846222749969,
-      "compiled_us": 2498.9002849906683,
-      "flowgpu_over_compiled": 0.9880528609077217
+      "flowgpu_us": 1346.82422503829,
+      "eager_us": 1848.0753060430288,
+      "flowgpu_over_eager": 0.7287712901277908,
+      "compiled_us": 808.4708824753761,
+      "flowgpu_over_compiled": 1.6658908245583115
     },
     {
       "name": "moe_router_topk",
-      "max_abs_error": 2.9802322387695312e-08,
+      "max_abs_error": 7.450580596923828e-09,
       "tolerance": 0.02,
       "passed": true,
       "id_name": "ids",
-      "ids_equal": true,
-      "flowgpu_us": 2480.872441083193,
-      "eager_us": 2487.479941919446,
-      "flowgpu_over_eager": 0.9973436968375493,
-      "compiled_us": 2491.907449439168,
-      "flowgpu_over_compiled": 0.995571662038067
+      "ids_equal": false,
+      "flowgpu_us": 1861.5827430039644,
+      "eager_us": 2445.8228144794703,
+      "flowgpu_over_eager": 0.7611273931959597,
+      "compiled_us": 2017.2260701656342,
+      "flowgpu_over_compiled": 0.92284289328618
     },
     {
       "name": "routed_silu",
@@ -34,25 +34,38 @@
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2567.445393651724,
-      "eager_us": 3315.345151349902,
-      "flowgpu_over_eager": 0.7744127010746807,
-      "compiled_us": 2594.930585473776,
-      "flowgpu_over_compiled": 0.9894081205963997
+      "flowgpu_us": 2087.511122226715,
+      "eager_us": 3257.3624048382044,
+      "flowgpu_over_eager": 0.6408593404056321,
+      "compiled_us": 1160.0854340940714,
+      "flowgpu_over_compiled": 1.7994460242981025
     },
     {
       "name": "gqa_decode_masked",
-      "max_abs_error": 3.0517578125e-05,
+      "max_abs_error": 0.0001220703125,
       "tolerance": 0.03,
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2542.588161304593,
-      "eager_us": 12589.729391038418,
-      "flowgpu_over_eager": 0.2019573322294322,
-      "compiled_us": 12201.949022710323,
-      "flowgpu_over_compiled": 0.2083755764404782
+      "flowgpu_us": 2050.1192193478346,
+      "eager_us": 6156.143732368946,
+      "flowgpu_over_eager": 0.33302003794491136,
+      "compiled_us": 7344.704587012529,
+      "flowgpu_over_compiled": 0.2791288873582489
+    },
+    {
+      "name": "gqa_decode_large",
+      "max_abs_error": 0.000244140625,
+      "tolerance": 0.03,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 2587.3854756355286,
+      "eager_us": 13816.990423947573,
+      "flowgpu_over_eager": 0.18726114705493888,
+      "compiled_us": 13991.480693221092,
+      "flowgpu_over_compiled": 0.1849257796488347
     }
   ],
-  "note": "Starter suite, shared H100; absolute times are launch/load dominated, so ratios for tiny shapes are not performance claims. MoE ids are a separate contract: ties are implementation-defined. GQA is included for correctness/contract coverage."
+  "note": "Five-case starter suite on a shared H100. Absolute times are launch/load dominated for small shapes and vary with load; ratios are indicative, not a ranking. GQA large is the first serving-shaped case; it passes correctness, but a dedicated-GPU rerun is required before a performance claim. MoE ids are a separate tie-sensitive contract."
 }

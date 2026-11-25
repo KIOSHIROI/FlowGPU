@@ -128,6 +128,39 @@ def _gqa_eager(x, n1, wq, wk, wv, wo, n2, wg, wu, wd, qcos, qsin, kcos, ksin,
     return mid + (F.silu(hn @ wg) * (hn @ wu)) @ wd
 
 
+def _gqa_large_inputs():
+    bf = lambda *shape: torch.randn(*shape, device="cuda", dtype=torch.bfloat16) * 0.02
+    weights = [bf(128), bf(128, 4096), bf(128, 1024), bf(128, 1024), bf(4096, 128),
+               bf(128), bf(128, 14336), bf(128, 14336), bf(14336, 128)]
+    cache_k = torch.zeros(4, 8, 256, 128, device="cuda", dtype=torch.bfloat16)
+    cache_v = torch.zeros_like(cache_k)
+    locs = torch.tensor([8, 16, 24, 32], device="cuda", dtype=torch.int32)
+    for b, loc in enumerate(locs.tolist()):
+        cache_k[b, :, :loc] = bf(8, loc, 128)
+        cache_v[b, :, :loc] = bf(8, loc, 128)
+    valid = locs + 1
+    return (bf(4, 128), *weights, cache_k, cache_v, locs, valid)
+
+
+def _gqa_large_eager(x, n1, wq, wk, wv, wo, n2, wg, wu, wd,
+                     k_cache, v_cache, loc, valid):
+    h = x * torch.rsqrt(x.square().mean(-1, keepdim=True) + 1e-6) * n1
+    q = (h @ wq).reshape(4, 32, 128)
+    k = (h @ wk).reshape(4, 8, 128)
+    v = (h @ wv).reshape(4, 8, 128)
+    kc, vc = k_cache.clone(), v_cache.clone()
+    for b in range(4):
+        kc[b, :, loc[b]] = k[b]; vc[b, :, loc[b]] = v[b]
+    k_rep = kc.repeat_interleave(4, dim=1)
+    scores = torch.einsum("bqd,bqsd->bqs", q.float(), k_rep.float()) / math.sqrt(128)
+    keep = torch.arange(256, device=x.device).view(1, 1, 256) < valid.view(4, 1, 1)
+    scores = scores.masked_fill(~keep, float("-inf"))
+    context = torch.einsum("bqs,bqsd->bqd", torch.softmax(scores, -1), vc.repeat_interleave(4, dim=1).float())
+    mid = x + context.reshape(4, 4096).to(torch.bfloat16) @ wo
+    hn = mid * torch.rsqrt(mid.square().mean(-1, keepdim=True) + 1e-6) * n2
+    return mid + (F.silu(hn @ wg) * (hn @ wu)) @ wd
+
+
 CASES = (
     Case("residual_norm", ROOT / "examples/residual_norm.fgpu", "residual_norm",
          {"N": 2048, "D": 4096}, _residual_inputs, _residual_eager, ("z",), 2e-2),
@@ -137,6 +170,8 @@ CASES = (
          {"M": 2048, "N": 14336}, _routed_inputs, _routed_eager, ("out",), 2e-2),
     Case("gqa_decode_masked", ROOT / "examples/llama3_decode_block_gqa_masked.fgpu",
          "llama3_decode_block_gqa_masked", {}, _gqa_inputs, _gqa_eager, ("out",), 3e-2),
+    Case("gqa_decode_large", ROOT / "examples/gqa_decode_large.fgpu", "gqa_decode_large",
+         {}, _gqa_large_inputs, _gqa_large_eager, ("out",), 3e-2),
 )
 
 
