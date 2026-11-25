@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.21.0
+
+- Extend the audit sheet with input declarations and caller-owned semantic
+  risks; all 6 user-study tasks now have evidence (3 direct guards, 3 risk
+  flags), while mask/cache values remain undiagnosed.
+
 ## 1.20.0
 
 - Add an audit-coverage check for the six user-study faults: 3/3 guard tasks

@@ -20,31 +20,26 @@ def main() -> int:
         ("shape", "mlp", "input x dtype or shape", True),
         ("dtype", "mlp", "input x dtype or shape", True),
         ("loc_range", "decode", "loc index is outside the cache range", True),
-        ("mask_missing", "decode", "attention", False),
-        ("cache_skip", "decode", "attention", False),
-        ("moe_tie", "moe", "topk", False),
+        ("mask_missing", "decode", "mask/cache consistency", False),
+        ("cache_skip", "decode", "cache-position continuity", False),
+        ("moe_tie", "moe", "topk tie contract", False),
     ]
     rows = []
     for task, source, needle, guard_expected in checks:
         report = reports[source]
         haystack = "\n".join(report["host_guards"])
+        kind = "guard" if guard_expected else "risk"
         if not guard_expected:
-            haystack = "\n".join(
-                f"{kernel['kind']} {' '.join(kernel['ops'])}"
-                for kernel in report["kernels"]) + "\n" + "\n".join(
-                f"{kernel['kind']} {' '.join(kernel['ops'])}"
-                for kernel in report["reference_kernels"])
+            haystack = "\n".join(report["semantic_risks"])
         visible = needle in haystack
         rows.append({"task": task, "source": source, "evidence": needle,
-                     "guard_expected": guard_expected, "visible_in_audit": visible})
-    guard_rows = [row for row in rows if row["guard_expected"]]
-    semantic_rows = [row for row in rows if not row["guard_expected"]]
+                     "evidence_kind": kind, "visible_in_audit": visible})
+    direct = [row for row in rows if row["evidence_kind"] == "guard"]
+    flagged = [row for row in rows if row["evidence_kind"] == "risk"]
     summary = {"tasks": len(rows),
                "visible": sum(1 for row in rows if row["visible_in_audit"]),
-               "guard_tasks": len(guard_rows),
-               "guard_visible": sum(1 for row in guard_rows if row["visible_in_audit"]),
-               "semantic_tasks": len(semantic_rows),
-               "semantic_visible": sum(1 for row in semantic_rows if row["visible_in_audit"])}
+               "direct_visible": sum(1 for row in direct if row["visible_in_audit"]),
+               "risk_flagged": sum(1 for row in flagged if row["visible_in_audit"])}
     print(json.dumps({"rows": rows, "summary": summary}, indent=2))
     return 0
 

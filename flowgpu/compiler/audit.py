@@ -38,8 +38,25 @@ def build_audit_report(source, *, shape_bindings=None, source_path=None):
         "ops": list(kernel.ops),
         "results": list(kernel.results),
     } for kernel in program.reference.kernels]
+    inputs = [{
+        "name": name,
+        "dtype": str(tensor.dtype),
+        "shape": [str(axis) for axis in tensor.shape],
+    } for name, tensor in program.reference.inputs]
+    names = {entry["name"] for entry in inputs}
+    risks = []
+    if any("mask" in name for name in names):
+        risks.append("mask/cache consistency is not checked by the host")
+    if "loc" in names and any("cache" in name for name in names):
+        risks.append("loc range is guarded; cache-position continuity is not")
+    if "valid" in names:
+        risks.append("valid must match the written prefix; it is caller-owned")
+    if any("topk" in op for kernel in kernels for op in kernel["ops"]):
+        risks.append("topk tie contract: lower column wins")
     return {
         "pipeline": program.pipeline.name,
+        "inputs": inputs,
+        "semantic_risks": risks,
         "kernels": kernels,
         "fusion_groups": groups,
         "host_guards": guards,
@@ -58,6 +75,12 @@ def render_markdown(report) -> str:
              f"- reference kernels: {report['reference_count']}",
              f"- fusion groups: {len(report['fusion_groups'])}",
              f"- host guards: {len(report['host_guards'])}", ""]
+    lines.append("## Inputs")
+    for value in report["inputs"]:
+        lines.append(f"- `{value['name']}` {value['dtype']} {value['shape']}")
+    if report["semantic_risks"]:
+        lines.append("\n## Semantic risks (caller-owned)")
+        lines.extend(f"- {risk}" for risk in report["semantic_risks"])
     lines.append("## Kernels")
     for kernel in report["kernels"]:
         lines.append(f"- `{kernel['name']}` {kernel['kind']} "

@@ -4,51 +4,49 @@
       "task": "shape",
       "source": "mlp",
       "evidence": "input x dtype or shape",
-      "guard_expected": true,
+      "evidence_kind": "guard",
       "visible_in_audit": true
     },
     {
       "task": "dtype",
       "source": "mlp",
       "evidence": "input x dtype or shape",
-      "guard_expected": true,
+      "evidence_kind": "guard",
       "visible_in_audit": true
     },
     {
       "task": "loc_range",
       "source": "decode",
       "evidence": "loc index is outside the cache range",
-      "guard_expected": true,
+      "evidence_kind": "guard",
       "visible_in_audit": true
     },
     {
       "task": "mask_missing",
       "source": "decode",
-      "evidence": "attention",
-      "guard_expected": false,
-      "visible_in_audit": false
+      "evidence": "mask/cache consistency",
+      "evidence_kind": "risk",
+      "visible_in_audit": true
     },
     {
       "task": "cache_skip",
       "source": "decode",
-      "evidence": "attention",
-      "guard_expected": false,
-      "visible_in_audit": false
+      "evidence": "cache-position continuity",
+      "evidence_kind": "risk",
+      "visible_in_audit": true
     },
     {
       "task": "moe_tie",
       "source": "moe",
-      "evidence": "topk",
-      "guard_expected": false,
+      "evidence": "topk tie contract",
+      "evidence_kind": "risk",
       "visible_in_audit": true
     }
   ],
   "summary": {
     "tasks": 6,
-    "visible": 4,
-    "guard_tasks": 3,
-    "guard_visible": 3,
-    "semantic_tasks": 3,
-    "semantic_visible": 1
+    "visible": 6,
+    "direct_visible": 3,
+    "risk_flagged": 3
   }
 }
