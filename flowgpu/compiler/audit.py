@@ -11,10 +11,12 @@ import json
 from flowgpu.compiler.compile import compile_source
 
 
-def build_audit_report(source, *, shape_bindings=None, source_path=None):
+def build_audit_report(source, *, shape_bindings=None, source_path=None,
+                       materialize_all=False):
     """Return a JSON-serialisable audit report for the first pipeline."""
     result = compile_source(source, source_path=source_path,
-                            shape_bindings=shape_bindings)
+                            shape_bindings=shape_bindings,
+                            materialize_all=materialize_all)
     return audit_from_result(result)
 
 
@@ -120,9 +122,20 @@ def main(argv=None) -> int:
     import pathlib
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", type=pathlib.Path)
+    parser.add_argument("--shape", action="append", default=[],
+                        help="shape binding KEY=VALUE; repeatable")
+    parser.add_argument("--materialize-all", action="store_true")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
-    report = build_audit_report(args.path.read_text(), source_path=str(args.path))
+    bindings = {}
+    for item in args.shape:
+        key, _, value = item.partition("=")
+        if not _ or not value.isdigit():
+            parser.error("--shape expects KEY=INTEGER")
+        bindings[key] = int(value)
+    report = build_audit_report(args.path.read_text(), source_path=str(args.path),
+                                shape_bindings=bindings or None,
+                                materialize_all=args.materialize_all)
     print(json.dumps(report, indent=2) if args.json else render_markdown(report), end="")
     return 0
 

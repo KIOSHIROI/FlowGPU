@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.29.0
+
+- Make the fused/materialized comparison CPU-first: the audit CLI accepts
+  shape bindings and --materialize-all, so the kernel split can be inspected
+  without a GPU.
+
 ## 1.28.0
 
 - Add materialize_all=True: one SwiGLU source compiles to 3 fused kernels or

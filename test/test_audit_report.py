@@ -37,3 +37,17 @@ def test_audit_from_result_does_not_require_source_again():
     result = compile_source(source)
     report = audit_from_result(result)
     assert report["kernel_count"] == 1
+
+
+def test_audit_cli_accepts_shape_bindings(tmp_path, capsys):
+    from flowgpu.compiler.audit import main
+    path = tmp_path / "p.fgpu"
+    path.write_text("""
+    pipeline p {
+      input x: bf16[T,D]
+      y = relu(x)
+      output y
+    }
+    """)
+    assert main([str(path), "--shape", "T=2", "--shape", "D=4"]) == 0
+    assert "# Audit: p" in capsys.readouterr().out

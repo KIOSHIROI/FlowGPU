@@ -34,3 +34,18 @@ latency comparison needs an idle device.
 
 Raw data:
 [`swiglu-materialize-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/swiglu-materialize-20261125.json).
+
+## CPU-first inspection
+
+The comparison does not need a GPU:
+
+```bash
+python -m flowgpu.compiler.audit examples/llama3_mlp_swiglu.fgpu \
+  --shape T=2 --shape H=8 --shape I=16
+python -m flowgpu.compiler.audit examples/llama3_mlp_swiglu.fgpu \
+  --shape T=2 --shape H=8 --shape I=16 --materialize-all
+```
+
+The first prints 3 kernels and the fused epilogue; the second prints 4 kernels
+and the standalone `pointwise: silu, mul` kernel. Shape bindings make the
+CPU-only path concrete on a small slice.
