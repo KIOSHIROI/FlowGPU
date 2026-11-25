@@ -1,0 +1,10 @@
+{
+  "questions": [
+    {"id": "kernels", "question": "生成版/手写版 kernel 数？", "answer": "1 / 2"},
+    {"id": "generated_buffer", "question": "生成版为什么不需要 gate/up 缓冲？", "answer": "split 被折进索引加载"},
+    {"id": "handwritten_buffer", "question": "手写版为什么需要缓冲？", "answer": "split_copy 先把两半写入 gate/up"},
+    {"id": "address", "question": "gate 的地址表达式？", "answer": "row * 16 + column"},
+    {"id": "up_address", "question": "up 的地址表达式？", "answer": "row * 16 + 8 + column"},
+    {"id": "best", "question": "哪份更适合检查布局改动？", "answer": "手写版，地址显式可逐行对照"}
+  ]
+}

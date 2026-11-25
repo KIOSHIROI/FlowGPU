@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.40.0
+
+- Add Lesson 8 (lessons/08-handwritten): compare the generated one-kernel
+  SwiGLU split with the handwritten two-kernel version; address/instruction
+  reading, CPU reference, dataflow card, exercise and quiz.
+
 ## 1.39.0
 
 - Add Lesson 7 (lessons/07-masks): tile larger than the matrix; print the
