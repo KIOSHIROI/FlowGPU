@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.14.0
+
+- Measure generated guard overhead on dedicated GPU0: 1.018x guarded /
+  unguarded at decode; prefill within noise. Auditability tax is small on the
+  launch-bound path.
+
 ## 1.13.0
 
 - Add mla_latent_attention to the Phase-3 suite: low-rank latent K/V, masked
