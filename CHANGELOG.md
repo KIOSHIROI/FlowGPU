@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.37.0
+
+- Add Lesson 5 (lessons/05-fusion): SwiGLU as 3 kernels; gate/hidden are
+  materialized, up/act fuse into k1 epilogue. CPU runner, dataflow card,
+  exercise and quiz.
+
 ## 1.36.0
 
 - Add Lesson 4 (lessons/04-matmul): K as the reduction axis, output tile,

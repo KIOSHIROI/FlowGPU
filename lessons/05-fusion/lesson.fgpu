@@ -1,0 +1,15 @@
+# Lesson 5: the SwiGLU MLP and its fused epilogue.
+pipeline fused_mlp {
+    input x       : fp32[B,D]
+    input w_gate  : fp32[D,H]
+    input w_up    : fp32[D,H]
+    input w_down  : fp32[H,D]
+
+    gate = matmul(x, w_gate)
+    up = matmul(x, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    out = matmul(hidden, w_down)
+
+    output out
+}

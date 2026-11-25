@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "shapes", "question": "gate/hidden/out 的形状？", "answer": "gate [2,16], hidden [2,16], out [2,8]"},
+    {"id": "buffers", "question": "哪些中间值需要缓冲？", "answer": "gate 和 hidden"},
+    {"id": "fused", "question": "哪些值被融合？", "answer": "up 和 act"},
+    {"id": "epilogue", "question": "k1 epilogue 包含什么？", "answer": "silu(gate) * up"},
+    {"id": "kernels", "question": "生成几个 kernel？", "answer": "3 个"}
+  ]
+}
