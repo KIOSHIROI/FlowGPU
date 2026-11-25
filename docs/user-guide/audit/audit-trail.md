@@ -37,6 +37,9 @@ mask/cache state. The audit sheet makes both sides visible in one place:
 This is the artifact a user study should test: does an engineer localize a
 subgraph fault faster with this sheet than with source + logs alone?
 
+The incremental cost of building the sheet from a compiled result is about
+0.2% of compile time on small shapes; see [Audit cost](audit-cost.md).
+
 ## Limits
 
 - It reports the first pipeline only;

@@ -2,7 +2,7 @@
 
 This directory is a standalone, sanitized public snapshot of FlowGPU.
 
-- Source snapshot: FlowGPU compiler prototype, version `1.22.0`.
+- Source snapshot: FlowGPU compiler prototype, version `1.23.0`.
 - The public tree contains the compiler, migration tooling, public examples,
   models, technical documentation, curated CPU tests, license and CI.
 - Excluded intentionally: organizer task packages, competition submissions and

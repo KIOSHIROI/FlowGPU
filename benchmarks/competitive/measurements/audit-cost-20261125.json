@@ -1,0 +1,28 @@
+{"name": "mlp", "compile_ms": 3.8941659731790423, "audit_report_ms": 0.008333008736371994, "reference_run_ms": 5.318958021234721, "audit_over_compile": 0.0021398699474458344, "reference_over_compile": 1.3658786137696475, "report_bytes": 1573, "kernels": 2, "guards": 11}
+{"name": "residual_norm", "compile_ms": 2.6971250190399587, "audit_report_ms": 0.005457957740873098, "reference_run_ms": 2.20379198435694, "audit_over_compile": 0.0020236205968738735, "reference_over_compile": 0.8170892964914839, "report_bytes": 1065, "kernels": 1, "guards": 7}
+{
+  "cases": [
+    {
+      "name": "mlp",
+      "compile_ms": 3.8941659731790423,
+      "audit_report_ms": 0.008333008736371994,
+      "reference_run_ms": 5.318958021234721,
+      "audit_over_compile": 0.0021398699474458344,
+      "reference_over_compile": 1.3658786137696475,
+      "report_bytes": 1573,
+      "kernels": 2,
+      "guards": 11
+    },
+    {
+      "name": "residual_norm",
+      "compile_ms": 2.6971250190399587,
+      "audit_report_ms": 0.005457957740873098,
+      "reference_run_ms": 2.20379198435694,
+      "audit_over_compile": 0.0020236205968738735,
+      "reference_over_compile": 0.8170892964914839,
+      "report_bytes": 1065,
+      "kernels": 1,
+      "guards": 7
+    }
+  ]
+}

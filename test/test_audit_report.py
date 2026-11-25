@@ -22,3 +22,18 @@ def test_audit_report_exposes_kernels_fusion_guards_and_reference():
     assert report["host_guards"]
     text = render_markdown(report)
     assert "# Audit: p" in text and "## Host guards" in text
+
+
+def test_audit_from_result_does_not_require_source_again():
+    from flowgpu.compiler.compile import compile_source
+    from flowgpu.compiler.audit import audit_from_result
+    source = """
+    pipeline p {
+      input x: bf16[2,4]
+      y = relu(x)
+      output y
+    }
+    """
+    result = compile_source(source)
+    report = audit_from_result(result)
+    assert report["kernel_count"] == 1

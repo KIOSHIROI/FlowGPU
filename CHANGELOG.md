@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.23.0
+
+- Add audit_from_result(), avoiding recompilation when building the audit
+  sheet; measure its incremental cost at ~0.2% of compile time on small
+  CPU-shape cases and the CPU-reference cost separately.
+
 ## 1.22.0
 
 - Add the user-study scoring harness: root-cause keyword and stage accuracy

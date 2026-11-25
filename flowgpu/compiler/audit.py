@@ -15,6 +15,11 @@ def build_audit_report(source, *, shape_bindings=None, source_path=None):
     """Return a JSON-serialisable audit report for the first pipeline."""
     result = compile_source(source, source_path=source_path,
                             shape_bindings=shape_bindings)
+    return audit_from_result(result)
+
+
+def audit_from_result(result):
+    """Build the report from an already compiled result (no recompilation)."""
     program = result.pipelines[0]
     kernels = [{
         "name": kernel.name,
@@ -25,7 +30,7 @@ def build_audit_report(source, *, shape_bindings=None, source_path=None):
         "parameters": list(kernel.parameters),
     } for kernel in program.triton.kernels]
     groups = [{
-        "anchor": group.anchor.op,
+        "anchor": group.anchor.op if group.anchor is not None else "pointwise",
         "members": [node.op for node in group.members],
         "fused_values": list(group.fused_values),
         "epilogue": [node.op for node in group.epilogue],
@@ -118,7 +123,7 @@ def main(argv=None) -> int:
     return 0
 
 
-__all__ = ["build_audit_report", "render_markdown", "main"]
+__all__ = ["build_audit_report", "audit_from_result", "render_markdown", "main"]
 
 
 if __name__ == "__main__":
