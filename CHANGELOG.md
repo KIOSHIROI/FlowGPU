@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.0
+
+- Add the masked GQA decode block to the Phase-3 suite (correctness/contract
+  coverage; tiny shape, not a performance claim).
+- Replace the looped GQA eager baseline with a vectorized einsum baseline;
+  document that baseline implementation is part of the measurement.
+
 ## 1.5.0
 
 - Add the Phase-3 starter suite: residual_norm, moe_router_topk and

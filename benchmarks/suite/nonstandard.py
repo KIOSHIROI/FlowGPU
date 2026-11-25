@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import pathlib
 import statistics
 import time
@@ -74,6 +75,59 @@ def _p50(fn, iterations):
     return statistics.median(samples)
 
 
+def _rope_tables(positions, width):
+    half = width // 2
+    frequency = torch.exp(-math.log(10000.0) * torch.arange(half, device="cuda") / half)
+    angle = positions[:, None].float() * frequency[None, :]
+    return angle.cos().repeat(1, 2), angle.sin().repeat(1, 2)
+
+
+def _apply_rope(x, cosine, sine):
+    width = x.shape[-1]
+    index = torch.arange(width, device=x.device)
+    first = index < width // 2
+    partner = torch.where(first, index + width // 2, index - width // 2)
+    rotated = torch.where(first, -x[..., partner], x[..., partner])
+    return x * cosine + rotated * sine
+
+
+def _gqa_inputs():
+    bf = lambda *shape: torch.randn(*shape, device="cuda", dtype=torch.bfloat16) * 0.02
+    x = bf(2, 64)
+    weights = [bf(64), bf(64, 256), bf(64, 128), bf(64, 128), bf(256, 64), bf(64),
+               bf(64, 128), bf(64, 128), bf(128, 64)]
+    qcos, qsin = _rope_tables(torch.tensor([0, 0], device="cuda"), 256)
+    kcos, ksin = _rope_tables(torch.tensor([0, 0], device="cuda"), 128)
+    cache_k = torch.zeros(2, 2, 8, 64, device="cuda", dtype=torch.bfloat16)
+    cache_v = torch.zeros_like(cache_k)
+    cache_k[0, :, :5] = bf(2, 5, 64); cache_v[0, :, :5] = bf(2, 5, 64)
+    cache_k[1, :, :1] = bf(2, 1, 64); cache_v[1, :, :1] = bf(2, 1, 64)
+    return (x, *weights, qcos.to(torch.bfloat16), qsin.to(torch.bfloat16),
+            kcos.to(torch.bfloat16), ksin.to(torch.bfloat16), cache_k, cache_v,
+            torch.tensor([1, 5], device="cuda", dtype=torch.int32),
+            torch.tensor([2, 6], device="cuda", dtype=torch.int32))
+
+
+def _gqa_eager(x, n1, wq, wk, wv, wo, n2, wg, wu, wd, qcos, qsin, kcos, ksin,
+               k_cache, v_cache, loc, valid):
+    xn = x * torch.rsqrt(x.square().mean(-1, keepdim=True) + 1e-6) * n1
+    q = _apply_rope(xn @ wq, qcos, qsin).reshape(2, 4, 64)
+    k = _apply_rope(xn @ wk, kcos, ksin).reshape(2, 2, 64)
+    v = (xn @ wv).reshape(2, 2, 64)
+    kc, vc = k_cache.clone(), v_cache.clone()
+    for b in range(2):
+        kc[b, :, loc[b]] = k[b]; vc[b, :, loc[b]] = v[b]
+    k_rep = kc.repeat_interleave(2, dim=1)
+    v_rep = vc.repeat_interleave(2, dim=1)
+    scores = torch.einsum("bqd,bqsd->bqs", q.float(), k_rep.float()) / 8.0
+    keep = torch.arange(8, device=x.device).view(1, 1, 8) < valid.view(2, 1, 1)
+    scores = scores.masked_fill(~keep, float("-inf"))
+    context = torch.einsum("bqs,bqsd->bqd", torch.softmax(scores, -1), v_rep.float()).to(torch.bfloat16)
+    mid = x + context.reshape(2, 256) @ wo
+    hn = mid * torch.rsqrt(mid.square().mean(-1, keepdim=True) + 1e-6) * n2
+    return mid + (F.silu(hn @ wg) * (hn @ wu)) @ wd
+
+
 CASES = (
     Case("residual_norm", ROOT / "examples/residual_norm.fgpu", "residual_norm",
          {"N": 2048, "D": 4096}, _residual_inputs, _residual_eager, ("z",), 2e-2),
@@ -81,6 +135,8 @@ CASES = (
          {}, _moe_inputs, _moe_eager, ("weights",), 2e-2, "ids"),
     Case("routed_silu", ROOT / "examples/batch10/routed_silu.fgpu", "routed_silu",
          {"M": 2048, "N": 14336}, _routed_inputs, _routed_eager, ("out",), 2e-2),
+    Case("gqa_decode_masked", ROOT / "examples/llama3_decode_block_gqa_masked.fgpu",
+         "llama3_decode_block_gqa_masked", {}, _gqa_inputs, _gqa_eager, ("out",), 3e-2),
 )
 
 
