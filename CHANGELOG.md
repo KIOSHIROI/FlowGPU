@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.33.0
+
+- Add Lesson 1 (lessons/01-values): values, shapes and explicit broadcast.
+  One fused kernel; CPU-only compile + reference; dataflow card, exercise and
+  five-question quiz.
+
 ## 1.32.0
 
 - Add a dataflow learning card to the SwiGLU review packet: shape flow,

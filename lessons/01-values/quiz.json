@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "shape", "question": "out 的形状是什么？", "answer": "[4, 8]"},
+    {"id": "row_offset", "question": "scale 的地址里有行偏移吗？", "answer": "没有，只有列偏移 c"},
+    {"id": "buffer", "question": "y 会单独占显存吗？", "answer": "不会，y 被融合进同一个 pointwise kernel"},
+    {"id": "kernels", "question": "生成几个 kernel？", "answer": "1 个"},
+    {"id": "scalar", "question": "scale 改成 [1,1] 后地址是什么？", "answer": "scale[0]"}
+  ]
+}

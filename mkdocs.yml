@@ -34,6 +34,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting started: getting-started.md
+  - Lesson 1: learn/lesson-01.md
   - Tutorial: tutorial.md
   - Examples: examples.md
   - Language: language.md

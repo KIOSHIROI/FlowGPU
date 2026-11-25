@@ -1,0 +1,11 @@
+# Lesson 1: values, shapes and broadcast.
+pipeline add_scale {
+    input x     : fp32[N,D]
+    input scale : fp32[1,D]
+
+    scale_full = broadcast_like(scale, x)
+    y = mul(x, scale_full)
+    out = add(y, x)
+
+    output out
+}
