@@ -1,0 +1,11 @@
+# Lesson 2: layout operators change addresses.
+pipeline layout_mix {
+    input x : fp32[N,8]
+
+    a, b = split(x)
+    interleaved = interleave(a, b)
+    joined = concat(a, b)
+    out = add(interleaved, joined)
+
+    output out
+}

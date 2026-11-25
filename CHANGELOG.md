@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.34.0
+
+- Add Lesson 2 (lessons/02-layout): split/interleave/concat as different
+  address functions. One primitive kernel; no a/b buffers. Dataflow card,
+  CPU-only runner, exercise and six-question quiz.
+
 ## 1.33.0
 
 - Add Lesson 1 (lessons/01-values): values, shapes and explicit broadcast.

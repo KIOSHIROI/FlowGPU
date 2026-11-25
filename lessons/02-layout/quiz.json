@@ -1,0 +1,10 @@
+{
+  "questions": [
+    {"id": "shapes", "question": "a/b 的形状？", "answer": "[4,4]"},
+    {"id": "interleave_even", "question": "interleaved[0,0] 来自？", "answer": "a[0,0]"},
+    {"id": "interleave_odd", "question": "interleaved[0,1] 来自？", "answer": "b[0,0]"},
+    {"id": "concat_left", "question": "joined[0,0] 来自？", "answer": "a[0,0]"},
+    {"id": "concat_right", "question": "joined[0,4] 来自？", "answer": "b[0,0]"},
+    {"id": "buffer", "question": "为什么 a/b 需要缓冲？", "answer": "它们仍在同一个 primitive kernel 内，两个用途变成两条地址计算"}
+  ]
+}
