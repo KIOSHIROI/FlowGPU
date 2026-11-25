@@ -1,0 +1,9 @@
+# Lesson 7: tails and masks when the tile is larger than the matrix.
+pipeline masked_matmul {
+    input a : fp32[M,K]
+    input b : fp32[K,N]
+
+    out = matmul(a, b)
+
+    output out
+}

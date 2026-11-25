@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.39.0
+
+- Add Lesson 7 (lessons/07-masks): tile larger than the matrix; print the
+  generated A/B load masks and store mask. CPU-only runner, dataflow card,
+  exercise and quiz.
+
 ## 1.38.0
 
 - Add Lesson 6 (lessons/06-materialized): same SwiGLU source compiles to 3

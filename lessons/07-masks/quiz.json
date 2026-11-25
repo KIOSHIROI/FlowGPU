@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "shape", "question": "out 的形状？", "answer": "[3, 5]"},
+    {"id": "grid", "question": "M=3,N=5 时 grid？", "answer": "(1, 1)"},
+    {"id": "grid_large", "question": "M=130,N=5 时 grid？", "answer": "(2, 1)"},
+    {"id": "load_mask", "question": "A/B load 的 K mask？", "answer": "k < 7"},
+    {"id": "store_mask", "question": "store 的 mask？", "answer": "(m < 3) & (n < 5)"}
+  ]
+}
