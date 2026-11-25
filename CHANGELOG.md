@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0
+
+- Add a controlled device-policy experiment on dedicated H100 GPU0: the
+  L4-safe tile is 1.027x slower at decode and 1.163x slower at prefill than
+  the H100 device policy, with everything else held fixed.
+
 ## 1.9.0
 
 - Add a dedicated-GPU0 run of the Phase-3 suite: all five cases pass; FlowGPU

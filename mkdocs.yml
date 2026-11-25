@@ -50,6 +50,7 @@ nav:
   - Trained parity: trained-parity.md
   - Fault injection: audit/fault-injection.md
   - Non-standard suite: audit/nonstandard-suite.md
+  - Device policy: audit/device-policy.md
   - Dynamic batching: dynamic-batching.md
   - Cached decode block: decode-block.md
   - Cached prefill block: prefill-block.md
