@@ -1,58 +1,64 @@
-# Phase 3 starter suite: non-standard subgraphs
+# Phase 3 suite: non-standard subgraphs
 
-This is the first slice of the Phase-3 workload suite. It is deliberately
-small and reproducible before expanding to GQA/MLA/MoE variants.
+Seven cases:
 
-| case | FlowGPU / eager (median, range) | FlowGPU / compiled |
-|---|---|---|
-| `residual_norm` | 0.98x (0.96–0.98) | 1.01x (1.00–1.01) |
-| `moe_router_topk` | 0.99x (0.99–1.00) | 1.00x (1.00–1.01) |
-| `routed_silu` | **0.78x** (0.77–0.79) | 1.00x (1.00–1.02) |
-| `gqa_decode_masked` | not interpreted* | not interpreted* |
-| `gqa_decode_large` | not interpreted* | not interpreted* |
+| case | coverage |
+|---|---|
+| `residual_norm` | fused add + RMSNorm |
+| `moe_router_topk` | MoE routing, global softmax, tie-sensitive top-k |
+| `routed_silu` | fp16 SiLU*mul + fp32 per-row scale |
+| `gqa_decode_masked` | small masked GQA decode |
+| `gqa_decode_large` | batch 4, 32q/8kv, depth 128, 256 slots |
+| `awq_dequantize` | int4 AWQ dequant |
+| `mla_latent_attention` | low-rank latent K/V (MLA-shaped) |
 
-All seven pass correctness (max abs error <= 3e-2). Ratios are medians of three
-randomly interleaved rounds x 8 iterations on a shared H100; ranges are across
-rounds. *The GQA and AWQ cases are correctness/contract coverage: GQA has different
-baseline host overhead/shape; AWQ is a tiny int4 dequant case, compared against
-`packed_layout.awq_dequantize` (max abs error 0.0). `mla_latent_attention` is
-the latent-KV core (low-rank K/V), not the full DeepSeek decoupled-RoPE MLA.
+All seven pass correctness. `awq_dequantize` is correctness-only (tiny shape)
+and matches `packed_layout.awq_dequantize` exactly (max abs error 0.0). The MLA
+case is the latent-KV core, not the full DeepSeek decoupled-RoPE MLA.
 
-## Dedicated-GPU rerun
+## Performance is not yet stable
 
-GPU0 was idle (0% utilization immediately before and after; GPU1 was busy), so
-the same five cases were rerun with five randomized interleaved rounds x 20
-iterations:
+Three runs of the same suite — busy GPU1, idle GPU0, and idle GPU0 with a
+500 ms clock warm-up — gave different ratios for the same code and weights:
 
-| case | FlowGPU / eager (range) | FlowGPU / compiled (range) |
-|---|---|---|
-| `residual_norm` | **0.40x** (0.39–0.42) | **0.87x** (0.86–0.89) |
-| `moe_router_topk` | 1.19x (1.17–1.23) | **0.85x** (0.84–0.87) |
-| `routed_silu` | **0.15x** (0.151–0.155) | 1.02x (1.01–1.03) |
-| `gqa_decode_masked` | **0.34x** (0.34–0.36) | **0.32x** (0.32–0.33) |
-| `gqa_decode_large` | **0.45x** (0.44–0.46) | **0.36x** (0.36–0.37) |
-| `mla_latent_attention` | **0.42x** (0.41–0.43) | **0.34x** (0.34–0.34) |
-| `awq_dequantize` | correctness only* | correctness only* |
+| case | FlowGPU / eager across runs |
+|---|---:|
+| `residual_norm` | 0.39–0.98x |
+| `moe_router_topk` | 0.73–1.19x |
+| `routed_silu` | 0.15–0.78x |
+| `gqa_decode_masked` | 0.10–0.36x |
+| `gqa_decode_large` | 0.17–0.79x |
+| `mla_latent_attention` | 0.34–0.65x |
 
-All pass correctness. This is the first table in the project that is stable
-enough to discuss as a performance result, with three caveats:
+The ordering and magnitude are **not** stable enough for a compiler ranking.
+0% utilization in `nvidia-smi` is not a clock/isolation guarantee, and a
+warm-up kernel did not remove the variance.
 
-- it is **one H100**, not a cross-device claim;
-- it is five cases, not a general LLM workload;
-- FlowGPU is **not universally faster**: MoE is 1.19x slower than eager, while
-  it is 0.85x of `torch.compile`; `routed_silu` is at parity with compiled.
+**Decision:** correctness/contract is the stable signal. Performance requires a
+clock-locked, isolated run with longer repetitions; until then these ratios are
+diagnostic only.
 
-The AWQ case is the quant pre/post coverage: it checks the AWQ nibble order,
-zero-point subtraction and fp16 scale path against the independent reference.
+## MoE tie contract
 
-The shared-device numbers earlier in this page are kept as a negative result:
-they changed ordering between sessions. Dedicated measurement is the only
-basis for a ranking.
+FlowGPU's `topk_last` contract is explicit: **lower column wins on a tie**.
+The first suite baseline used `torch.topk`, whose tie order is unspecified, so
+equal routing weights produced different `ids`. Replacing the baseline with a
+stable descending argsort gives `ids_equal=true` across runs.
+
+This is the kind of issue a latency-only benchmark would miss: a non-standard
+subgraph suite needs a semantics column, not only timing.
 
 ## Measurement protocol
 
-- Randomize the order of FlowGPU, eager and compiled **inside each round**;
-- run 5 rounds, report median and min/max ratio;
+- Randomize FlowGPU / eager / compiled order inside each round;
+- run multiple rounds, report median and min/max;
 - keep correctness separate from timing;
-- verify the device is idle before and after;
-- do not merge shared-device runs with dedicated runs.
+- record whether the device was idle before/after;
+- do not merge shared-device runs with dedicated runs;
+- treat cross-session variance as a first-class result until clocks are locked.
+
+## Raw data
+
+- [`nonstandard-suite-dedicated-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/nonstandard-suite-dedicated-20261125.json)
+- [`nonstandard-suite-warm-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/nonstandard-suite-warm-20261125.json)
+- earlier shared-device runs are kept in the same directory.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.16.0
+
+- Fix the MoE reference to a stable descending argsort, honoring the
+  documented lower-column tie contract; ids now match across runs.
+- Report that suite performance ratios are unstable across sessions even on
+  idle GPU0 with a warm-up; correctness is the stable signal.
+
 ## 1.15.0
 
 - Update the research report with the 7-case suite, MLA-shaped latent

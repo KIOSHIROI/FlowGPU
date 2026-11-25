@@ -60,20 +60,13 @@ Seven cases: fused residual+RMSNorm, MoE routing, fp16 routed SiLU, small masked
 GQA, serving-shaped GQA, AWQ int4 dequant, and MLA-shaped latent attention. All
 pass correctness.
 
-Dedicated H100 GPU0 (0% util before/after), 5 randomized interleaved rounds:
+Performance ratios were not stable across sessions, even on idle GPU0 with a
+clock warm-up: `routed_silu` ranged 0.15x–0.78x of eager, `moe_router_topk`
+0.73x–1.19x. The stable result is correctness: all seven cases pass. A
+clock-locked, isolated run is required before any performance ranking.
 
-| case | FlowGPU / eager | FlowGPU / compiled |
-|---|---:|---:|
-| residual_norm | 0.40x | 0.87x |
-| moe_router_topk | 1.19x | 0.85x |
-| routed_silu | 0.15x | 1.02x |
-| gqa_decode_masked | 0.34x | 0.32x |
-| gqa_decode_large | 0.45x | 0.36x |
-| mla_latent_attention | 0.42x | 0.34x |
-
-**Meaning:** on these six timed cases, FlowGPU is competitive and often faster,
-but **not universally**: MoE is slower than eager.
-**Not meaning:** general LLM performance or a cuBLAS win.
+**Meaning:** correctness and the guard/oracle boundary are stable.
+**Not meaning:** a compiler performance ranking; the ratios are diagnostic.
 
 ### Measurement lessons
 

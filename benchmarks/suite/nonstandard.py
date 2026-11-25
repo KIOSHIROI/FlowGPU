@@ -54,7 +54,8 @@ def _moe_eager(x, router_weight, cap):
     logits = x @ router_weight.t()
     capped = torch.tanh(logits / cap) * cap
     probs = torch.softmax(capped, -1)
-    values, ids = torch.topk(capped, 2, -1)
+    order = torch.argsort(capped, dim=-1, descending=True, stable=True)
+    ids = order[..., :2]
     return torch.gather(probs, -1, ids), ids
 
 
@@ -236,9 +237,17 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--rounds", type=int, default=3)
+    parser.add_argument("--warmup-ms", type=float, default=300.0)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     payload = {"environment": "H100 PCIe, shared", "cases": []}
+    if args.warmup_ms > 0:
+        burn_a = torch.randn(4096, 4096, device="cuda", dtype=torch.bfloat16)
+        burn_b = torch.randn(4096, 4096, device="cuda", dtype=torch.bfloat16)
+        deadline = time.perf_counter() + args.warmup_ms / 1000.0
+        while time.perf_counter() < deadline:
+            burn_a @ burn_b
+        torch.cuda.synchronize()
     for case in CASES:
         inputs = tuple(value.cuda() if isinstance(value, torch.Tensor) else value for value in case.make_inputs())
         run = compile_pipeline(case.source.read_text(), pipeline=case.pipeline,
