@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.36.0
+
+- Add Lesson 4 (lessons/04-matmul): K as the reduction axis, output tile,
+  CPU-only runner, dataflow card, exercise and quiz.
+
 ## 1.35.0
 
 - Add Lesson 3 (lessons/03-reduction): sum_last + broadcast_like + mul in

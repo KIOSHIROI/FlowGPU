@@ -1,0 +1,9 @@
+# Lesson 4: the first two-dimensional reduction.
+pipeline matmul_intro {
+    input a : fp32[M,K]
+    input b : fp32[K,N]
+
+    out = matmul(a, b)
+
+    output out
+}

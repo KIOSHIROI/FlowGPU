@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "shape", "question": "out 的形状？", "answer": "[M, N] = [4, 16]"},
+    {"id": "axis", "question": "哪个维度被消掉？", "answer": "K"},
+    {"id": "address", "question": "a 和 b 的列步长？", "answer": "都是 1"},
+    {"id": "loop", "question": "K 变大时哪个循环变长？", "answer": "累加循环 k"},
+    {"id": "tail", "question": "N=6 时尾部 mask 加在哪？", "answer": "输出列轴 j"}
+  ]
+}
