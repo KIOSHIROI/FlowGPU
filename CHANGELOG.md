@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.0
+
+- Add awq_dequantize to the Phase-3 suite as quant pre/post coverage; it
+  matches packed_layout.awq_dequantize exactly (max abs error 0.0).
+
 ## 1.10.0
 
 - Add a controlled device-policy experiment on dedicated H100 GPU0: the

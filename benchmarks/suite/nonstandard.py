@@ -29,6 +29,7 @@ class Case:
     output_names: tuple
     tolerance: float
     id_name: str | None = None
+    timing: bool = True
 
 
 def _bf(*shape):
@@ -162,6 +163,25 @@ def _gqa_large_eager(x, n1, wq, wk, wv, wo, n2, wg, wu, wd,
     return mid + (F.silu(hn @ wg) * (hn @ wu)) @ wd
 
 
+def _awq_inputs():
+    import random
+    rng = random.Random(0)
+    qweight = torch.tensor([[rng.randrange(-2**31, 2**31) for _ in range(2)] for _ in range(4)],
+                           device="cuda", dtype=torch.int32)
+    zeros = torch.tensor([[rng.randrange(0, 2**31) for _ in range(2)] for _ in range(2)],
+                         device="cuda", dtype=torch.int32)
+    scales = torch.randn(2, 16, device="cuda", dtype=torch.float16) * 0.02
+    group = torch.tensor([0, 0, 1, 1], device="cuda", dtype=torch.int32)
+    return (qweight, zeros, scales, group, 0, 4, 8, 12, 16, 20, 24, 28, 15)
+
+
+def _awq_eager(qweight, zeros, scales, group, *constants):
+    from flowgpu.compiler.packed_layout import awq_dequantize
+    values = awq_dequantize(qweight.flatten().tolist(), scales.flatten().tolist(),
+                            zeros.flatten().tolist(), [4, 16])
+    return torch.tensor(values, device="cuda", dtype=torch.float16).reshape(4, 16)
+
+
 CASES = (
     Case("residual_norm", ROOT / "examples/residual_norm.fgpu", "residual_norm",
          {"N": 2048, "D": 4096}, _residual_inputs, _residual_eager, ("z",), 2e-2),
@@ -173,6 +193,8 @@ CASES = (
          "llama3_decode_block_gqa_masked", {}, _gqa_inputs, _gqa_eager, ("out",), 3e-2),
     Case("gqa_decode_large", ROOT / "examples/gqa_decode_large.fgpu", "gqa_decode_large",
          {}, _gqa_large_inputs, _gqa_large_eager, ("out",), 3e-2),
+    Case("awq_dequantize", ROOT / "examples/packed/awq_dequant.fgpu", "awq_dequantize",
+         {}, _awq_inputs, _awq_eager, ("out",), 2e-2, timing=False),
 )
 
 
@@ -197,6 +219,14 @@ def main(argv=None) -> int:
         ids_equal = None
         if case.id_name is not None:
             ids_equal = bool(torch.equal(result[case.id_name].to(expected[0].dtype), eager_result[1]))
+        if not case.timing:
+            entry = {"name": case.name, "max_abs_error": max(errors),
+                     "tolerance": case.tolerance,
+                     "passed": max(errors) <= case.tolerance,
+                     "timing": False}
+            payload["cases"].append(entry)
+            print(json.dumps(entry) if args.json else entry)
+            continue
         compiled_fn = None
         try:
             compiled_fn = torch.compile(case.eager)

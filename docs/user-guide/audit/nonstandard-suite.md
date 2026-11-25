@@ -11,10 +11,11 @@ small and reproducible before expanding to GQA/MLA/MoE variants.
 | `gqa_decode_masked` | not interpreted* | not interpreted* |
 | `gqa_decode_large` | not interpreted* | not interpreted* |
 
-All five pass correctness (max abs error <= 3e-2). Ratios are medians of three
+All six pass correctness (max abs error <= 3e-2). Ratios are medians of three
 randomly interleaved rounds x 8 iterations on a shared H100; ranges are across
-rounds. *The GQA cases are correctness/contract coverage: their eager baseline
-has different host overhead / shape, so the ratio is not a compiler result.
+rounds. *The GQA and AWQ cases are correctness/contract coverage: GQA has different
+baseline host overhead/shape; AWQ is a tiny int4 dequant case, compared against
+`packed_layout.awq_dequantize` (max abs error 0.0).
 
 ## Dedicated-GPU rerun
 
@@ -29,6 +30,7 @@ iterations:
 | `routed_silu` | **0.15x** (0.151–0.155) | 1.02x (1.01–1.03) |
 | `gqa_decode_masked` | **0.34x** (0.34–0.36) | **0.32x** (0.32–0.33) |
 | `gqa_decode_large` | **0.45x** (0.44–0.46) | **0.36x** (0.36–0.37) |
+| `awq_dequantize` | correctness only* | correctness only* |
 
 All pass correctness. This is the first table in the project that is stable
 enough to discuss as a performance result, with three caveats:
@@ -37,6 +39,9 @@ enough to discuss as a performance result, with three caveats:
 - it is five cases, not a general LLM workload;
 - FlowGPU is **not universally faster**: MoE is 1.19x slower than eager, while
   it is 0.85x of `torch.compile`; `routed_silu` is at parity with compiled.
+
+The AWQ case is the quant pre/post coverage: it checks the AWQ nibble order,
+zero-point subtraction and fp16 scale path against the independent reference.
 
 The shared-device numbers earlier in this page are kept as a negative result:
 they changed ordering between sessions. Dedicated measurement is the only
