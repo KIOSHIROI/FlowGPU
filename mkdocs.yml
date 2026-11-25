@@ -50,6 +50,7 @@ nav:
   - Trained parity: trained-parity.md
   - Fault injection: audit/fault-injection.md
   - Audit trail: audit/audit-trail.md
+  - State invariants: audit/invariants.md
   - Audit cost: audit/audit-cost.md
   - User study: audit/user-study.md
   - Non-standard suite: audit/nonstandard-suite.md

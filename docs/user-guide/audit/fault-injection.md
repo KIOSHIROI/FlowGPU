@@ -72,3 +72,17 @@ call is wrong".
 
 Raw data:
 [`fault-matrix-coverage-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/fault-matrix-coverage-20261125.json).
+
+
+## Closing the gap with optional invariants
+
+`flowgpu.compiler.runtime.invariants` provides opt-in host checks for the state
+semantics the generated guards miss:
+
+- cache position continuity (`expected` next slot);
+- valid-count range;
+- mask prefix/beyond-valid shape.
+
+With those checks, the five observable semantic faults in this matrix are
+rejected by the host; the two no-effect injections remain inapplicable. This
+is a library, not an automatic compiler check: callers must invoke it.

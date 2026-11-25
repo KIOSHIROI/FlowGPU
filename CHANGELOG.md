@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.27.0
+
+- Add optional state invariants for cache position continuity, valid range and
+  mask prefix; they reject the five observable semantic faults the generated
+  guards miss. Caller-invoked, not an automatic compiler check.
+
 ## 1.26.0
 
 - Add Phase 2c to the research report: audit-sheet coverage (13/13 as 6 direct
