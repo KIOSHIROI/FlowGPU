@@ -1,0 +1,45 @@
+{
+  "environment": "H100 PCIe, shared",
+  "cases": [
+    {
+      "name": "residual_norm",
+      "max_abs_error": 0.001953125,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 1653.620507568121,
+      "eager_us": 2549.596130847931,
+      "flowgpu_over_eager": 0.6485813527722011,
+      "compiled_us": 2481.976058334112,
+      "flowgpu_over_compiled": 0.6662515949803406
+    },
+    {
+      "name": "moe_router_topk",
+      "max_abs_error": 1.4901161193847656e-08,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": "ids",
+      "ids_equal": true,
+      "flowgpu_us": 2457.0864625275135,
+      "eager_us": 2474.3913672864437,
+      "flowgpu_over_eager": 0.9930063994775783,
+      "compiled_us": 2464.8006074130535,
+      "flowgpu_over_compiled": 0.9968702762964521
+    },
+    {
+      "name": "routed_silu",
+      "max_abs_error": 1.9073486328125e-06,
+      "tolerance": 0.02,
+      "passed": true,
+      "id_name": null,
+      "ids_equal": null,
+      "flowgpu_us": 2532.5962342321873,
+      "eager_us": 3251.745831221342,
+      "flowgpu_over_eager": 0.7788420023224739,
+      "compiled_us": 2537.710592150688,
+      "flowgpu_over_compiled": 0.997984656747574
+    }
+  ],
+  "note": "Starter suite, shared H100; ratios are the signal, absolute times vary. MoE ids are recorded separately because top-k tie order is not a specified contract."
+}

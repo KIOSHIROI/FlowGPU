@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0
+
+- Add the Phase-3 starter suite: residual_norm, moe_router_topk and
+  routed_silu, with eager and torch.compile baselines.
+- All pass the tolerance; the MoE run exposed that top-k tie order is not a
+  specified contract and must be recorded separately from weights.
+
 ## 1.4.0
 
 - Expand the fault matrix to 13 cases: 6 caught at launch, 5 observable

@@ -49,6 +49,7 @@ nav:
   - Closed loop: closed-loop.md
   - Trained parity: trained-parity.md
   - Fault injection: audit/fault-injection.md
+  - Non-standard suite: audit/nonstandard-suite.md
   - Dynamic batching: dynamic-batching.md
   - Cached decode block: decode-block.md
   - Cached prefill block: prefill-block.md
