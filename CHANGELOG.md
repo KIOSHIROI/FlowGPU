@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Add a Phase-2 fault-injection experiment: 5/5 structural faults caught,
+  4/4 semantic faults silent (cache loc, mask, skipped position).
+- Document the auditability boundary: guards cover declarations, not state
+  invariants; reference/oracle tests are required for the latter.
+
 ## 1.1.0
 
 - Add a trained tiny-model parity experiment: PyTorch and FlowGPU generate

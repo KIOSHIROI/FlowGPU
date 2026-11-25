@@ -1,0 +1,20 @@
+{
+  "experiment": "Phase-2 fault injection on compiled MLP and masked decode host boundaries",
+  "environment": "H100 PCIe, shared",
+  "total": 9,
+  "caught_at_launch": 5,
+  "silent_wrong_value": 4,
+  "silent_non_finite": 0,
+  "cases": {
+    "shape_mismatch": {"caught": "launch", "message": "input x dtype or shape does not match its declaration"},
+    "dtype_mismatch": {"caught": "launch", "message": "input x dtype or shape does not match its declaration"},
+    "noncontiguous_layout": {"caught": "launch", "message": "input x must be contiguous for its consuming kernels"},
+    "weight_dtype_mismatch": {"caught": "launch", "message": "input w1 dtype or shape does not match its declaration"},
+    "cache_dtype_mismatch": {"caught": "launch", "message": "input k_cache dtype or shape does not match its declaration"},
+    "cache_loc_oob": {"caught": null, "silent": "wrong_value", "maxdiff": 0.000244140625},
+    "missing_mask": {"caught": null, "silent": "wrong_value", "maxdiff": 0.002147674560546875},
+    "valid_zero_mask": {"caught": null, "silent": "wrong_value", "maxdiff": 0.002147674560546875},
+    "skipped_cache_loc": {"caught": null, "silent": "wrong_value", "maxdiff": 0.000244140625}
+  },
+  "note": "MLP compiled with B/D/H bindings; decode block has fixed literals. The four silent cases keep every declaration valid and change state/value semantics."
+}
