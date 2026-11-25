@@ -12,7 +12,7 @@ lexer/parser or Lark.  This is part of the de-DSL boundary: core must be usable
 without the text frontend being importable.
 """
 
-__version__ = "1.37.0"
+__version__ = "1.38.0"
 
 __all__ = [
     "__version__",

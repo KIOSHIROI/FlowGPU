@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.38.0
+
+- Add Lesson 6 (lessons/06-materialized): same SwiGLU source compiles to 3
+  fused or 4 materialized kernels; both CPU references agree. Dataflow card,
+  runner, exercise and quiz.
+
 ## 1.37.0
 
 - Add Lesson 5 (lessons/05-fusion): SwiGLU as 3 kernels; gate/hidden are

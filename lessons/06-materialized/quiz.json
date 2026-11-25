@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "fused_kernels", "question": "fused 有几个 kernel？", "answer": "3"},
+    {"id": "material_kernels", "question": "materialized 有几个 kernel？", "answer": "4"},
+    {"id": "extra", "question": "多出来的 kernel 是什么？", "answer": "pointwise: silu, mul"},
+    {"id": "buffer", "question": "哪个值从寄存器变成显存？", "answer": "up（以及 act 的中间结果）"},
+    {"id": "result", "question": "两种模式的数学结果？", "answer": "必须完全相同"}
+  ]
+}
