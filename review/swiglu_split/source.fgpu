@@ -1,0 +1,28 @@
+# Task160 `swiglu_oai_split` (batch10, 30 teams, leader 4.32x):
+#
+#   gate, up = split(x)                        # x is [-1, 2n], last axis halved
+#   gate = clamp(gate, max=limit)              # asymmetric: upper bound only
+#   up   = clamp(up, min=-limit, max=limit)    # both bounds
+#   out  = gate * sigmoid(alpha * gate) * (up + beta)
+#
+# Every operator it needs entered the language with the value layer (`sigmoid`,
+# `maximum`, `minimum`) or was already there (`split`, `mul`, `add`, `sub`).
+# `limit`/`alpha`/`beta` are `[1,1]` tensors broadcast over the row.
+pipeline swiglu_oai_split {
+ input x:fp32[8,16]
+ input alpha:fp32[1,1]
+ input beta:fp32[1,1]
+ input limit:fp32[1,1]
+ gate, up = split(x)
+ gate_tile = broadcast_like(limit, gate)
+ upper = minimum(gate, gate_tile)
+ alpha_tile = broadcast_like(alpha, gate)
+ beta_tile = broadcast_like(beta, up)
+ neg_limit = sub(broadcast_like(zeros_like(limit), gate), gate_tile)
+ lower = maximum(up, broadcast_like(neg_limit, up))
+ bounded = minimum(lower, broadcast_like(gate_tile, up))
+ gated = mul(upper, sigmoid(mul(alpha_tile, upper)))
+ shifted = add(bounded, beta_tile)
+ out = mul(gated, shifted)
+ output out
+}

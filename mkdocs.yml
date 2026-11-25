@@ -51,6 +51,7 @@ nav:
   - Fault injection: audit/fault-injection.md
   - Audit trail: audit/audit-trail.md
   - Source map: audit/source-map.md
+  - Review packet: audit/review-packet.md
   - Materialized vs fused: audit/materialized-vs-fused.md
   - State invariants: audit/invariants.md
   - Audit cost: audit/audit-cost.md

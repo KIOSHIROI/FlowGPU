@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.31.0
+
+- Add the SwiGLU split review packet: PyTorch reference, FlowGPU-generated
+  Triton, handwritten two-kernel Triton, inputs and manifest with source map.
+  GPU execution pending remote availability.
+
 ## 1.30.0
 
 - Add flowgpu.compiler.source_map: kernel -> DSL statement lines, with the
