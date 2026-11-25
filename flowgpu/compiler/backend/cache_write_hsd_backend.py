@@ -39,7 +39,8 @@ def {name}({", ".join(parameter for parameter, _ in pairs)}):
     return TritonKernel(name, "cache_write_hsd", ("cache_write_hsd",), operands, results,
                         tuple(parameter for parameter, _ in pairs),
                         tuple(argument for _, argument in pairs), f"({heads * keys},)", source,
-                        launch_options=(("num_warps", config.num_warps),))
+                        launch_options=(("num_warps", config.num_warps),),
+                        host_index_checks=(("loc", keys),))
 
 
 def cache_write_hsd_reference_kernel(graph, group, memory, name):

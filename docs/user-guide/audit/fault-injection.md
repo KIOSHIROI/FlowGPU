@@ -9,7 +9,8 @@ This experiment injects nine faults into two compiled hosts: an MLP with bound
 | class | cases | caught at launch | silently wrong |
 |---|---:|---:|---:|
 | structural | 5 | 5 | 0 |
-| semantic | 4 | 0 | 4 |
+| cache index (fixed) | 1 | 1 | 0 |
+| semantic | 3 | 0 | 3 |
 
 Caught at launch:
 
@@ -19,19 +20,22 @@ Caught at launch:
 - weight dtype mismatch;
 - cache dtype mismatch.
 
-Silently wrong:
+Silently wrong after the loc guard:
 
-- `loc=99` outside a 32-slot cache;
 - mask missing (all zeros) at the decode step;
 - mask all `-1e9` (no valid keys);
 - skipped cache position (`loc=9` while slot 8 is empty).
 
+`loc=99` was silently wrong in the first run and is now caught by a host
+`cache_write_hsd` range check; the three remaining cases are state semantics,
+not declaration errors.
+
 ## Interpretation
 
 FlowGPU's host guards cover the **declaration boundary** well: shape, dtype,
-layout and cache dtype are rejected before any launch. They do **not** cover
-**state invariants**: whether `loc` is in range, whether the mask matches the
-written prefix, or whether a cache position was skipped.
+layout, cache dtype and now the cache `loc` range are rejected before any
+launch. They still do **not** cover **state invariants**: whether the mask
+matches the written prefix, or whether a cache position was skipped.
 
 This is the auditability boundary the project should state explicitly:
 
@@ -41,7 +45,7 @@ This is the auditability boundary the project should state explicitly:
 The four silent cases are exactly the ones a reference-backed test or an
 explicit invariant check must catch. This motivates:
 
-1. a host guard for `cache_write_hsd` locations;
+1. ~~a host guard for `cache_write_hsd` locations~~ (added in 1.3.0);
 2. a test/oracle path for mask and cache-position consistency;
 3. reporting "caught vs silent" as a benchmark metric, not only latency.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0
+
+- Add a host range guard for cache_write_hsd loc; the fault matrix now catches
+  6/9 cases, with 3 remaining silent state-semantic faults.
+- Document the updated audit boundary: declaration + loc range are guarded;
+  mask/prefix consistency still needs an oracle.
+
 ## 1.2.0
 
 - Add a Phase-2 fault-injection experiment: 5/5 structural faults caught,

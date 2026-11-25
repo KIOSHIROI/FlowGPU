@@ -269,6 +269,11 @@ class TritonKernel:
     #: kernel; `_host` emits the bounds/overlap checks before any allocation or
     #: launch. None for every kernel that is not `store_at`.
     store_at_contract: object = None
+    #: (tensor operand, exclusive upper bound) pairs checked on the host before
+    #: the launch. Used by cache writes whose scalar index is read by the
+    #: kernel: the kernel masks nothing, so an out-of-range index would
+    #: silently leave the cache unchanged.
+    host_index_checks: tuple = ()
 
     @property
     def signature(self) -> str:
@@ -3665,6 +3670,12 @@ def _host(pipeline, graph, memory, kernels, skipped=(), *, attention_impl="math"
         # first time anything runs it -- which is what happened on the first
         # GPU run, and what no amount of reading the module had caught.
         indent = "        " if overlap else "    "
+        for checked, limit in getattr(kernel, "host_index_checks", ()):
+            host_value = variable(checked)
+            lines.append(
+                f"{indent}if not (0 <= int({host_value}.item()) < {limit}):")
+            lines.append(
+                f"{indent}    raise ValueError('{checked} index is outside the cache range')")
         launch_guard = getattr(kernel, "launch_guard", None)
         fast = (_fast_launch_lines(
             kernel, arguments, graph, names, device_variable, indent
