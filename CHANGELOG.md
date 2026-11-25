@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.12.0
+
+- Add a consolidated research report covering the thesis, Phase 1-4
+  experiments, negative results, threats to validity and next experiments.
+
 ## 1.11.0
 
 - Add awq_dequantize to the Phase-3 suite as quant pre/post coverage; it
