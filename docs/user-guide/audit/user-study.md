@@ -68,6 +68,28 @@ and the audit evidence. Three tasks are host-guard cases; three are semantic
 
 The fixtures are ready; the experiment still needs participants.
 
+
+## Scoring harness
+
+One answer is scored against the fixture:
+
+```bash
+python -m benchmarks.audit.user_study_runner loc_range \
+  --answer "loc is outside the cache range" --stage "host guard"
+```
+
+It reports two independent signals:
+
+- `root_cause_keyword`: the answer names the cause;
+- `stage_correct`: the answer identifies the right layer;
+- `both`: both are correct.
+
+Keeping the two separate matters: an engineer can name the cause but blame the
+wrong stage, which is exactly the auditability question.
+
+A dry run with the reference answers scores 6/6 on both fields; that validates
+the harness, **not** human performance.
+
 ## Status
 
 Protocol ready; no participants have been run. This document is the prereg

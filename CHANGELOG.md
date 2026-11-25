@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.22.0
+
+- Add the user-study scoring harness: root-cause keyword and stage accuracy
+  are scored separately; fixtures carry scoring keywords.
+
 ## 1.21.0
 
 - Extend the audit sheet with input declarations and caller-owned semantic

@@ -15,6 +15,7 @@ TASKS = (
         "root_cause": "input shape does not match the bound B",
         "stage": "host guard",
         "evidence": "input x dtype or shape does not match its declaration",
+        "keywords": ("shape", "dimension", "b"),
     },
     {
         "id": "dtype",
@@ -23,6 +24,7 @@ TASKS = (
         "root_cause": "input dtype does not match bf16",
         "stage": "host guard",
         "evidence": "input x dtype or shape does not match its declaration",
+        "keywords": ("dtype", "bf16", "float"),
     },
     {
         "id": "loc_range",
@@ -31,6 +33,7 @@ TASKS = (
         "root_cause": "cache index outside [0,32)",
         "stage": "host guard",
         "evidence": "loc index is outside the cache range",
+        "keywords": ("loc", "range", "index", "cache"),
     },
     {
         "id": "mask_missing",
@@ -39,6 +42,7 @@ TASKS = (
         "root_cause": "mask does not match the written slots",
         "stage": "semantic / oracle",
         "evidence": "audit shows the masked-attention kernel and reference; no host guard",
+        "keywords": ("mask", "prefix", "attention"),
     },
     {
         "id": "cache_skip",
@@ -47,6 +51,7 @@ TASKS = (
         "root_cause": "cache position skipped; slot 9 stays empty",
         "stage": "semantic / oracle",
         "evidence": "reference output differs; loc is inside the guarded range",
+        "keywords": ("cache", "position", "skip", "loc"),
     },
     {
         "id": "moe_tie",
@@ -55,6 +60,7 @@ TASKS = (
         "root_cause": "top-k tie order: lower column wins",
         "stage": "semantic contract",
         "evidence": "topk_last kernel; stable-argsort reference",
+        "keywords": ("tie", "topk", "column", "ids"),
     },
 )
 
