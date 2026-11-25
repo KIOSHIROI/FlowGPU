@@ -197,7 +197,7 @@ def coalesce_store_cache_groups(graph, report):
                         fused_values=report.fused_values)
 
 
-def fuse(graph: DataflowGraph, *, opaque_anchors=("attention",), placement_cost=None) -> FusionReport:
+def fuse(graph: DataflowGraph, *, opaque_anchors=("attention",), placement_cost=None, fuse_pointwise=True) -> FusionReport:
     """Partition the graph's operators into the kernels that evaluate them."""
     graph.validate()
     index_of = graph.index_of
@@ -225,17 +225,18 @@ def fuse(graph: DataflowGraph, *, opaque_anchors=("attention",), placement_cost=
         if is_operator(node) and is_pointwise(node.op):
             parent[index_of(node)] = index_of(node)
 
-    for edge in graph.edges():
-        producer, consumer = edge.producer, edge.consumer
+    if fuse_pointwise:
+        for edge in graph.edges():
+            producer, consumer = edge.producer, edge.consumer
 
-        if not (is_operator(producer) and is_operator(consumer)):
-            continue
-        if not (is_pointwise(producer.op) and is_pointwise(consumer.op)):
-            continue
-        if not single_use[edge.value]:
-            continue
+            if not (is_operator(producer) and is_operator(consumer)):
+                continue
+            if not (is_pointwise(producer.op) and is_pointwise(consumer.op)):
+                continue
+            if not single_use[edge.value]:
+                continue
 
-        union(index_of(producer), index_of(consumer))
+            union(index_of(producer), index_of(consumer))
 
     regions = {}
     for key in parent:

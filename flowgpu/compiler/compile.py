@@ -158,7 +158,7 @@ def auto_cross_domain_config():
                             reduction_block_limit=65536, num_warps=8)
 
 
-def compile_source(source: str, source_path: str | None = None, *, gpu_backend="triton", attention_impl="math", platform_config: PlatformConfig | None = None, custom_ops=False, autotune=False, autotune_fold=False, fusion_policy="traffic", library_matmul="unfused", shape_bindings=None, shape_constraints=None, index_fusion=True, reduction_fusion=True, cross_domain_strategy=DEFAULT_CROSS_DOMAIN_STRATEGY, gather_fusion=False, gather_plan=None, numeric_mode="fp64", concurrency="sequential", launch_cache=False, semantic_view_folding=True, prune_kernel_abi=False, emit=True, platform_gate=False,
+def compile_source(source: str, source_path: str | None = None, *, gpu_backend="triton", attention_impl="math", platform_config: PlatformConfig | None = None, custom_ops=False, autotune=False, autotune_fold=False, fusion_policy="traffic", library_matmul="unfused", materialize_all=False, shape_bindings=None, shape_constraints=None, index_fusion=True, reduction_fusion=True, cross_domain_strategy=DEFAULT_CROSS_DOMAIN_STRATEGY, gather_fusion=False, gather_plan=None, numeric_mode="fp64", concurrency="sequential", launch_cache=False, semantic_view_folding=True, prune_kernel_abi=False, emit=True, platform_gate=False,
     dependence_guard=False, split_views=False, layout_views=None, scan_epilogue=False, _pipelines=None,
     scalar_placement="off", scalar_specialization=None,
     scalar_calls=1, optimize=True, identity_folding=True) -> CompileResult:
@@ -435,6 +435,8 @@ def compile_source(source: str, source_path: str | None = None, *, gpu_backend="
         candidates = configs_for(platform_config.name) if autotune else ()
         bm = min(c[0] for c in candidates) if candidates else 64
         bn = min(c[1] for c in candidates) if candidates else 64
+        if materialize_all:
+            opaque = tuple(sorted({node.op for node in dataflow.nodes}))
         fusion = fuse(dataflow, opaque_anchors=opaque + ('store_cache_4d', 'linear_decode_forward', 'patchify',
                               'scatter_by_index', 'store_at', 'store_at_trusted',
                               'topk_last', 'gather_last', 'segment_rank',

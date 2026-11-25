@@ -1,0 +1,106 @@
+{
+  "environment": "H100 GPU0",
+  "cases": [
+    {
+      "tokens": 1,
+      "fused_kernels": [
+        [
+          "matmul"
+        ],
+        [
+          "matmul",
+          "silu",
+          "mul"
+        ],
+        [
+          "matmul"
+        ]
+      ],
+      "materialized_kernels": [
+        [
+          "matmul"
+        ],
+        [
+          "matmul"
+        ],
+        [
+          "silu",
+          "mul"
+        ],
+        [
+          "matmul"
+        ]
+      ],
+      "relative_error": {
+        "fused": 0.003448275849223137,
+        "materialized": 0.003448275849223137
+      },
+      "fused_us": 242.05279350280762,
+      "materialized_us": 241.3856029510498,
+      "materialized_over_fused": 0.9972436155678985,
+      "samples": {
+        "fused": [
+          235.64000129699707,
+          242.05279350280762,
+          336.30878925323486
+        ],
+        "materialized": [
+          231.113600730896,
+          241.3856029510498,
+          424.348783493042
+        ]
+      }
+    },
+    {
+      "tokens": 2048,
+      "fused_kernels": [
+        [
+          "matmul"
+        ],
+        [
+          "matmul",
+          "silu",
+          "mul"
+        ],
+        [
+          "matmul"
+        ]
+      ],
+      "materialized_kernels": [
+        [
+          "matmul"
+        ],
+        [
+          "matmul"
+        ],
+        [
+          "silu",
+          "mul"
+        ],
+        [
+          "matmul"
+        ]
+      ],
+      "relative_error": {
+        "fused": 0.0,
+        "materialized": 0.0
+      },
+      "fused_us": 2334.6607208251953,
+      "materialized_us": 3250.2159118652344,
+      "materialized_over_fused": 1.3921577053459109,
+      "samples": {
+        "fused": [
+          2250.168037414551,
+          2334.6607208251953,
+          2462.4176025390625
+        ],
+        "materialized": [
+          2932.961654663086,
+          3250.2159118652344,
+          3941.0945892333984
+        ]
+      }
+    }
+  ],
+  "note": "GPU0 was 88% busy at start; timing is contaminated. Correctness/kernel-shape comparison is valid; performance must be rerun on an idle device."
+}

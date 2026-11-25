@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.28.0
+
+- Add materialize_all=True: one SwiGLU source compiles to 3 fused kernels or
+  4 kernels with the hidden tensor materialized. CPU reference matches; H100
+  correctness matches; timing is pending an idle device.
+
 ## 1.27.0
 
 - Add optional state invariants for cache position continuity, valid range and
