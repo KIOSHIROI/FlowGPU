@@ -1,0 +1,10 @@
+# Lesson 3: reduce over the last axis, then broadcast the scalar back.
+pipeline row_scale {
+    input x : fp32[N,D]
+
+    total = sum_last(x)
+    total_full = broadcast_like(total, x)
+    out = mul(x, total_full)
+
+    output out
+}

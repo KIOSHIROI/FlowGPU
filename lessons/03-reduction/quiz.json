@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"id": "shape", "question": "total 的形状？", "answer": "[N]"},
+    {"id": "axis", "question": "归约的是哪一维？", "answer": "最后一维 D"},
+    {"id": "broadcast", "question": "total_full[r,c] 依赖 c 吗？", "answer": "不依赖，只有行 r"},
+    {"id": "kernels", "question": "生成几个 kernel？", "answer": "1 个 primitive kernel"},
+    {"id": "tail", "question": "D=5 时归约 mask 是什么？", "answer": "column < 5"}
+  ]
+}

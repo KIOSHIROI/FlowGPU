@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.35.0
+
+- Add Lesson 3 (lessons/03-reduction): sum_last + broadcast_like + mul in
+  one primitive kernel; CPU-only runner, dataflow card, exercise and quiz.
+
 ## 1.34.0
 
 - Add Lesson 2 (lessons/02-layout): split/interleave/concat as different
