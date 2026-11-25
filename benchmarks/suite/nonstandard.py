@@ -182,6 +182,38 @@ def _awq_eager(qweight, zeros, scales, group, *constants):
     return torch.tensor(values, device="cuda", dtype=torch.float16).reshape(4, 16)
 
 
+def _mla_inputs():
+    bf = lambda *shape: torch.randn(*shape, device="cuda", dtype=torch.bfloat16) * 0.02
+    weights = [bf(128), bf(128, 512), bf(128, 32), bf(32, 512), bf(32, 512),
+               bf(512, 128), bf(128), bf(128, 2048), bf(128, 2048), bf(2048, 128)]
+    cache_k = torch.zeros(4, 8, 64, 64, device="cuda", dtype=torch.bfloat16)
+    cache_v = torch.zeros_like(cache_k)
+    locs = torch.tensor([8, 16, 24, 32], device="cuda", dtype=torch.int32)
+    for b, loc in enumerate(locs.tolist()):
+        cache_k[b, :, :loc] = bf(8, loc, 64)
+        cache_v[b, :, :loc] = bf(8, loc, 64)
+    return (bf(4, 128), *weights, cache_k, cache_v, locs, locs + 1)
+
+
+def _mla_eager(x, n1, wq, wdkv, wuk, wuv, wo, n2, wg, wu, wd,
+               k_cache, v_cache, loc, valid):
+    h = x * torch.rsqrt(x.square().mean(-1, keepdim=True) + 1e-6) * n1
+    q = (h @ wq).reshape(4, 8, 64)
+    latent = h @ wdkv
+    k = (latent @ wuk).reshape(4, 8, 64)
+    v = (latent @ wuv).reshape(4, 8, 64)
+    kc, vc = k_cache.clone(), v_cache.clone()
+    for b in range(4):
+        kc[b, :, loc[b]] = k[b]; vc[b, :, loc[b]] = v[b]
+    scores = torch.einsum("bqd,bqsd->bqs", q.float(), kc.float()) / math.sqrt(64)
+    keep = torch.arange(64, device=x.device).view(1, 1, 64) < valid.view(4, 1, 1)
+    scores = scores.masked_fill(~keep, float("-inf"))
+    context = torch.einsum("bqs,bqsd->bqd", torch.softmax(scores, -1), vc.float())
+    mid = x + context.reshape(4, 512).to(torch.bfloat16) @ wo
+    hn = mid * torch.rsqrt(mid.square().mean(-1, keepdim=True) + 1e-6) * n2
+    return mid + (F.silu(hn @ wg) * (hn @ wu)) @ wd
+
+
 CASES = (
     Case("residual_norm", ROOT / "examples/residual_norm.fgpu", "residual_norm",
          {"N": 2048, "D": 4096}, _residual_inputs, _residual_eager, ("z",), 2e-2),
@@ -195,6 +227,8 @@ CASES = (
          {}, _gqa_large_inputs, _gqa_large_eager, ("out",), 3e-2),
     Case("awq_dequantize", ROOT / "examples/packed/awq_dequant.fgpu", "awq_dequantize",
          {}, _awq_inputs, _awq_eager, ("out",), 2e-2, timing=False),
+    Case("mla_latent_attention", ROOT / "examples/mla_latent_attention.fgpu",
+         "mla_latent_attention", {}, _mla_inputs, _mla_eager, ("out",), 3e-2),
 )
 
 

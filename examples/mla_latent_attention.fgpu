@@ -1,0 +1,46 @@
+# MLA-shaped decode subgraph: K/V come from a shared low-rank latent vector,
+# then masked GQA attention and a SwiGLU MLP. Not the full DeepSeek MLA
+# (no decoupled RoPE); this is the latent-KV core.
+pipeline mla_latent_attention {
+    input x        : bf16[4,128]
+    input norm1_w  : bf16[128]
+    input w_q      : bf16[128,512]
+    input w_dkv    : bf16[128,32]
+    input w_uk     : bf16[32,512]
+    input w_uv     : bf16[32,512]
+    input w_o      : bf16[512,128]
+    input norm2_w  : bf16[128]
+    input w_gate   : bf16[128,2048]
+    input w_up     : bf16[128,2048]
+    input w_down   : bf16[2048,128]
+    input k_cache  : bf16[4,8,64,64]
+    input v_cache  : bf16[4,8,64,64]
+    input loc      : int32[4]
+    input valid    : int32[4]
+
+    h = rms_norm(x, norm1_w)
+    q_flat = matmul(h, w_q)
+    latent = matmul(h, w_dkv)
+    k_flat = matmul(latent, w_uk)
+    v_flat = matmul(latent, w_uv)
+    q4 = reshape(q_flat, [4,8,1,64])
+    k3 = reshape(k_flat, [4,8,64])
+    v3 = reshape(v_flat, [4,8,64])
+    k_out = cache_write_hsd_batch(k_cache, k3, loc)
+    v_out = cache_write_hsd_batch(v_cache, v3, loc)
+    attn4 = window_attention(q4, k_out, v_out, valid)
+    attn = reshape(attn4, [4,512])
+    attn_proj = matmul(attn, w_o)
+    x_mid = add(x, attn_proj)
+    n2 = rms_norm(x_mid, norm2_w)
+    gate = matmul(n2, w_gate)
+    up = matmul(n2, w_up)
+    act = silu(gate)
+    hidden = mul(act, up)
+    mlp_out = matmul(hidden, w_down)
+    out = add(x_mid, mlp_out)
+
+    output out
+    output k_out
+    output v_out
+}

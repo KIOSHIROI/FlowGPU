@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.13.0
+
+- Add mla_latent_attention to the Phase-3 suite: low-rank latent K/V, masked
+  attention, SwiGLU; correctness passes and it is 0.42x eager / 0.34x compiled
+  on dedicated H100.
+
 ## 1.12.0
 
 - Add a consolidated research report covering the thesis, Phase 1-4
