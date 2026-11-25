@@ -3,22 +3,30 @@
 This is the first slice of the Phase-3 workload suite. It is deliberately
 small and reproducible before expanding to GQA/MLA/MoE variants.
 
-| case | shape | what is non-standard | FlowGPU / eager | FlowGPU / compiled |
-|---|---|---|---|---|
-| `residual_norm` | 2048x4096 | fused add + RMSNorm | **0.65x** | **0.67x** |
-| `moe_router_topk` | 4x16, 8 experts | tanh cap + global softmax + top-k gather | 0.99x | 1.00x |
-| `routed_silu` | 2048x14336 | fp16 SiLU*mul + fp32 per-row weight + cast | **0.78x** | **1.00x** |
-| `gqa_decode_masked` | batch 2, 4q/2kv, 8 slots | masked GQA + cached decode | correctness only* | correctness only* |
-| `gqa_decode_large` | batch 4, 32q/8kv, depth 128, 256 slots | serving-shaped masked GQA + SwiGLU | indicative only* | indicative only* |
+| case | FlowGPU / eager (median, range) | FlowGPU / compiled |
+|---|---|---|
+| `residual_norm` | 0.98x (0.96–0.98) | 1.01x (1.00–1.01) |
+| `moe_router_topk` | 0.99x (0.99–1.00) | 1.00x (1.00–1.01) |
+| `routed_silu` | **0.78x** (0.77–0.79) | 1.00x (1.00–1.02) |
+| `gqa_decode_masked` | not interpreted* | not interpreted* |
+| `gqa_decode_large` | not interpreted* | not interpreted* |
 
-All five pass the tolerance (max abs error <= 3e-2). Ratios are from one
-shared-H100 session, 10 iterations, 2 repeats; absolute times moved with load.
+All five pass correctness (max abs error <= 3e-2). Ratios are medians of three
+randomly interleaved rounds x 8 iterations on a shared H100; ranges are across
+rounds. *The GQA cases are correctness/contract coverage: their eager baseline
+has different host overhead / shape, so the ratio is not a compiler result.
 
-\* The GQA cases are included for **correctness/contract coverage**. The
-large case has meaningful shapes but the shared device made the measured
-ratios unstable: in different runs `residual_norm`/`routed_silu` were faster
-than compiled in one session and slower in another. **Do not rank compilers
-from this shared-device data; a dedicated GPU rerun is required.**
+## Measurement protocol
+
+- Randomize the order of FlowGPU, eager and compiled **inside each round**;
+- run 3 rounds, report median and min/max ratio;
+- keep correctness separate from timing;
+- do not rank compilers from one shared session: within-session variance is
+  small, but **session-level load variance remains** (an earlier run had
+  `routed_silu` compiled 3x faster; this run has FlowGPU faster).
+
+The stable output of this phase is the correctness/contract result, not a
+performance leaderboard.
 
 ## What the suite already exposed
 

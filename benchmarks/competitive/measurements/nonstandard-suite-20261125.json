@@ -8,24 +8,78 @@
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 1346.82422503829,
-      "eager_us": 1848.0753060430288,
-      "flowgpu_over_eager": 0.7287712901277908,
-      "compiled_us": 808.4708824753761,
-      "flowgpu_over_compiled": 1.6658908245583115
+      "flowgpu_us": 2499.283757060766,
+      "eager_us": 2560.5647824704647,
+      "compiled_us": 2487.543970346451,
+      "flowgpu_over_eager": 0.976067379419874,
+      "flowgpu_over_compiled": 1.0047194288238774,
+      "samples": {
+        "flowgpu": [
+          2516.0093791782856,
+          2464.1435593366623,
+          2499.283757060766
+        ],
+        "eager": [
+          2589.6988809108734,
+          2559.974789619446,
+          2560.5647824704647
+        ],
+        "compiled": [
+          2487.543970346451,
+          2472.324762493372,
+          2499.259077012539
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.9625655570236966,
+          0.976067379419874
+        ],
+        "flowgpu_over_compiled": [
+          0.9966908865369051,
+          1.0114431781593274
+        ]
+      }
     },
     {
       "name": "moe_router_topk",
-      "max_abs_error": 7.450580596923828e-09,
+      "max_abs_error": 1.4901161193847656e-08,
       "tolerance": 0.02,
       "passed": true,
       "id_name": "ids",
-      "ids_equal": false,
-      "flowgpu_us": 1861.5827430039644,
-      "eager_us": 2445.8228144794703,
-      "flowgpu_over_eager": 0.7611273931959597,
-      "compiled_us": 2017.2260701656342,
-      "flowgpu_over_compiled": 0.92284289328618
+      "ids_equal": true,
+      "flowgpu_us": 2471.654210239649,
+      "eager_us": 2501.938957720995,
+      "compiled_us": 2476.2889370322227,
+      "flowgpu_over_eager": 0.9878954890614389,
+      "flowgpu_over_compiled": 0.9981283578328591,
+      "samples": {
+        "flowgpu": [
+          2497.059293091297,
+          2471.654210239649,
+          2465.509343892336
+        ],
+        "eager": [
+          2502.624411135912,
+          2501.938957720995,
+          2459.5847353339195
+        ],
+        "compiled": [
+          2470.608800649643,
+          2479.4237688183784,
+          2476.2889370322227
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.9878954890614389,
+          1.002408784081843
+        ],
+        "flowgpu_over_compiled": [
+          0.9956468758638457,
+          1.0107060625845334
+        ]
+      }
     },
     {
       "name": "routed_silu",
@@ -34,24 +88,78 @@
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2087.511122226715,
-      "eager_us": 3257.3624048382044,
-      "flowgpu_over_eager": 0.6408593404056321,
-      "compiled_us": 1160.0854340940714,
-      "flowgpu_over_compiled": 1.7994460242981025
+      "flowgpu_us": 2564.9238377809525,
+      "eager_us": 3294.337075203657,
+      "compiled_us": 2553.448546677828,
+      "flowgpu_over_eager": 0.7785857303695578,
+      "flowgpu_over_compiled": 1.0044940365522754,
+      "samples": {
+        "flowgpu": [
+          2564.9238377809525,
+          2544.228918850422,
+          2577.259670943022
+        ],
+        "eager": [
+          3294.337075203657,
+          3298.0870455503464,
+          3268.106374889612
+        ],
+        "compiled": [
+          2565.404400229454,
+          2553.448546677828,
+          2534.7289629280567
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.7714256427170407,
+          0.7886094806293062
+        ],
+        "flowgpu_over_compiled": [
+          0.9963893426247413,
+          1.0167791936088642
+        ]
+      }
     },
     {
       "name": "gqa_decode_masked",
-      "max_abs_error": 0.0001220703125,
+      "max_abs_error": 6.103515625e-05,
       "tolerance": 0.03,
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2050.1192193478346,
-      "eager_us": 6156.143732368946,
-      "flowgpu_over_eager": 0.33302003794491136,
-      "compiled_us": 7344.704587012529,
-      "flowgpu_over_compiled": 0.2791288873582489
+      "flowgpu_us": 2512.519247829914,
+      "eager_us": 12390.69551229477,
+      "compiled_us": 12343.049980700016,
+      "flowgpu_over_eager": 0.20277467437859692,
+      "flowgpu_over_compiled": 0.2035574069422524,
+      "samples": {
+        "flowgpu": [
+          2522.869501262903,
+          2460.0443430244923,
+          2512.519247829914
+        ],
+        "eager": [
+          12365.144677460194,
+          12404.559645801783,
+          12390.69551229477
+        ],
+        "compiled": [
+          12384.760659188032,
+          12306.124903261662,
+          12343.049980700016
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.19831774873661664,
+          0.20403073049858578
+        ],
+        "flowgpu_over_compiled": [
+          0.19990406097474867,
+          0.20370757018959681
+        ]
+      }
     },
     {
       "name": "gqa_decode_large",
@@ -60,12 +168,39 @@
       "passed": true,
       "id_name": null,
       "ids_equal": null,
-      "flowgpu_us": 2587.3854756355286,
-      "eager_us": 13816.990423947573,
-      "flowgpu_over_eager": 0.18726114705493888,
-      "compiled_us": 13991.480693221092,
-      "flowgpu_over_compiled": 0.1849257796488347
+      "flowgpu_us": 2159.253228455782,
+      "eager_us": 15642.742160707712,
+      "compiled_us": 15642.417129129171,
+      "flowgpu_over_eager": 0.13803546758441823,
+      "flowgpu_over_compiled": 0.13803833580392377,
+      "samples": {
+        "flowgpu": [
+          2180.4282441735268,
+          2159.253228455782,
+          2147.1488289535046
+        ],
+        "eager": [
+          15642.742160707712,
+          15411.02584451437,
+          15680.9170730412
+        ],
+        "compiled": [
+          15642.417129129171,
+          15645.707026124,
+          15639.032237231731
+        ]
+      },
+      "ratio_ranges": {
+        "flowgpu_over_eager": [
+          0.13692750359893846,
+          0.1401109342259898
+        ],
+        "flowgpu_over_compiled": [
+          0.1372942261632918,
+          0.13939202785438784
+        ]
+      }
     }
   ],
-  "note": "Five-case starter suite on a shared H100. Absolute times are launch/load dominated for small shapes and vary with load; ratios are indicative, not a ranking. GQA large is the first serving-shaped case; it passes correctness, but a dedicated-GPU rerun is required before a performance claim. MoE ids are a separate tie-sensitive contract."
+  "note": "Five-case Phase-3 suite, interleaved 3 rounds x 8 iterations on a shared H100. Correctness is the stable signal; ratio_ranges show session/load variance. A dedicated-GPU rerun is required for ranking."
 }

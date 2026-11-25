@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.0
+
+- Add an interleaved multi-round measurement protocol to the Phase-3 suite:
+  randomized order per round, median and min/max ratios.
+- Document that within-session variance is controlled but session-level load
+  variance remains; GQA ratios are not interpreted as compiler results.
+
 ## 1.7.0
 
 - Add a serving-shaped GQA decode case (batch 4, 32q/8kv, depth 128,

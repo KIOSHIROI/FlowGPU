@@ -5,6 +5,7 @@ import argparse
 import json
 import math
 import pathlib
+import random
 import statistics
 import time
 from dataclasses import dataclass
@@ -178,7 +179,7 @@ CASES = (
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iterations", type=int, default=20)
-    parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     payload = {"environment": "H100 PCIe, shared", "cases": []}
@@ -196,28 +197,40 @@ def main(argv=None) -> int:
         ids_equal = None
         if case.id_name is not None:
             ids_equal = bool(torch.equal(result[case.id_name].to(expected[0].dtype), eager_result[1]))
-        flowgpu = statistics.median([_p50(lambda: run(*inputs), args.iterations)
-                                     for _ in range(args.repeats)])
-        eager = statistics.median([_p50(lambda: case.eager(*inputs), args.iterations)
-                                   for _ in range(args.repeats)])
-        compiled = None
+        compiled_fn = None
         try:
             compiled_fn = torch.compile(case.eager)
             compiled_fn(*inputs); torch.cuda.synchronize()
-            compiled = statistics.median([_p50(lambda: compiled_fn(*inputs), args.iterations)
-                                          for _ in range(args.repeats)])
         except Exception as error:  # noqa: BLE001 - baseline may be unsupported
-            compiled = None
+            compiled_fn = None
             payload.setdefault("baseline_errors", {})[case.name] = str(error).splitlines()[0][:120]
+        paths = {"flowgpu": lambda: run(*inputs), "eager": lambda: case.eager(*inputs)}
+        if compiled_fn is not None:
+            paths["compiled"] = lambda: compiled_fn(*inputs)
+        samples = {key: [] for key in paths}
+        rng = random.Random(0)
+        for _ in range(args.rounds):
+            order = list(paths); rng.shuffle(order)
+            for key in order:
+                samples[key].append(_p50(paths[key], args.iterations))
+        medians = {key: statistics.median(values) for key, values in samples.items()}
+        ratios = {
+            f"flowgpu_over_{key}": [a / b for a, b in zip(samples["flowgpu"], samples[key])]
+            for key in ("eager", "compiled") if key in samples
+        }
         entry = {"name": case.name,
                  "max_abs_error": max(errors), "tolerance": case.tolerance,
                  "passed": max(errors) <= case.tolerance,
                  "id_name": case.id_name,
                  "ids_equal": ids_equal,
-                 "flowgpu_us": flowgpu, "eager_us": eager,
-                 "flowgpu_over_eager": flowgpu / eager,
-                 "compiled_us": compiled,
-                 "flowgpu_over_compiled": flowgpu / compiled if compiled else None}
+                 "flowgpu_us": medians["flowgpu"],
+                 "eager_us": medians["eager"],
+                 "compiled_us": medians.get("compiled"),
+                 "flowgpu_over_eager": medians["flowgpu"] / medians["eager"],
+                 "flowgpu_over_compiled": (medians["flowgpu"] / medians["compiled"]
+                                           if "compiled" in medians else None),
+                 "samples": samples,
+                 "ratio_ranges": {key: [min(values), max(values)] for key, values in ratios.items()}}
         payload["cases"].append(entry)
         print(json.dumps(entry) if args.json else entry)
     if args.json:
