@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.24.0
+
+- Add StudySession: collect per-participant answers and emit both/root/stage
+  accuracy, median time and per-task responses. Protocol remains unrun.
+
 ## 1.23.0
 
 - Add audit_from_result(), avoiding recompilation when building the audit

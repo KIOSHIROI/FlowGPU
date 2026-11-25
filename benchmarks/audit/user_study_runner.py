@@ -25,6 +25,39 @@ def score_answer(task, *, answer, stage):
     }
 
 
+class StudySession:
+    """Collect scored answers for one participant/condition."""
+
+    def __init__(self, subject, condition):
+        self.subject = subject
+        self.condition = condition
+        self.responses = []
+
+    def record(self, task_id, *, answer, stage, seconds):
+        task = next(task for task in TASKS if task["id"] == task_id)
+        result = score_answer(task, answer=answer, stage=stage)
+        result["seconds"] = float(seconds)
+        self.responses.append(result)
+        return result
+
+    def summary(self):
+        import statistics
+        both = [row["both"] for row in self.responses]
+        root = [row["root_cause_keyword"] for row in self.responses]
+        stage = [row["stage_correct"] for row in self.responses]
+        times = [row["seconds"] for row in self.responses]
+        return {
+            "subject": self.subject,
+            "condition": self.condition,
+            "tasks": len(self.responses),
+            "both_correct": sum(both),
+            "root_correct": sum(root),
+            "stage_correct": sum(stage),
+            "median_seconds": statistics.median(times) if times else None,
+            "per_task": self.responses,
+        }
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("task", choices=[task["id"] for task in TASKS])
@@ -38,7 +71,7 @@ def main(argv=None) -> int:
     return 0
 
 
-__all__ = ["score_answer"]
+__all__ = ["score_answer", "StudySession"]
 
 
 if __name__ == "__main__":

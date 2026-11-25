@@ -90,6 +90,29 @@ wrong stage, which is exactly the auditability question.
 A dry run with the reference answers scores 6/6 on both fields; that validates
 the harness, **not** human performance.
 
+
+## Session collection
+
+`StudySession` collects one participant/condition and emits a summary:
+
+```python
+from benchmarks.audit.user_study_runner import StudySession
+session = StudySession("s1", "treatment")
+session.record("loc_range", answer="loc range", stage="host guard", seconds=8)
+print(session.summary())
+```
+
+The summary separates:
+
+- `both_correct`;
+- `root_correct`;
+- `stage_correct`;
+- `median_seconds`;
+- per-task responses.
+
+This is the unit the study analysis consumes. A dry run with reference answers
+validates the pipeline; it is not a participant result.
+
 ## Status
 
 Protocol ready; no participants have been run. This document is the prereg
