@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.25.0
+
+- Extend audit risk flags to cache values and q_scale; check all 13 Phase-2
+  faults against the audit sheet: 6 direct guards + 7 risk flags = 13/13.
+
 ## 1.24.0
 
 - Add StudySession: collect per-participant answers and emit both/root/stage

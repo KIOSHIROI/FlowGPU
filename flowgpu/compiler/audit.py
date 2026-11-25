@@ -56,6 +56,10 @@ def audit_from_result(result):
         risks.append("loc range is guarded; cache-position continuity is not")
     if "valid" in names:
         risks.append("valid must match the written prefix; it is caller-owned")
+    if any("q_scale" in name for name in names):
+        risks.append("q_scale value is caller-owned; it is not checked")
+    if any("cache" in name for name in names):
+        risks.append("cache values are caller-owned; corruption is not checked")
     if any("topk" in op for kernel in kernels for op in kernel["ops"]):
         risks.append("topk tie contract: lower column wins")
     return {

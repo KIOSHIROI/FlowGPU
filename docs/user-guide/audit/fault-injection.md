@@ -55,3 +55,20 @@ explicit invariant check must catch. This motivates:
 
 Raw data:
 [`fault-injection-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/fault-injection-20261125.json).
+
+## Audit-sheet coverage of the 13 faults
+
+The same 13 faults are checked against the audit sheet:
+
+| kind | count | visible |
+|---|---:|---:|
+| direct host guard | 6 | 6 |
+| semantic risk flag | 7 | 7 |
+
+The sheet names the relevant guard for all six structural/loc faults, and flags
+the caller-owned state for the seven semantic faults (mask, cache position,
+cache value, `q_scale`). A risk flag means "this is not checked here", not "this
+call is wrong".
+
+Raw data:
+[`fault-matrix-coverage-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/fault-matrix-coverage-20261125.json).

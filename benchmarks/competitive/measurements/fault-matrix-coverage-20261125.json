@@ -1,0 +1,101 @@
+{
+  "rows": [
+    {
+      "fault": "shape_mismatch",
+      "source": "mlp",
+      "kind": "guard",
+      "visible": true,
+      "needle": "input x dtype or shape"
+    },
+    {
+      "fault": "dtype_mismatch",
+      "source": "mlp",
+      "kind": "guard",
+      "visible": true,
+      "needle": "input x dtype or shape"
+    },
+    {
+      "fault": "noncontiguous_layout",
+      "source": "mlp",
+      "kind": "guard",
+      "visible": true,
+      "needle": "must be contiguous"
+    },
+    {
+      "fault": "weight_dtype_mismatch",
+      "source": "mlp",
+      "kind": "guard",
+      "visible": true,
+      "needle": "w1 dtype or shape"
+    },
+    {
+      "fault": "cache_dtype_mismatch",
+      "source": "decode",
+      "kind": "guard",
+      "visible": true,
+      "needle": "k_cache dtype or shape"
+    },
+    {
+      "fault": "cache_loc_oob",
+      "source": "decode",
+      "kind": "guard",
+      "visible": true,
+      "needle": "loc index is outside the cache range"
+    },
+    {
+      "fault": "missing_mask",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "mask/cache consistency"
+    },
+    {
+      "fault": "valid_zero_mask",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "mask/cache consistency"
+    },
+    {
+      "fault": "skipped_cache_loc",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "cache-position continuity"
+    },
+    {
+      "fault": "duplicate_cache_loc",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "cache-position continuity"
+    },
+    {
+      "fault": "mask_too_short",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "mask/cache consistency"
+    },
+    {
+      "fault": "corrupt_cache_value",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "cache values are caller-owned"
+    },
+    {
+      "fault": "wrong_q_scale",
+      "source": "decode",
+      "kind": "risk",
+      "visible": true,
+      "needle": "q_scale value is caller-owned"
+    }
+  ],
+  "summary": {
+    "faults": 13,
+    "visible": 13,
+    "direct": 6,
+    "risk": 7
+  }
+}
