@@ -42,3 +42,25 @@ subgraph fault faster with this sheet than with source + logs alone?
 - It reports the first pipeline only;
 - it does not prove semantic correctness;
 - it does not include runtime values or timings.
+
+## Coverage of the six user-study faults
+
+Running the audit sheet on the sources used by the user-study fixtures:
+
+| task | evidence in sheet |
+|---|---|
+| shape | yes (host guard) |
+| dtype | yes (host guard) |
+| cache loc range | yes (host guard) |
+| mask missing | **no** |
+| skipped cache position | **no** |
+| MoE tie order | yes (topk kernel) |
+
+Summary: 4/6 visible overall — **3/3 guard tasks** and **1/3 semantic tasks**.
+The two invisible cases are state semantics: the sheet shows kernels, guards
+and reference, but not whether the caller's mask or cache positions are
+consistent. That is exactly why the audit sheet cannot replace an oracle, and
+why the user study has both guard and semantic tasks.
+
+Raw data:
+[`audit-coverage-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/audit-coverage-20261125.json).

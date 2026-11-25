@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.20.0
+
+- Add an audit-coverage check for the six user-study faults: 3/3 guard tasks
+  and 1/3 semantic tasks are visible in the audit sheet; mask/cache state is
+  not. Document why an oracle remains necessary.
+
 ## 1.19.0
 
 - Add six user-study task fixtures (3 host-guard, 3 semantic) with reference
