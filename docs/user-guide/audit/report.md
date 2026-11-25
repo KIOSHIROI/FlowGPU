@@ -54,6 +54,39 @@ mask. Oracle catches all five observable semantic faults.
 counted as silent errors. Fault-injection studies must distinguish "not
 caught" from "not effective".
 
+## Phase 2c: the audit artifact
+
+The audit sheet exposes, for one compiled pipeline:
+
+- inputs (name/dtype/shape);
+- kernels (kind, fused ops, tile);
+- fusion groups;
+- generated host guards;
+- caller-owned semantic risks;
+- independent reference kernels;
+- refusals/skips.
+
+Coverage of the 13-phase fault matrix:
+
+| kind | count | visible |
+|---|---:|---:|
+| direct host guard | 6 | 6/6 |
+| semantic risk flag | 7 | 7/7 |
+
+The risk flag is not a diagnosis: it names state the host does not check
+(mask/cache consistency, cache values, `q_scale`, tie order). This is the
+artifact's honest boundary.
+
+Cost:
+
+- building the sheet from an already compiled result: **~0.2%** of compile
+  time on small CPU shapes;
+- CPU reference: ~0.8–1.4x compile time on those shapes;
+- host guard runtime: ~1.8% at decode (Phase 2b).
+
+A user-study protocol and scoring/session harness are ready, but **no
+participants have been run**.
+
 ## Phase 3: non-standard subgraph suite
 
 Seven cases: fused residual+RMSNorm, MoE routing, fp16 routed SiLU, small masked
@@ -113,7 +146,7 @@ behavior.
 - guard-cost result is one subgraph;
 - random weights in most performance runs;
 - seven-case suite, not a model zoo;
-- no user study of "auditability" with engineers;
+- no user study of "auditability" with engineers (protocol + harness ready);
 - no full-model serving measurement;
 - fault matrix is hand-designed, not exhaustive;
 - tiny trained model is a synthetic pattern.
@@ -127,7 +160,9 @@ behavior.
 - on a dedicated H100, a small non-standard suite is competitive, with at least
   one loss (MoE vs eager);
 - device policy materially changes prefill performance;
-- the host-guard audit tax is about 1.8% at decode on the measured subgraph.
+- the host-guard audit tax is about 1.8% at decode on the measured subgraph;
+- the audit sheet covers all 13 injected faults as 6 direct guards + 7 risk
+  flags, and costs ~0.2% of compile time incrementally.
 
 ## What it does not support
 

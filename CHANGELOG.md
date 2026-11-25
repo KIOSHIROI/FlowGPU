@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.26.0
+
+- Add Phase 2c to the research report: audit-sheet coverage (13/13 as 6 direct
+  + 7 risk flags), incremental cost (~0.2% of compile), reference cost and the
+  unrun user-study status.
+
 ## 1.25.0
 
 - Extend audit risk flags to cache values and q_scale; check all 13 Phase-2
