@@ -5,12 +5,18 @@
   "generated": "generated_module.py:run_swiglu_oai_split",
   "handwritten": "handwritten.py:run_handwritten",
   "inputs": "inputs.json",
-  "tolerance": 1e-6,
+  "tolerance": 1e-06,
   "kernel_evidence": {
     "generated": "one primitive kernel; split folded into index loads; no gate/up buffers",
     "handwritten": "split_copy materializes gate/up; second kernel is pointwise",
-    "source_map": {"split": 16, "gate": 16, "up": 16}
+    "source_map": {
+      "split": 16,
+      "gate": 16,
+      "up": 16
+    }
   },
   "review_question": "If the split changes from halves to even/odd, which load address changes, and which input rows expose the error?",
-  "status": "internal review packet; not a user-study result"
+  "status": "internal review packet; not a user-study result",
+  "dataflow": "dataflow.md",
+  "learning_entry": "start with dataflow.md, then reference.py, then the two implementations"
 }

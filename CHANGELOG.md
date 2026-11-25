@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.32.0
+
+- Add a dataflow learning card to the SwiGLU review packet: shape flow,
+  address expressions, buffering, tail masks and four exercises. Entry is now
+  dataflow -> reference -> implementations, not compiler internals.
+
 ## 1.31.0
 
 - Add the SwiGLU split review packet: PyTorch reference, FlowGPU-generated
