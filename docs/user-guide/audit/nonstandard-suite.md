@@ -16,47 +16,36 @@ randomly interleaved rounds x 8 iterations on a shared H100; ranges are across
 rounds. *The GQA cases are correctness/contract coverage: their eager baseline
 has different host overhead / shape, so the ratio is not a compiler result.
 
+## Dedicated-GPU rerun
+
+GPU0 was idle (0% utilization immediately before and after; GPU1 was busy), so
+the same five cases were rerun with five randomized interleaved rounds x 20
+iterations:
+
+| case | FlowGPU / eager (range) | FlowGPU / compiled (range) |
+|---|---|---|
+| `residual_norm` | **0.40x** (0.39–0.42) | **0.87x** (0.86–0.89) |
+| `moe_router_topk` | 1.19x (1.17–1.23) | **0.85x** (0.84–0.87) |
+| `routed_silu` | **0.15x** (0.151–0.155) | 1.02x (1.01–1.03) |
+| `gqa_decode_masked` | **0.34x** (0.34–0.36) | **0.32x** (0.32–0.33) |
+| `gqa_decode_large` | **0.45x** (0.44–0.46) | **0.36x** (0.36–0.37) |
+
+All pass correctness. This is the first table in the project that is stable
+enough to discuss as a performance result, with three caveats:
+
+- it is **one H100**, not a cross-device claim;
+- it is five cases, not a general LLM workload;
+- FlowGPU is **not universally faster**: MoE is 1.19x slower than eager, while
+  it is 0.85x of `torch.compile`; `routed_silu` is at parity with compiled.
+
+The shared-device numbers earlier in this page are kept as a negative result:
+they changed ordering between sessions. Dedicated measurement is the only
+basis for a ranking.
+
 ## Measurement protocol
 
 - Randomize the order of FlowGPU, eager and compiled **inside each round**;
-- run 3 rounds, report median and min/max ratio;
+- run 5 rounds, report median and min/max ratio;
 - keep correctness separate from timing;
-- do not rank compilers from one shared session: within-session variance is
-  small, but **session-level load variance remains** (an earlier run had
-  `routed_silu` compiled 3x faster; this run has FlowGPU faster).
-
-The stable output of this phase is the correctness/contract result, not a
-performance leaderboard.
-
-## What the suite already exposed
-
-The first MoE run had equal routing **weights** but different `ids`: the
-capped logits contained exact ties (`+0.5`), and top-k tie order is not a
-specified contract. That is not a numerical error, but the suite must record
-`ids` separately and compare them only when the contract says so.
-
-The GQA baseline itself exposed the second methodology issue: a per-batch/per-head
-Python loop made eager look ~9x slower than FlowGPU. Replacing it with a
-vectorized einsum baseline removed that artifact. **Baseline implementation is
-part of the result.**
-
-A second methodology lesson: the five-case run produced different ordering of
-FlowGPU vs `torch.compile` than the previous run, on the same shared device.
-That is a measurement problem, not a compiler result. The suite now labels
-ratios "indicative" and keeps correctness as the stable signal.
-
-This is the kind of issue a "fastest kernel" benchmark would miss:
-
-> **A non-standard subgraph suite needs a semantics column, not only latency.**
-
-## Method
-
-- FlowGPU: `compile_pipeline` with literal/symbolic bindings, first call
-  warmup, p50 per call;
-- eager: the same math in PyTorch;
-- compiled: `torch.compile(eager)` where it compiles;
-- correctness: max absolute error against eager, with `ids` treated as a
-  separate contract.
-
-Raw data:
-[`nonstandard-suite-20261125.json`](https://github.com/KIOSHIROI/FlowGPU/blob/main/benchmarks/competitive/measurements/nonstandard-suite-20261125.json).
+- verify the device is idle before and after;
+- do not merge shared-device runs with dedicated runs.

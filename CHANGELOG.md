@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.0
+
+- Add a dedicated-GPU0 run of the Phase-3 suite: all five cases pass; FlowGPU
+  is 0.40x/0.15x/0.34x/0.45x of eager on residual/routed/masked-GQA/large-GQA,
+  but 1.19x on MoE, and 0.85x of compiled on MoE.
+
 ## 1.8.0
 
 - Add an interleaved multi-round measurement protocol to the Phase-3 suite:
