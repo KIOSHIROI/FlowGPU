@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.15.0
+
+- Update the research report with the 7-case suite, MLA-shaped latent
+  attention and the 1.8% host-guard cost; refresh threats/next experiments.
+
 ## 1.14.0
 
 - Measure generated guard overhead on dedicated GPU0: 1.018x guarded /

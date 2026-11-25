@@ -56,8 +56,9 @@ caught" from "not effective".
 
 ## Phase 3: non-standard subgraph suite
 
-Six cases: fused residual+RMSNorm, MoE routing, fp16 routed SiLU, small masked
-GQA, serving-shaped GQA, and AWQ int4 dequant. All pass correctness.
+Seven cases: fused residual+RMSNorm, MoE routing, fp16 routed SiLU, small masked
+GQA, serving-shaped GQA, AWQ int4 dequant, and MLA-shaped latent attention. All
+pass correctness.
 
 Dedicated H100 GPU0 (0% util before/after), 5 randomized interleaved rounds:
 
@@ -68,9 +69,10 @@ Dedicated H100 GPU0 (0% util before/after), 5 randomized interleaved rounds:
 | routed_silu | 0.15x | 1.02x |
 | gqa_decode_masked | 0.34x | 0.32x |
 | gqa_decode_large | 0.45x | 0.36x |
+| mla_latent_attention | 0.42x | 0.34x |
 
-**Meaning:** on these five cases, FlowGPU is competitive and often faster, but
-**not universally**: MoE is slower than eager.
+**Meaning:** on these six timed cases, FlowGPU is competitive and often faster,
+but **not universally**: MoE is slower than eager.
 **Not meaning:** general LLM performance or a cuBLAS win.
 
 ### Measurement lessons
@@ -81,6 +83,20 @@ Dedicated H100 GPU0 (0% util before/after), 5 randomized interleaved rounds:
    sessions. Dedicated measurement is required for a ranking.
 3. MoE top-k tie order is not a specified contract; weights and ids must be
    reported separately.
+
+## Phase 2b: what do the guards cost?
+
+Same subgraph, weights and dedicated GPU0; only `runtime_validation` changes
+(7 interleaved rounds x 30 iterations):
+
+| tokens | guarded / unguarded |
+|---:|---:|
+| 1 | 1.018x (1.013–1.025) |
+| 2048 | 1.003x (0.89–1.05) |
+
+Host guards cost about 1.8% at decode and are inside noise at prefill. This is
+the **host guard** tax only; reference/oracle tests and compile-time checks are
+outside it.
 
 ## Phase 4: device-policy contribution
 
@@ -98,8 +114,9 @@ behavior.
 ## Threats to validity
 
 - single H100, no L4 evidence;
+- guard-cost result is one subgraph;
 - random weights in most performance runs;
-- six-case suite, not a model zoo;
+- seven-case suite, not a model zoo;
 - no user study of "auditability" with engineers;
 - no full-model serving measurement;
 - fault matrix is hand-designed, not exhaustive;
@@ -113,7 +130,8 @@ behavior.
   semantic boundary;
 - on a dedicated H100, a small non-standard suite is competitive, with at least
   one loss (MoE vs eager);
-- device policy materially changes prefill performance.
+- device policy materially changes prefill performance;
+- the host-guard audit tax is about 1.8% at decode on the measured subgraph.
 
 ## What it does not support
 
@@ -128,4 +146,5 @@ behavior.
 2. MLA-shaped latent attention and a larger quant case;
 3. end-to-end trained model on a real tokenizer, not a synthetic pattern;
 4. user study: can engineers use the audit trail to localize a fault faster?
-5. dedicated rerun with longer repetitions and clock lock.
+5. dedicated rerun with longer repetitions and clock lock;
+6. include reference/oracle test time in the total auditability cost.
