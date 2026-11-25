@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.30.0
+
+- Add flowgpu.compiler.source_map: kernel -> DSL statement lines, with the
+  first explicit split gate/up correlation. Statement-level; line-level
+  address mapping remains future work.
+
 ## 1.29.0
 
 - Make the fused/materialized comparison CPU-first: the audit CLI accepts
