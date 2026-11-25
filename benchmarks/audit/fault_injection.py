@@ -36,6 +36,8 @@ def _outcome(fn, correct=None, key="y"):
     if not torch.isfinite(value).all():
         return {"caught": None, "silent": "non_finite"}
     difference = (value.float() - correct.float()).abs().max().item()
+    if difference <= 1e-5:
+        return {"caught": None, "silent": "no_effect", "maxdiff": difference}
     return {"caught": None, "silent": "wrong_value", "maxdiff": difference}
 
 
@@ -85,14 +87,37 @@ def main() -> int:
         x[0:1], *weights, cache_k, cache_v,
         torch.tensor([9], device="cuda", dtype=torch.int32), good_mask, q_scale), good, key="out")
     cases["cache_dtype_mismatch"] = _outcome(lambda: decode(
-        x[0:1], *weights, cache_k.float(), cache_v, 
+        x[0:1], *weights, cache_k.float(), cache_v,
         torch.tensor([8], device="cuda", dtype=torch.int32), good_mask, q_scale), key="out")
+    cases["duplicate_cache_loc"] = _outcome(lambda: decode(
+        x[0:1], *weights, cache_k, cache_v,
+        torch.tensor([7], device="cuda", dtype=torch.int32), good_mask, q_scale), good, key="out")
+    short_mask = torch.full_like(good_mask, -1e9)
+    short_mask[0, :7] = 0
+    cases["mask_too_short"] = _outcome(lambda: decode(
+        x[0:1], *weights, cache_k, cache_v,
+        torch.tensor([8], device="cuda", dtype=torch.int32), short_mask, q_scale), good, key="out")
+    corrupt_k = cache_k.clone()
+    corrupt_k[0, 0] = _bf(D) * 1000
+    cases["corrupt_cache_value"] = _outcome(lambda: decode(
+        x[0:1], *weights, corrupt_k, cache_v,
+        torch.tensor([8], device="cuda", dtype=torch.int32), good_mask, q_scale), good, key="out")
+    wrong_scale = torch.zeros((1, D), device="cuda", dtype=torch.bfloat16)
+    cases["wrong_q_scale"] = _outcome(lambda: decode(
+        x[0:1], *weights, cache_k, cache_v,
+        torch.tensor([8], device="cuda", dtype=torch.int32), good_mask, wrong_scale), good, key="out")
+
+    for outcome in cases.values():
+        if outcome.get("silent") == "wrong_value":
+            outcome["oracle_detected"] = True
 
     summary = {"cases": cases,
                "counts": {"total": len(cases),
                           "caught": sum(1 for c in cases.values() if c["caught"]),
                           "silent_wrong": sum(1 for c in cases.values() if c.get("silent") == "wrong_value"),
-                          "silent_non_finite": sum(1 for c in cases.values() if c.get("silent") == "non_finite")}}
+                          "silent_non_finite": sum(1 for c in cases.values() if c.get("silent") == "non_finite"),
+                          "silent_no_effect": sum(1 for c in cases.values() if c.get("silent") == "no_effect"),
+                          "oracle_detected": sum(1 for c in cases.values() if c.get("oracle_detected"))}}
     print(json.dumps(summary, indent=2))
     return 0
 

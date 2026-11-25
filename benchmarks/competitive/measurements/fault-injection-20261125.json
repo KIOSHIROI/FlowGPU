@@ -1,50 +1,14 @@
 {
   "experiment": "Phase-2 fault injection on compiled MLP and masked decode host boundaries",
   "environment": "H100 PCIe, shared",
-  "total": 9,
+  "total": 13,
   "caught_at_launch": 6,
-  "silent_wrong_value": 3,
+  "silent_wrong_value": 5,
   "silent_non_finite": 0,
-  "cases": {
-    "shape_mismatch": {
-      "caught": "launch",
-      "message": "input x dtype or shape does not match its declaration"
-    },
-    "dtype_mismatch": {
-      "caught": "launch",
-      "message": "input x dtype or shape does not match its declaration"
-    },
-    "noncontiguous_layout": {
-      "caught": "launch",
-      "message": "input x must be contiguous for its consuming kernels"
-    },
-    "weight_dtype_mismatch": {
-      "caught": "launch",
-      "message": "input w1 dtype or shape does not match its declaration"
-    },
-    "cache_dtype_mismatch": {
-      "caught": "launch",
-      "message": "input k_cache dtype or shape does not match its declaration"
-    },
-    "cache_loc_oob": {
-      "caught": "launch",
-      "message": "loc index is outside the cache range"
-    },
-    "missing_mask": {
-      "caught": null,
-      "silent": "wrong_value",
-      "maxdiff": 0.002147674560546875
-    },
-    "valid_zero_mask": {
-      "caught": null,
-      "silent": "wrong_value",
-      "maxdiff": 0.002147674560546875
-    },
-    "skipped_cache_loc": {
-      "caught": null,
-      "silent": "wrong_value",
-      "maxdiff": 0.000244140625
-    }
-  },
-  "note": "MLP compiled with B/D/H bindings; decode block has fixed literals. After adding the cache loc host guard, only mask/skipped-position semantics remain silent."
+  "silent_no_effect": 2,
+  "oracle_detected_observable": 5,
+  "structural_caught": ["shape_mismatch", "dtype_mismatch", "noncontiguous_layout", "weight_dtype_mismatch", "cache_dtype_mismatch", "cache_loc_oob"],
+  "silent_wrong": ["missing_mask", "valid_zero_mask", "skipped_cache_loc", "duplicate_cache_loc", "mask_too_short"],
+  "no_effect": ["corrupt_cache_value", "wrong_q_scale"],
+  "note": "13 injected faults. Six are rejected at launch, including the cache-loc range check added in 1.3.0. Five observable semantic faults are silent under guards but detected by comparing against the correct output. Two injections had no observable effect in this model and are excluded from the silent-error count."
 }

@@ -6,11 +6,11 @@ This experiment injects nine faults into two compiled hosts: an MLP with bound
 
 ## Result
 
-| class | cases | caught at launch | silently wrong |
-|---|---:|---:|---:|
-| structural | 5 | 5 | 0 |
-| cache index (fixed) | 1 | 1 | 0 |
-| semantic | 3 | 0 | 3 |
+| class | cases | caught at launch | silently wrong | oracle catches |
+|---|---:|---:|---:|---:|
+| structural + loc range | 6 | 6 | 0 | - |
+| observable semantic | 5 | 0 | 5 | 5/5 |
+| injection with no observable effect | 2 | 0 | - | - |
 
 Caught at launch:
 
@@ -18,24 +18,28 @@ Caught at launch:
 - input dtype mismatch;
 - non-contiguous input layout;
 - weight dtype mismatch;
-- cache dtype mismatch.
+- cache dtype mismatch;
+- `loc` outside the 32-slot cache range.
 
-Silently wrong after the loc guard:
+Silently wrong under guards, detected by the oracle:
 
-- mask missing (all zeros) at the decode step;
+- mask missing (all zeros);
 - mask all `-1e9` (no valid keys);
-- skipped cache position (`loc=9` while slot 8 is empty).
+- skipped cache position;
+- duplicate cache position;
+- mask shorter than the written prefix.
 
-`loc=99` was silently wrong in the first run and is now caught by a host
-`cache_write_hsd` range check; the three remaining cases are state semantics,
-not declaration errors.
+Two injections — corrupting one cached key and setting `q_scale=0` — produced
+the same bf16 output in this setup, so they are reported as "no observable
+effect", not as silent errors. A stronger injection or a more sensitive
+subgraph is needed to study those.
 
 ## Interpretation
 
-FlowGPU's host guards cover the **declaration boundary** well: shape, dtype,
-layout, cache dtype and now the cache `loc` range are rejected before any
-launch. They still do **not** cover **state invariants**: whether the mask
-matches the written prefix, or whether a cache position was skipped.
+FlowGPU's host guards cover the **declaration boundary** and the cache `loc`
+range. They still do **not** cover **state invariants**: whether the mask
+matches the written prefix, or whether a cache position was skipped. An
+independent correct-output oracle detects all five observable semantic faults.
 
 This is the auditability boundary the project should state explicitly:
 

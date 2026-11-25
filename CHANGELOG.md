@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+- Expand the fault matrix to 13 cases: 6 caught at launch, 5 observable
+  semantic faults silent under guards but caught by an oracle; 2 injections
+  had no observable effect and are excluded.
+
 ## 1.3.0
 
 - Add a host range guard for cache_write_hsd loc; the fault matrix now catches
