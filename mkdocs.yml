@@ -49,6 +49,8 @@ nav:
   - Closed loop: closed-loop.md
   - Trained parity: trained-parity.md
   - Fault injection: audit/fault-injection.md
+  - Audit trail: audit/audit-trail.md
+  - User study: audit/user-study.md
   - Non-standard suite: audit/nonstandard-suite.md
   - Device policy: audit/device-policy.md
   - Guard cost: audit/guard-cost.md

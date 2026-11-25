@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.18.0
+
+- Add flowgpu.compiler.audit: a compiled-artifact audit sheet with kernels,
+  fusion groups, host guards, reference kernels and refusals.
+- Add the pre-registered user-study protocol (not yet run).
+
 ## 1.17.0
 
 - Add CUDA-event timing to the suite; absolute times improve but ratios still
