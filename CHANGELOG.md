@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.0
+
+- Add six user-study task fixtures (3 host-guard, 3 semantic) with reference
+  root cause, stage and audit evidence; protocol remains unrun.
+
 ## 1.18.0
 
 - Add flowgpu.compiler.audit: a compiled-artifact audit sheet with kernels,

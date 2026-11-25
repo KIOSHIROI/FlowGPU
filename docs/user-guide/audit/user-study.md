@@ -53,6 +53,21 @@ anonymised timings and answers.
 - the audit report generator (`flowgpu.compiler.audit`);
 - a consent/withdrawal script.
 
+
+## Task fixtures
+
+The six tasks are now code, not prose:
+
+```bash
+python -m benchmarks.audit.user_study
+```
+
+Each fixture records the source, fault, reference root cause, expected stage
+and the audit evidence. Three tasks are host-guard cases; three are semantic
+(mask, skipped cache position, MoE tie).
+
+The fixtures are ready; the experiment still needs participants.
+
 ## Status
 
 Protocol ready; no participants have been run. This document is the prereg
